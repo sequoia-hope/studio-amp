@@ -45,7 +45,7 @@ the silkscreen; the pcbview page may be published to GitHub Pages.
 | R-17 | Knob header | in | RP2350 ADC (clean reference, RC filter) + GPIO for rotary encoders | 0–3.3 V; ESD protected | — | optional-population 0.1 in header |
 | R-18 | Qwiic I2C connector, buffered | bidir | I2C, buffer for long runs | 3.3 V | ≤ 300 mA to the LED driver board **(proposed)** | JST SH 4-pin (Qwiic) |
 | R-19 | Addressable LED output | out | 5 V level-shifted; WS2812 single-wire or APA102/SK9822 data+clock, firmware-selectable | 5 V | ≤ 1 A (5 W) at Class 8, firmware-limited by PoE class (see R-33a), with a hardware current limit **(proposed)** | one connector, 4-pin (5V, GND, D, C) **(proposed: JST PH)** |
-| R-20 | Colour OLED header | out | SPI (SCK, MOSI, RES, DC, CS) routed to the FPGA for remapping; solder jumpers on GND/VCC | 3.3 V | ≤ 50 mA | 7-pin 0.1 in female, SSD1331/SSD1351 module (exact module still open) |
+| R-20 | Colour display header | out | SPI (SCL, SDA, RES, DC, CS) + backlight BLK, all signal pins routed to FPGA I/O (series R) so the order can be remapped; solder jumpers choose which pins get GND / VCC | 3.3 V | ≤ 40 mA incl. backlight | user's module (2026-11-07): 0.96 in 80×160 IPS TFT, ST7735S, usually an **8-pin** 0.1 in header (GND, VCC, SCL, SDA, RES, DC, CS, BLK). 8-pin 0.1 in female header; pin order confirmed against the module in hand before phase 2 |
 | R-21 | RP2350 debug | bidir | SWD + UART | 3.3 V | — | Raspberry Pi Debug Probe (3-pin JST SH, from Sequoia's library) |
 | R-22 | FPGA JTAG | bidir | JTAG | 3.3 V | — | 0.1 in or 1.27 mm header **(proposed)** |
 | R-23 | USB-C (RP2350 USB) | bidir | USB 2.0 FS, for bring-up, BOOTSEL and bench audio **(proposed — not in the spec)** | 5 V in. On USB alone only 5 V/3.3 V/1.2 V logic, the FPGA and the PHY come up; VBUS, gate drive and LEDs stay off. USB 5 V joins the 5 V rail through an ideal diode, and the 5 V buck output joins it through another, so neither back-feeds the other | sink ≤ 500 mA | USB-C cable |
@@ -226,7 +226,7 @@ R-95. To resolve in phase 1 (part audits). LCSC stock checked 2026-11-07 with `j
 - VBUS bulk: ≈ 5–7 mF, 63 V, 105 °C, ripple current, volume.
 
 R-96. Open with the user:
-- the exact OLED module (pinout, R-20);
+- ~~the display module~~: 0.96 in ST7735S 80×160 IPS TFT, 8-pin (user, 2026-11-07); confirm the pin order on the module in hand;
 - ~~the gate driver~~: LMG1210 (user, 2026-11-07);
 - ~~the R-51 audio targets~~: relaxed open-loop targets accepted (user, 2026-11-07);
 - ~~confirm the **proposed** items~~ (signed off 2026-11-07, as written):: 4 Ω minimum load with a 144 W / 12 A firmware limit (R-11, R-50),

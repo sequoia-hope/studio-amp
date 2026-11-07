@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "gate": 0,
-  "judged_at": "2026-11-07T20:19:58Z",
+  "judged_at": "2026-11-07T20:21:41Z",
   "skill": "boardroom 66be834 (skill 2e92638, working tree incl. uncommitted LESSONS.md), vendored 2026-11-07",
   "files": {
-    "design/intent.md": "sha256:158c922405eb1d5104e02825972553c5f1e4cebd82c2c57dbf068fcfde1eb0ca"
+    "design/intent.md": "sha256:211535d2cecdfcd56d1282efadf07ec007b5df257dd0f4d09d260a854a4169d0"
   },
   "links": {},
   "own_interface": {}

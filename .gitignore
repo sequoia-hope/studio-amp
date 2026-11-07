@@ -29,3 +29,6 @@ build/
 
 # Boardroom runtime state (materialized links, job logs, locks)
 .boardroom/
+
+# datasheets are the makers' copyright; design/datasheets/sources.csv re-fetches them
+design/datasheets/*.pdf

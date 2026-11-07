@@ -68,3 +68,7 @@ budget arithmetic was rechecked by the author (Class 8: 71.3 − 1.5 = 69.8 × 0
 ## Sign-off
 
 - [x] User sign-off on `design/intent.md`, 2026-11-07: "use LMG1210, relaxed targets fine, signed off — go". Proposed items accepted as written. OLED module (R-20) stays open; it only fixes a header pinout and is resolved by phase 2.
+
+## Post-sign-off edit
+
+2026-11-07: R-20 updated with the display module the user named (open item R-96 closed). The rest of the intent is unchanged; inputs re-recorded.
