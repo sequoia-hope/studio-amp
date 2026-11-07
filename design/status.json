@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "board": "satellite",
+  "phase": "1 architecture and parts",
+  "doing": "Gate 0 passed (signed off 2026-11-07). Starting phase 1: block diagram and datasheet audits.",
+  "needs_user": [
+    {
+      "id": "oled-module",
+      "kind": "question",
+      "text": "Which colour OLED module (sets the 7-pin header pinout)? Needed by phase 2."
+    }
+  ],
+  "checks": {},
+  "gates": {
+    "0": {
+      "state": "passed",
+      "stale_because": null
+    }
+  },
+  "links": [
+    {
+      "label": "Gate 0",
+      "href": "design/gates/phase0.md"
+    },
+    {
+      "label": "Design intent",
+      "href": "design/intent.md"
+    },
+    {
+      "label": "Decisions",
+      "href": "design/decisions.md"
+    },
+    {
+      "label": "System spec",
+      "href": "PoE++ GaN Speaker Amplifier \u2014 System Specification.md"
+    }
+  ],
+  "updated": "2026-11-07T20:19:58Z"
+}
