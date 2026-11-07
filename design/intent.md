@@ -17,10 +17,11 @@ correction) and supervision. PTP keeps the speakers in a room sample-synchronous
 first, packaged to sell later.
 
 R-02. Variant A choices (user, 2026-11-07): an integrated PoE PD chip; an isolated active-clamp
-forward converter; a 48 V amp rail; Gowin GW1N-9-class FPGA; all-GaN power stage; satellite only
+forward converter; a 48 V amp rail; Lattice ECP5 LFE5U-25F FPGA (replacing Gowin GW1N-9, 2026-11-07, so the RP2350 can load it by slave SPI); all-GaN power stage; satellite only
 (no subwoofer); everything on one board (full spec, not a core-only subset); headphone and line
 out fed from an FPGA 1-bit stream with a discrete reconstruction filter (no DAC chip); LMG1210 half-bridge
-GaN gate drivers in place of the spec's uP1966 (0 LCSC stock).
+GaN gate drivers in place of the spec's uP1966 (0 LCSC stock); Infineon IGC033S10S1 GaN in place of
+Innoscience (stock and lifecycle data).
 
 R-03. Deferred to later variants, with no provision needed in A beyond what is listed:
 discrete PD front end, flyback, planar transformer, non-isolated buck, silicon-MOSFET control
@@ -97,6 +98,13 @@ R-33a. Power budget (average; phase 1 recomputes with real part efficiencies):
 
 Peaks above these averages come from the VBUS bulk capacitance.
 
+Phase 1 update (2026-11-07, from the block audits): logic, LEDs, gate drive and analog rails come
+to ≈ 1.65 W more than the table in the worst case (Qwiic load, sensing ADCs, ECP5), and ≈ 1.2 W less
+in the typical case. The GaN stage idles at ≈ 5.2 W of VBUS power with both channels switching at
+448 kHz (IGC033S10S1, 16 ns dead time), so gateware auto-idles the bridges with no signal.
+Average speaker output, worst case: ≈ 28 W at Class 6, ≈ 42 W at Class 8. Phase 8 rechecks this with
+real efficiencies.
+
 | Rail | Voltage | Load (avg / peak) | Notes |
 |---|---|---|---|
 | VBUS (amp) | 48 V | per R-33a / 3.3 A pk from the bulk | bulk capacitance for a combined 144 W, 10 ms burst at ≤ 10 % sag: ≈ 1.1 J deficit (with ~50 W from the converter) → **≈ 5 mF, rising to ≈ 7 mF if the converter current-limits**; 63 V, 105 °C electrolytics, ripple current set in phase 1. That is about 5–7 cans of 16 × 25 mm, which phase 4 must place. Bus-voltage feedforward via a fast ADC |
@@ -115,8 +123,11 @@ this needs).
 
 R-35. Backfeed: in BTL, supply pumping largely cancels; what comes back is driver back-EMF and
 energy stored in the output filters. VBUS bulk absorbs it, the SRs cannot pass it back (R-33), and
-a TVS clamp on VBUS (≈ 56–58 V stand-off, below the 100 V GaN rating) handles transients only, not
-sustained regen. Firmware stops switching if VBUS exceeds 55 V **(proposed)**.
+SMx51A TVS clamps (51 V stand-off, 82.4 V clamp; one at the converter, one at each bridge) handle
+fast spikes only, not sustained regen. Gateware stops the bridges above 55 V (restart below 52 V,
+< 5 µs), and the converter has its own output OVP at ≈ 53 V that works without the optocoupler.
+The 63 V bulk caps are protected by their own capacitance: ≤ 10 mJ of regen lifts 6 mF by ~0.03 V,
+while reaching the TVS from 55 V takes 0.57 J (B/D interfaces, 2026-11-07).
 
 ## Environment
 
@@ -152,7 +163,7 @@ by simulation of the 1-bit stream plus reconstruction filter in phase 8.
 
 R-53. PWM: switching frequency 400 kHz–1 MHz, tunable per build; three-level BD modulation;
 noise shaping that pushes quantization noise above 20 kHz; edge resolution set in phase 1 from the
-noise-shaper analysis (target ≤ 1 ns effective, using PLL/DDR I/O). Output LC filter sized in
+noise-shaper analysis (ECP5 -7 ODDRX2 gives a 1.453 ns grid, accepted 2026-11-07 in place of the earlier ≤ 1 ns target; the noise shaper must make up the difference, shown in the phase 8 simulation). Output LC filter sized in
 phase 1 jointly with the noise-shaper order.
 
 R-54. Protection: cycle-by-cycle overcurrent shutdown at ≈ 15 A with ≤ 200 ns from threshold to
@@ -185,8 +196,8 @@ height, set in phase 4.
 
 ## Manufacturing
 
-R-70. Fab and assembler: JLCPCB. Quantity: 5 prototypes. Parts on both sides allowed. ≥ 4 layers,
-6 if the isolation and power-stage layout need it (decided in phase 5). Cost is secondary to
+R-70. Fab and assembler: JLCPCB. Quantity: 5 prototypes. Parts on both sides allowed. 6 layers
+(user, 2026-11-07: ECP5 BGA fan-out without via-in-pad). Cost is secondary to
 performance on this spin; no per-board cost target. Parts from LCSC; JLC-assembled except for
 large through-hole parts (transformer, bulk caps, jacks), which may be hand-soldered.
 

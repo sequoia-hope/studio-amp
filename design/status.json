@@ -2,8 +2,14 @@
   "schema": 1,
   "board": "satellite",
   "phase": "1 architecture and parts",
-  "doing": "Phase 1: architecture.md written; datasheet audits running per block (A PoE in, B isolated DC-DC, C rails + G I/O, D GaN stage, E compute/network, F analog audio).",
-  "needs_user": [],
+  "doing": "Phase 1: blocks A, B, F audited; C+G finishing; D running; E redoing for ECP5 LFE5U-25F. Then cross-block reconciliation and independent datasheet reviews.",
+  "needs_user": [
+    {
+      "id": "wurth-samples",
+      "kind": "action",
+      "text": "Request W\u00fcrth 750343576 samples (\u22657) and a quote for a custom 8T:16T part on the same core (spec draft in design/parts/B-transformer.md)."
+    }
+  ],
   "checks": {},
   "gates": {
     "0": {
@@ -29,5 +35,5 @@
       "href": "PoE++ GaN Speaker Amplifier \u2014 System Specification.md"
     }
   ],
-  "updated": "2026-11-07T20:21:41Z"
+  "updated": "2026-11-07T23:20:02Z"
 }

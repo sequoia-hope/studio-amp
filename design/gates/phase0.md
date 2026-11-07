@@ -72,3 +72,5 @@ budget arithmetic was rechecked by the author (Class 8: 71.3 − 1.5 = 69.8 × 0
 ## Post-sign-off edit
 
 2026-11-07: R-20 updated with the display module the user named (open item R-96 closed). The rest of the intent is unchanged; inputs re-recorded.
+
+2026-11-07, later: R-02, R-53 and R-70 updated with the user's phase 1 decisions (ECP5, IGC033S10S1, 1.453 ns edge grid, 6 layers); see decisions.md. Inputs re-recorded.

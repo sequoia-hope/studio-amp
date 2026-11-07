@@ -9,31 +9,31 @@ audits in `design/parts/`.
 ```mermaid
 flowchart LR
   subgraph PRI["PRIMARY (PoE side, isolated ≥1500 Vrms)"]
-    RJ45["J1 RJ45 + 4-pair PoE magnetics<br/>(block A)"] --> BR["2× ideal-diode bridges<br/>(block A)"]
+    RJ45["J1 RJ45 + 4-pair PoE magnetics<br/>(block A)"] --> BR["LT4321 + 8 FET ideal-diode bridges<br/>(block A)"]
     BR --> PD["TPS2373-4 PD<br/>class 8 request, hot-swap<br/>(block A)"]
-    PD -->|VPRI 42–57 V| ACFP["UCC2897A active-clamp<br/>forward, primary FET + clamp<br/>(block B)"]
+    PD -->|VPRI 42–57 V| ACFP["UCC2897A active-clamp<br/>forward 400 kHz, FDMS86200 + clamp<br/>(block B)"]
   end
-  ACFP ==>|T1 forward transformer| ACFS
+  ACFP ==>|T1 Würth 750343576, 1:2| ACFS
   PD -.->|type/class, PG<br/>digital isolator| FPGA
   ACFS -.->|feedback: opto + TL431| ACFP
   subgraph SEC["SECONDARY (user-touchable, GND)"]
     ACFS["SR rectifiers (diode-emulating)<br/>+ output L (block B)"] -->|VBUS 48 V| BULK["VBUS bulk ≈5–7 mF<br/>+ TVS (block B)"]
-    BULK --> AMPW["Woofer BTL:<br/>2× LMG1210 + 4× INN100 GaN<br/>LC filter, I-sense, OCP (block D)"]
+    BULK --> AMPW["Woofer BTL:<br/>2× LMG1210 + 4× IGC033S10S1 GaN<br/>LC filter, I-sense, OCP (block D)"]
     BULK --> AMPT["Tweeter BTL:<br/>same + series film HPF cap (block D)"]
     BULK --> P5["5 V buck (block C)"]
     BULK --> PAUX["±15 V analog (block C)"]
     P5 --> P33["3V3 buck"]
-    P5 --> P12["1V2 FPGA core"]
+    P5 --> P12["1V1 + 2V5 ECP5"]
     P5 --> GDRV["gate-drive supply"]
     P33 --> PQ["3V3_Q quiet LDO<br/>(DAC reclock, analog ref)"]
     USB["J USB-C (block G)"] -->|ideal-diode OR| P5
     AMPW --> JW["J woofer"]
     AMPT --> JT["J tweeter"]
-    PHY["Ethernet PHY RMII<br/>(block E)"] <-->|RMII + 50 MHz ref| FPGA["GW1NR-LV9QN88<br/>PWM/noise-shaper, MAC, PTP,<br/>OCP latch, 1-bit DAC (block E)"]
+    PHY["LAN8720AI PHY RMII<br/>+ 50 MHz XO (block E)"] <-->|RMII + 50 MHz ref| FPGA["ECP5 LFE5U-25F-7BG256I<br/>PWM/noise-shaper, MAC, PTP,<br/>OCP latch, 1-bit DAC (block E)"]
     RJ45 <-->|MDI| PHY
     FPGA <-->|FPGA link| MCU["RP2350B + 16 MB QSPI<br/>(block E)"]
     MCU -->|SSPI config, A/B bitstreams| FPGA
-    FPGA -->|PWM ×8 (4 legs × 2 ch)| AMPW
+    FPGA -->|PWM ×2 + fault/arm| AMPW
     FPGA -->|PWM| AMPT
     AMPW -->|OC trip, I-sense| FPGA
     BULK -->|VBUS sense ADC| FPGA
@@ -43,7 +43,7 @@ flowchart LR
     MEMS["MEMS mic PDM (block F)"] --> FPGA
     XMIC["J 3.5 mm ext mic + preamp + ADC<br/>(block F)"] --> FPGA
     MCU --> UI["Qwiic buffer, LED level-shift,<br/>knob ADC, display hdr (via FPGA),<br/>debug, JTAG (block G)"]
-    CLK["audio clock VCXO or fixed XO<br/>(block E)"] --> FPGA
+    CLK["24.576 MHz VCXO, PTP-trimmed<br/>(fixed-XO fallback land) (block E)"] --> FPGA
   end
 ```
 
@@ -97,3 +97,44 @@ flowchart LR
   current-sense and post-filter sense to ADCs, `VBUS_SENSE`.
 - E → F: 2 × 1-bit DAC stream + bit clock; MEMS PDM data/clock; ext-mic ADC interface.
 - E → G: I2C, LED data/clock, display SPI + BLK (from the FPGA), knob ADCs, SWD, UART, JTAG.
+
+## Phase 1 reconciliation (2026-11-07)
+
+The block audits in `design/parts/` change the architecture above as follows. Where this section
+and the earlier text disagree, this section wins. Each `<X>-interfaces.md` holds the detail.
+
+- **FPGA: Lattice ECP5 LFE5U-25F-7BG256I** (user). Slave-SPI configuration from the RP2350; A/B
+  bitstreams in the RP2350's W25Q128 flash (decision 2 stands as first written). The Gowin files
+  (`E-*gowin*`, `E-fpga-gw1nr9.md`) are kept, marked superseded. 6-layer board, no via-in-pad.
+  PWM edge grid 1.453 ns (ODDRX2). Pin map: `E-pinmap.md` (108 balls used, 88 spare I/O).
+- **RP2350↔FPGA link:** PIO 8-bit parallel bus at 37.5 MHz, 37.5 MB/s (82 % at the worst-case load).
+- **PHY:** LAN8720AI (RTL8201F fails R-40, rated 0–70 °C), with its 50 MHz reference from an XO.
+- **Audio clock:** 24.576 MHz VCXO trimmed by the FPGA, with a shared land for a 0.7 ps fixed XO
+  (C5203547). An SN74LVC2G34 buffer on +3V3_Q feeds the DAC flip-flops and the PCM1808 straight
+  from the oscillator, never through the FPGA.
+- **Block A:** four centre-tap nets `POE_CT12/36/45/78`; `VPRI` is the bridge output; `VPD_N`
+  (TPS2373 VSS); status to the FPGA is active-low `PD_TPH_N`, `PD_TPL_N`, `PD_BT_N`, `PD_PG_N`
+  through an ISO7740 isolator powered from `VB_PRI`. The PD's PG doesn't fall on PoE loss: the
+  secondary-side detector stays the main PoE-loss signal.
+- **Block B:** 400 kHz; Würth 750343576 rewired 1:2 (bought outside LCSC); NCP4306 zero-current
+  SR control (no reverse power flow); secondary constant-current loop with `ILIM_SEL0/1` from the
+  FPGA (0.47 / 0.94 / 1.34 A per PoE class) and `IBUS_SENSE` back; bias rails `VB_PRI` (13.5 V)
+  and `VSR`; CBULK on `VPRI` 61 µF; VBUS bulk 6 × 1000 µF 63 V EKZN.
+- **VBUS overvoltage:** bulk absorbs regen (≤ 12.4 mJ, +0.04 V); gateware stop at 55 V; converter
+  OVP ≈ 53 V through the aux winding into LINEOV; SMCJ51A at the bulk and SMBJ51A at each bridge.
+- **Block C rails:** `+5V_BUCK` (LM5013, LEDs) and `+5V` (TPS2116 priority mux with `VUSB`);
+  `+3V3` and `+1V1` (TLV62569P / TPS62A02A); `+2V5` (TPS7A9401); `+3V3_Q` (TPS7A2033, enable
+  gated by ±15 V power-good); `+3V3_A` (TPS7A2033, block D sensing); `VDRV` 7.0 V (LM5017);
+  `+15V`/`-15V` from an LM5017 Fly-Buck at +18/−17.4 V plus TPS7A4901/TPS7A3001 LDOs, 120 mA
+  per rail; `+5V_A` from +15 V for the mic ADC and bias. `+1V2` and `+1V8` are withdrawn.
+- **Block D:** IGC033S10S1 GaN (user); LMG1210 in PWM mode (one PWM per half-bridge, 16 ns dead
+  time); 448 kHz baseline (512 / 672 kHz options); latched hardware OCP at ≈ 15 A, ≤ 198 ns; NTCs,
+  VBUS sense and current sense on ADS7038 / ADS8353 ADCs read by the FPGA; post-filter sense fitted;
+  tweeter series cap 2 × 22 µF polypropylene. 27 FPGA signals (20 used, 7 reserved).
+- **Block F:** 4-tap FIR 1-bit DAC (74LVC74A) at 6.144 Mb/s; SA5532 filter and drivers; BCP56/53
+  headphone stage; HFD4 relay mute; PCM1808 mic ADC; T3902 PDM MEMS mic. Gateware holds the DAC
+  lines low until `PG_3V3Q` (ball B5) is high; relay enables drop ≤ 1 ms after PoE loss.
+- **Block G:** USB-C (HRO TYPE-C-31-M-12); Qwiic with TCA9617B and a TPS2553 switch; LED out with
+  a TPS2553 (≈ 1.1 A) and SN74LV1T125 shifters, JST PH 4-pin; display header with 24 solder jumpers
+  and a FET-switched `DISP_BLK` driven by `DISP_BL_PWM` (ball G15); SH 3-pin Debug Probe headers;
+  1×6 JTAG header.
