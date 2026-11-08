@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "5a7e1117-0003-4000-8000-000000000003")
+	(paper "A3")
+	(title_block
+		(title "Studio Amp satellite: Isolated active-clamp forward, 48 V")
+		(date "2026-11-08")
+		(rev "A")
+		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
+		(comment 1 "Block B. Audits: design/parts/B-*.md")
+	)
+	(lib_symbols)
+	(text "Placeholder: this block's generator has not run yet."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "0c4ef724-e15f-49b7-a973-e0d09f298c4f")
+	)
+	(embedded_fonts no)
+)

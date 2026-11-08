@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "5a7e1117-0014-4000-8000-000000000014")
+	(paper "A3")
+	(title_block
+		(title "Studio Amp satellite: User I/O, debug and test points")
+		(date "2026-11-08")
+		(rev "A")
+		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
+		(comment 1 "Block G. Audits: design/parts/G-*.md")
+	)
+	(lib_symbols)
+	(text "Placeholder: this block's generator has not run yet."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "64cc7cad-7677-467f-8a7e-f1373b6f11c5")
+	)
+	(embedded_fonts no)
+)

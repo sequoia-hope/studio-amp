@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "5a7e1117-0012-4000-8000-000000000012")
+	(paper "A3")
+	(title_block
+		(title "Studio Amp satellite: 1-bit DAC, headphone and line out")
+		(date "2026-11-08")
+		(rev "A")
+		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
+		(comment 1 "Block F. Audits: design/parts/F-*.md")
+	)
+	(lib_symbols)
+	(text "Placeholder: this block's generator has not run yet."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "45d222de-a875-4430-94c2-271ce132ee08")
+	)
+	(embedded_fonts no)
+)

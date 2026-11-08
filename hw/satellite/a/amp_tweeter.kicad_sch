@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "5a7e1117-0007-4000-8000-000000000007")
+	(paper "A3")
+	(title_block
+		(title "Studio Amp satellite: GaN BTL power stage: tweeter")
+		(date "2026-11-08")
+		(rev "A")
+		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
+		(comment 1 "Block D. Audits: design/parts/D-*.md")
+	)
+	(lib_symbols)
+	(text "Placeholder: this block's generator has not run yet."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "8d22bc70-e6ae-46d9-815c-4ff458fe9b24")
+	)
+	(embedded_fonts no)
+)

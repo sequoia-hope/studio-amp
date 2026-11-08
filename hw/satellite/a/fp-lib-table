@@ -1,0 +1,10 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "studio_A")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_A.pretty")(options "")(descr "Studio Amp block A footprints"))
+  (lib (name "studio_B")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_B.pretty")(options "")(descr "Studio Amp block B footprints"))
+  (lib (name "studio_C")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_C.pretty")(options "")(descr "Studio Amp block C footprints"))
+  (lib (name "studio_D")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_D.pretty")(options "")(descr "Studio Amp block D footprints"))
+  (lib (name "studio_E")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_E.pretty")(options "")(descr "Studio Amp block E footprints"))
+  (lib (name "studio_F")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_F.pretty")(options "")(descr "Studio Amp block F footprints"))
+  (lib (name "studio_G")(type "KiCad")(uri "${KIPRJMOD}/lib/studio_G.pretty")(options "")(descr "Studio Amp block G footprints"))
+)

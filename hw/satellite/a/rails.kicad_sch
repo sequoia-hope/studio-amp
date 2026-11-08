@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "5a7e1117-0005-4000-8000-000000000005")
+	(paper "A3")
+	(title_block
+		(title "Studio Amp satellite: Secondary rails and sequencing")
+		(date "2026-11-08")
+		(rev "A")
+		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
+		(comment 1 "Block C. Audits: design/parts/C-*.md")
+	)
+	(lib_symbols)
+	(text "Placeholder: this block's generator has not run yet."
+		(exclude_from_sim no)
+		(at 25.4 25.4 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "af4eaeb5-677b-4356-930c-fc0372f290c7")
+	)
+	(embedded_fonts no)
+)
