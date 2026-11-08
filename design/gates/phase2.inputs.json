@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "gate": 2,
-  "judged_at": "2026-11-08T03:39:18Z",
+  "judged_at": "2026-11-08T03:41:04Z",
   "skill": "boardroom 66be834 (skill 2e92638, working tree incl. uncommitted LESSONS.md), vendored 2026-11-07",
   "files": {
     "design/parts/A-bridge-fets.md": "sha256:538825cfdf280cf39ac404b30d3c52315327912b11ce60c8ab9e40cc0b566da7",
@@ -108,8 +108,8 @@
     "hw/satellite/a/iso_dcdc.kicad_sch": "sha256:edd087cda4f64820294b1d5c122e5726dc15f9ff5c67e698cda4884e971db684",
     "hw/satellite/a/mcu.kicad_sch": "sha256:b9c7817af0ffb17e52eca33c2b50b8b0766ba6f925818f783c1febe70efdea7d",
     "hw/satellite/a/poe_in.kicad_sch": "sha256:ba907b57a0beb1a9f32249b6483d8f3d78504d3fb8fb3b2f621ac7929b6a9c4c",
-    "hw/satellite/a/rails.kicad_sch": "sha256:21ce5b4fd7be01d011c773263489e4c485451e04479113a8282836b9ac31a50f",
-    "hw/satellite/a/satellite.kicad_sch": "sha256:9b6553c535fb1112e5f4f72954c2090a4f8655566217730c82840139228f0a4f"
+    "hw/satellite/a/rails.kicad_sch": "sha256:93c6a0e588225eadcad29bf02a3d81fdfb43072568e98732a809f810a1a5c3b4",
+    "hw/satellite/a/satellite.kicad_sch": "sha256:f7280d9489827be86ebf1929bcaab9732e3ce514fa201e5399413c6f1be2c702"
   },
   "links": {},
   "own_interface": {}

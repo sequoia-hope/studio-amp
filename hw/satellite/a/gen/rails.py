@@ -62,10 +62,10 @@ def jumper(left, label, above=False, below=False):
 
 
 def cap_bank(caps, y, dec):
-    """VBUS input caps hanging from the input wire; texts on the right, starting below the wire.
+    """VBUS input caps hanging from the input wire; texts on the left, starting below the wire.
     caps: (x, key, decouples?)."""
     for x, k, d in caps:
-        S.C(k, (x, y + 3.81), dec=dec if d else None, ref_at=(x + 3.302, y + 5.588), value_at=(x + 5.08, y + 5.588),
+        S.C(k, (x, y + 3.81), dec=dec if d else None, ref_at=(x - 3.81, y + 5.588), value_at=(x - 2.286, y + 5.588),
             ref_rot=90, justify="", vtext=False)
         S.gnd((x, y + 7.62))
 
@@ -299,8 +299,7 @@ def lm5017(y, link_label, ron_key, rfb_top, rr_key, out_name, en_label=None, uv_
     vbus_in(y, link_label, 60.96)
     u = S.part("studio_C:LM5017", "U", "LM5017", (91.44, y + 10.16),
                ref_at=(76.2, y + 27.94), value_at=(76.2, y + 29.718))
-    # the 1u bulk sits furthest out; the 2u2 and 100n are the VIN decouplers
-    cap_bank(((40.64, "1u_100V", False), (48.26, "2u2_100V", True), (55.88, "100n_100V", True)), y, f"{u.ref}.2")
+    cap_bank(((43.18, "1u_100V", True), (50.8, "2u2_100V", True), (58.42, "100n_100V", True)), y, f"{u.ref}.2")
     vin, ron, uvlo = u.pin("VIN"), u.pin("RON"), u.pin("UVLO")
     bst, sw, fb, vcc = u.pin("BST"), u.pin("SW"), u.pin("FB"), u.pin("VCC")
     rtn, pad9 = u.pin("RTN"), u.pin("RTNPAD")

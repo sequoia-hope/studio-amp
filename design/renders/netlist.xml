@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/sequoia/pcb/studio-amp/hw/satellite/a/satellite.kicad_sch</source>
-    <date>2026-11-07T19:38:27-0800</date>
+    <date>2026-11-07T19:40:58-0800</date>
     <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -5510,7 +5510,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>450c7526-a0b7-4b89-9046-efe12a2aaa3e</tstamps>
+      <tstamps>5d948569-a591-49c0-ad72-5d2a9ec97fe0</tstamps>
     </comp>
     <comp ref="C302">
       <value>4u7 100V</value>
@@ -5536,7 +5536,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>498a398b-ee9b-4b1e-8ad3-0df5a087bc8f</tstamps>
+      <tstamps>74c18848-4444-42cf-884a-dd6eb3f3d9f5</tstamps>
     </comp>
     <comp ref="C303">
       <value>100n 100V</value>
@@ -5562,7 +5562,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>15f4ec88-1614-44c3-812f-5ab9ed61a024</tstamps>
+      <tstamps>4dd04da9-7a6b-4ad3-ae03-92e65197453d</tstamps>
     </comp>
     <comp ref="C304">
       <value>2n2</value>
@@ -5586,7 +5586,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>84183c9d-017b-410e-8328-717a0a908424</tstamps>
+      <tstamps>2cf9a261-6fcc-408b-8542-3a82b073319b</tstamps>
     </comp>
     <comp ref="C305">
       <value>22u 25V</value>
@@ -5610,7 +5610,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d13afa6a-01df-4953-8f23-9b6e5db0ba4c</tstamps>
+      <tstamps>4a16ddf7-0c02-4bca-b2af-f60f1db98ca9</tstamps>
     </comp>
     <comp ref="C306">
       <value>22u 25V</value>
@@ -5634,7 +5634,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>cde3f6a4-ee11-4228-b6a4-8af632d58368</tstamps>
+      <tstamps>7ffc87d5-eb66-4d00-aaf2-17078ff9bfa9</tstamps>
     </comp>
     <comp ref="C307">
       <value>22u 25V</value>
@@ -5658,7 +5658,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b8e49c1e-eb63-46e7-b571-05641b274972</tstamps>
+      <tstamps>b6faca91-1438-45e5-9d9e-2f3997143f1d</tstamps>
     </comp>
     <comp ref="C308">
       <value>3n3</value>
@@ -5682,7 +5682,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>31af0e32-9a0f-496e-9c4e-bf9f439bd528</tstamps>
+      <tstamps>083f472a-a7e9-4110-b581-d08523920bab</tstamps>
     </comp>
     <comp ref="C309">
       <value>330p C0G</value>
@@ -5706,7 +5706,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>cd475063-854f-4ddf-8887-8c994860f145</tstamps>
+      <tstamps>c3a57e61-5199-442e-9b13-8b3e06311d4a</tstamps>
     </comp>
     <comp ref="C310">
       <value>1u 50V</value>
@@ -5732,7 +5732,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>f094ec98-a40d-4a0a-b36e-ba94635b3f9b</tstamps>
+      <tstamps>c8d6737a-4f31-478d-9919-e5a51d6fc6b4</tstamps>
     </comp>
     <comp ref="C311">
       <value>4u7 25V</value>
@@ -5758,7 +5758,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>714c0437-a066-492b-86b0-44f1e707ea9f</tstamps>
+      <tstamps>36cbc09c-b59e-4371-8a30-9a51f2b58079</tstamps>
     </comp>
     <comp ref="C312">
       <value>47u 10V</value>
@@ -5782,7 +5782,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>3bd568a1-c45f-4476-9b5e-10594de89eb5</tstamps>
+      <tstamps>8841b942-4d00-43ca-8699-7f8890133002</tstamps>
     </comp>
     <comp ref="C313">
       <value>47u 10V</value>
@@ -5806,7 +5806,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>4bc7674c-d4de-4d6e-aa77-4e4b7eab1660</tstamps>
+      <tstamps>96d6b731-1ded-4126-885f-fae153653ac4</tstamps>
     </comp>
     <comp ref="C314">
       <value>4u7 25V</value>
@@ -5832,7 +5832,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ac34e7c2-1150-4cc6-a2a7-7884598de53c</tstamps>
+      <tstamps>b077e14f-6f85-4815-890e-845d0059c9b4</tstamps>
     </comp>
     <comp ref="C315">
       <value>22u 10V</value>
@@ -5856,7 +5856,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>46615b22-1d1e-4580-858a-c0f02ae289ad</tstamps>
+      <tstamps>2268be17-9fc2-4a7e-b121-abebf152a29a</tstamps>
     </comp>
     <comp ref="C316">
       <value>22p C0G</value>
@@ -5883,7 +5883,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>5634fcce-b314-4caf-92e1-c5b53b9fefa5</tstamps>
+      <tstamps>524516b2-67d5-4805-843b-1b8469dfc5a7</tstamps>
     </comp>
     <comp ref="C317">
       <value>4u7 25V</value>
@@ -5909,7 +5909,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>6442c9ea-ec90-40ef-9d47-cbb43827a990</tstamps>
+      <tstamps>534fbbda-23f4-49b8-9a66-5bd92b91977b</tstamps>
     </comp>
     <comp ref="C318">
       <value>22u 10V</value>
@@ -5933,7 +5933,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>452ae9b9-ceea-4fc2-aabe-2fb9cf342e1a</tstamps>
+      <tstamps>f1ca3a95-0b9e-4dd0-9697-ce029b116c3b</tstamps>
     </comp>
     <comp ref="C319">
       <value>22u 10V</value>
@@ -5957,7 +5957,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b62cdcb4-3993-4c26-a975-8c065aaf24c7</tstamps>
+      <tstamps>43707234-1cbf-48d7-92ba-254cca1306db</tstamps>
     </comp>
     <comp ref="C320">
       <value>22p C0G</value>
@@ -5984,7 +5984,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>248c9a43-46cf-4866-ae22-4dabb2e6c50b</tstamps>
+      <tstamps>ccedb7a7-bb59-49eb-84c7-1c72285d1c2d</tstamps>
     </comp>
     <comp ref="C321">
       <value>1u 100V</value>
@@ -5995,6 +5995,7 @@
         <field name="MPN">CL31B105KCHNNNE</field>
         <field name="Manufacturer">Samsung</field>
         <field name="LCSC">C13832</field>
+        <field name="Decouples">U305.2</field>
         <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
         <field name="Datasheet">~</field>
         <field name="Description">Unpolarized capacitor</field>
@@ -6003,12 +6004,13 @@
       <property name="MPN" value="CL31B105KCHNNNE"/>
       <property name="Manufacturer" value="Samsung"/>
       <property name="LCSC" value="C13832"/>
+      <property name="Decouples" value="U305.2"/>
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>efa4077c-ee94-49a0-9491-5d9ed3d2a7cb</tstamps>
+      <tstamps>04f1b47d-3bca-45ed-bf7c-5f1927bc424d</tstamps>
     </comp>
     <comp ref="C322">
       <value>2u2 100V</value>
@@ -6034,7 +6036,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>5836a9ee-e519-41a5-8e84-26582c3e92cc</tstamps>
+      <tstamps>2656c912-9cbe-4795-9f47-7762b9781997</tstamps>
     </comp>
     <comp ref="C323">
       <value>100n 100V</value>
@@ -6060,7 +6062,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>3f4ea0ab-ad50-4afa-ad19-04a3090c7c09</tstamps>
+      <tstamps>6fcbf773-8d32-4005-8a34-8b4645eb0b7b</tstamps>
     </comp>
     <comp ref="C324">
       <value>1u 50V</value>
@@ -6086,7 +6088,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c1ea611d-a5c6-4bb6-9575-3ab6ee5427e8</tstamps>
+      <tstamps>0c0eafc8-d0df-471d-b31a-1ba751749780</tstamps>
     </comp>
     <comp ref="C325">
       <value>10n</value>
@@ -6110,7 +6112,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>3b057c68-283f-423d-a8bf-eea89185ec08</tstamps>
+      <tstamps>6ba9b017-73e5-4eef-b167-e65a9201478d</tstamps>
     </comp>
     <comp ref="C326">
       <value>100n</value>
@@ -6134,7 +6136,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>79652273-663b-4dba-910d-093ed0977e6d</tstamps>
+      <tstamps>f8fbecac-712c-487d-9474-2e9b92300b06</tstamps>
     </comp>
     <comp ref="C327">
       <value>1n</value>
@@ -6158,7 +6160,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b3781a1c-9739-4d2a-85c4-47e23d315d21</tstamps>
+      <tstamps>95e700c7-1c91-4a5d-8154-1ce875bf155b</tstamps>
     </comp>
     <comp ref="C328">
       <value>10u 25V</value>
@@ -6182,7 +6184,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>eba5123a-b8a9-47e1-b034-0975388d5120</tstamps>
+      <tstamps>6e7177eb-d3d1-442d-868e-9f82e094d8b5</tstamps>
     </comp>
     <comp ref="C329">
       <value>10u 25V</value>
@@ -6206,7 +6208,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a9717b24-6848-40b1-a20e-722476b989d8</tstamps>
+      <tstamps>50e702dd-2468-4c1d-b5df-71aac18674e8</tstamps>
     </comp>
     <comp ref="C330">
       <value>100n</value>
@@ -6232,7 +6234,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d840cbd0-93dd-49de-8d61-b0b4bcdbaf16</tstamps>
+      <tstamps>2dda6ed8-e641-4d22-8830-174df392d46c</tstamps>
     </comp>
     <comp ref="C331">
       <value>10u 25V</value>
@@ -6258,7 +6260,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>be73e8d5-8b6f-4367-ba2c-f7e9a35fcbea</tstamps>
+      <tstamps>3b3840a9-f66b-4a76-8aab-b334f69bc022</tstamps>
     </comp>
     <comp ref="C332">
       <value>4u7 25V</value>
@@ -6282,7 +6284,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>3d055be5-adf3-43e1-a0b6-184dcea9b336</tstamps>
+      <tstamps>01b7f421-1ddf-4e54-a7bb-99c9747c7526</tstamps>
     </comp>
     <comp ref="C333">
       <value>22u 10V</value>
@@ -6308,7 +6310,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>f03de48a-89c4-4c0c-8013-b39d1a0e2a0f</tstamps>
+      <tstamps>ce9a4533-52b0-4b4e-9aa5-6eb50eeddcfb</tstamps>
     </comp>
     <comp ref="C334">
       <value>22u 10V</value>
@@ -6334,7 +6336,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ed9c50d0-fc84-4bc7-9296-3a0fb8a8536a</tstamps>
+      <tstamps>6a764d12-c9f6-43ba-8030-d278d03368f0</tstamps>
     </comp>
     <comp ref="C335">
       <value>10u 25V</value>
@@ -6360,7 +6362,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>383022df-9070-4295-95c1-07bf58115c93</tstamps>
+      <tstamps>ee530f65-0c90-4d8c-894a-ffc23e92d088</tstamps>
     </comp>
     <comp ref="C336">
       <value>2u2 10V</value>
@@ -6384,7 +6386,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>63cf097c-33bf-42bf-8473-ccd567ea33e7</tstamps>
+      <tstamps>0d04e338-b37f-4d49-9538-5267b2855217</tstamps>
     </comp>
     <comp ref="C337">
       <value>10u 25V</value>
@@ -6410,7 +6412,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ab89ddd1-f7df-4908-9c11-9d8ba5ad175c</tstamps>
+      <tstamps>8710aaa1-08f5-470e-bc32-99e45a817fee</tstamps>
     </comp>
     <comp ref="C338">
       <value>1u 100V</value>
@@ -6421,6 +6423,7 @@
         <field name="MPN">CL31B105KCHNNNE</field>
         <field name="Manufacturer">Samsung</field>
         <field name="LCSC">C13832</field>
+        <field name="Decouples">U309.2</field>
         <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
         <field name="Datasheet">~</field>
         <field name="Description">Unpolarized capacitor</field>
@@ -6429,12 +6432,13 @@
       <property name="MPN" value="CL31B105KCHNNNE"/>
       <property name="Manufacturer" value="Samsung"/>
       <property name="LCSC" value="C13832"/>
+      <property name="Decouples" value="U309.2"/>
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>8e382b53-423e-4d58-ab07-e8dd404c48c2</tstamps>
+      <tstamps>cbb83398-e447-4e09-862d-abc8543a7779</tstamps>
     </comp>
     <comp ref="C339">
       <value>2u2 100V</value>
@@ -6460,7 +6464,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d944e9a0-3390-4262-bac2-cd606196b73b</tstamps>
+      <tstamps>636a9a16-d315-4121-b791-f9626233d433</tstamps>
     </comp>
     <comp ref="C340">
       <value>100n 100V</value>
@@ -6486,7 +6490,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>586b7125-62ef-4eda-a06e-4eae40fc567a</tstamps>
+      <tstamps>1a0b8d0b-abbe-45ba-a1dc-577392e51490</tstamps>
     </comp>
     <comp ref="C341">
       <value>1u 50V</value>
@@ -6512,7 +6516,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>61c4397f-1299-4897-96c5-1bcad83e9416</tstamps>
+      <tstamps>3e65b293-a83b-4247-b610-ebf3e4dd1157</tstamps>
     </comp>
     <comp ref="C342">
       <value>10n</value>
@@ -6536,7 +6540,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>6af00fe5-1b86-419b-8b1d-3c1fbfac61fc</tstamps>
+      <tstamps>6bf65fe8-096c-48b8-85a3-e10f47f33029</tstamps>
     </comp>
     <comp ref="C343">
       <value>100n</value>
@@ -6560,7 +6564,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c1a3fcd8-2b2e-4c07-ba6a-f2c1c8d2dd24</tstamps>
+      <tstamps>ab2c44fe-048c-471e-89af-b237dcbb3c90</tstamps>
     </comp>
     <comp ref="C344">
       <value>1n</value>
@@ -6584,7 +6588,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>93d2043a-7298-4fe3-881b-707a580539ff</tstamps>
+      <tstamps>0e397444-ddb4-4ecf-9123-ffed6bb93d56</tstamps>
     </comp>
     <comp ref="C345">
       <value>10u 50V</value>
@@ -6608,7 +6612,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>de47d27a-00e1-42bf-8259-4dfde8756404</tstamps>
+      <tstamps>b0b3b980-4a7f-4f26-a69e-7e8e20188c6a</tstamps>
     </comp>
     <comp ref="C346">
       <value>10u 50V</value>
@@ -6632,7 +6636,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e1298588-7afe-4583-a530-6e4f5ed6bce0</tstamps>
+      <tstamps>93309b45-fecc-4c89-8587-c1fc6912c4ca</tstamps>
     </comp>
     <comp ref="C347">
       <value>220p C0G 100V</value>
@@ -6659,7 +6663,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c039b32e-1872-4f16-9a42-32d96633387b</tstamps>
+      <tstamps>cbc00d97-a71f-4ec1-bbf0-ca3fc9ff0d5d</tstamps>
     </comp>
     <comp ref="C348">
       <value>10u 50V</value>
@@ -6683,7 +6687,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>30aaabc2-336e-47ea-8cd0-98550535270a</tstamps>
+      <tstamps>e1630ed5-9ffd-47b2-bdb9-dfa610c17d19</tstamps>
     </comp>
     <comp ref="C349">
       <value>10u 50V</value>
@@ -6707,7 +6711,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>1664d1d1-4a78-4525-8834-ab1938b756c2</tstamps>
+      <tstamps>43aacb23-b057-4a6f-82ce-18a5892be71f</tstamps>
     </comp>
     <comp ref="C350">
       <value>10u 50V</value>
@@ -6733,7 +6737,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d3eae0b2-b020-4824-bea7-58046c567607</tstamps>
+      <tstamps>e0732e1c-d1ec-42da-96e2-78eb039b5972</tstamps>
     </comp>
     <comp ref="C351">
       <value>10n</value>
@@ -6757,7 +6761,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>0252c6e0-7718-42db-be61-381efac4c4f9</tstamps>
+      <tstamps>42c4c142-6fa9-43a2-938d-be21ad5fc0f0</tstamps>
     </comp>
     <comp ref="C352">
       <value>10n</value>
@@ -6781,7 +6785,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>6cb27e93-a2dd-41e0-a5ae-0f958e3a64b5</tstamps>
+      <tstamps>7768f4a8-7275-4671-b3d0-54d12d1e457b</tstamps>
     </comp>
     <comp ref="C353">
       <value>10u 50V</value>
@@ -6807,7 +6811,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>2be99d40-f2c9-4823-9922-5dfefe94d4c9</tstamps>
+      <tstamps>7955fec2-4520-44bb-8cfc-4ca7348269ea</tstamps>
     </comp>
     <comp ref="C354">
       <value>10u 50V</value>
@@ -6833,7 +6837,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b9a73da6-1b32-46ee-b4ca-92461721e9b3</tstamps>
+      <tstamps>e5aa247a-aebc-4097-9421-ed5663c20bb0</tstamps>
     </comp>
     <comp ref="C355">
       <value>10n</value>
@@ -6857,7 +6861,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>5263f642-c51a-4ceb-b1c4-fa7fd0c57ff6</tstamps>
+      <tstamps>ff0485f2-d1e2-417f-9f9a-0b04a1f64ade</tstamps>
     </comp>
     <comp ref="C356">
       <value>10n</value>
@@ -6881,7 +6885,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ff68b79b-bfcf-42b2-9cf5-3e586a15a436</tstamps>
+      <tstamps>a11c85ea-6522-4058-8cc2-8dcbc39e4db0</tstamps>
     </comp>
     <comp ref="C357">
       <value>10u 50V</value>
@@ -6907,7 +6911,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c735e43b-a3cd-47c4-919f-238bb37b5e7a</tstamps>
+      <tstamps>34393168-1db4-4e14-880a-7a2ec9a7f055</tstamps>
     </comp>
     <comp ref="C358">
       <value>10u 50V</value>
@@ -6933,7 +6937,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>46e8166d-a4fc-4790-b2d5-b49bc7b8d916</tstamps>
+      <tstamps>0958befb-6e59-4d6c-a785-140045c280e4</tstamps>
     </comp>
     <comp ref="C359">
       <value>10n</value>
@@ -6957,7 +6961,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>22704c75-5311-40fb-869b-d0759c6df790</tstamps>
+      <tstamps>d3fabc7c-b3fb-4033-b6d4-9ee651a088a8</tstamps>
     </comp>
     <comp ref="C360">
       <value>10n</value>
@@ -6981,7 +6985,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>51c06f77-e8b8-4d57-a186-6638a39be9a9</tstamps>
+      <tstamps>b7914521-f6a9-41b2-94b1-b02cf9429c54</tstamps>
     </comp>
     <comp ref="C361">
       <value>10u 25V</value>
@@ -7007,7 +7011,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>67c8dc3d-48e6-4d54-9ba5-313d8e68668b</tstamps>
+      <tstamps>2762ac11-c86d-42b4-a237-08aec319860c</tstamps>
     </comp>
     <comp ref="C362">
       <value>1u 50V</value>
@@ -7033,7 +7037,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>83629cb5-e096-4be4-8626-20d89e05cbe9</tstamps>
+      <tstamps>8447254b-eab1-4162-b7e9-4fee15302a7a</tstamps>
     </comp>
     <comp ref="C363">
       <value>4u7 25V</value>
@@ -7059,7 +7063,7 @@
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e2e25bdd-0adb-44f1-860b-106b94e48f36</tstamps>
+      <tstamps>d8b1c0ca-9d26-4052-87c5-192ae76eb201</tstamps>
     </comp>
     <comp ref="D301">
       <value>SS5P10</value>
@@ -7080,7 +7084,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d353eb3a-85aa-4a28-a727-526df1e208e6</tstamps>
+      <tstamps>946ff01f-d8b1-4b71-afb9-e6f07b02e41b</tstamps>
     </comp>
     <comp ref="D302">
       <value>B1100</value>
@@ -7104,7 +7108,7 @@
       <property name="ki_keywords" value="diode Schottky"/>
       <property name="ki_fp_filters" value="TO-???* *_Diode_* *SingleDiode* D_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>be4d83b3-fea5-4d2b-9d8b-def5f4b895bf</tstamps>
+      <tstamps>32f26075-b793-42bb-8dfa-06afaae7a04e</tstamps>
     </comp>
     <comp ref="FB301">
       <value>BLM18PG221</value>
@@ -7128,7 +7132,7 @@
       <property name="ki_keywords" value="L ferrite bead inductor filter"/>
       <property name="ki_fp_filters" value="Inductor_* L_* *Ferrite*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ba13cdd1-beed-4824-8355-1d06da1d1c72</tstamps>
+      <tstamps>6586b502-58bb-4b97-9ea8-0cb651b638ca</tstamps>
     </comp>
     <comp ref="FB302">
       <value>BLM18PG221</value>
@@ -7152,7 +7156,7 @@
       <property name="ki_keywords" value="L ferrite bead inductor filter"/>
       <property name="ki_fp_filters" value="Inductor_* L_* *Ferrite*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>7a7f003f-7599-4405-8232-977e48938546</tstamps>
+      <tstamps>76373f58-2678-46ac-808a-cbba10866657</tstamps>
     </comp>
     <comp ref="JP301">
       <value>bridged</value>
@@ -7173,7 +7177,7 @@
       <property name="ki_keywords" value="solder jumper SPST"/>
       <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>1932bf5f-e12d-4da8-ae98-3bb033be3517</tstamps>
+      <tstamps>59a722dc-231d-40ac-ace8-2d4a9a0aa5aa</tstamps>
     </comp>
     <comp ref="JP302">
       <value>bridged</value>
@@ -7194,7 +7198,7 @@
       <property name="ki_keywords" value="solder jumper SPST"/>
       <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>533f70e8-7495-49b9-974e-30c3f9056d7f</tstamps>
+      <tstamps>8d74dd90-5db6-4423-adb8-3bdc434d09ef</tstamps>
     </comp>
     <comp ref="JP303">
       <value>bridged</value>
@@ -7215,7 +7219,7 @@
       <property name="ki_keywords" value="solder jumper SPST"/>
       <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>1b534d6d-0c33-4f76-8525-571b8d642e26</tstamps>
+      <tstamps>9b0cd62e-47d3-49a7-83a3-324719a3e455</tstamps>
     </comp>
     <comp ref="JP304">
       <value>bridged</value>
@@ -7236,7 +7240,7 @@
       <property name="ki_keywords" value="solder jumper SPST"/>
       <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>0a7c64a2-ddfd-4268-a6fe-78c513ab9cf4</tstamps>
+      <tstamps>d4d20c89-0583-49e2-9d71-e1b3c7e58891</tstamps>
     </comp>
     <comp ref="JP305">
       <value>bridged</value>
@@ -7257,7 +7261,7 @@
       <property name="ki_keywords" value="solder jumper SPST"/>
       <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d3383da6-2a5b-4ac3-858b-2e2cdc4bb862</tstamps>
+      <tstamps>d070e0e4-f562-4d06-8865-0a597254a34c</tstamps>
     </comp>
     <comp ref="L301">
       <value>47u SRP1265A</value>
@@ -7281,7 +7285,7 @@
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
       <property name="ki_fp_filters" value="Choke_* *Coil* Inductor_* L_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e67f7db4-1095-4b9c-81dd-79fb8618b842</tstamps>
+      <tstamps>cd8b3dff-ad4a-4fd7-aca1-a87cbdc1363c</tstamps>
     </comp>
     <comp ref="L302">
       <value>1u SRP4020TA</value>
@@ -7305,7 +7309,7 @@
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
       <property name="ki_fp_filters" value="Choke_* *Coil* Inductor_* L_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>76de9e30-37b9-4109-8b7b-27d94fd7f667</tstamps>
+      <tstamps>3886e818-8859-482b-b195-8f541ccdcf28</tstamps>
     </comp>
     <comp ref="L303">
       <value>1u SRP4020TA</value>
@@ -7329,7 +7333,7 @@
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
       <property name="ki_fp_filters" value="Choke_* *Coil* Inductor_* L_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>713d68f4-4d2a-41d7-ac4c-1bd876dfd548</tstamps>
+      <tstamps>b0b69d20-99e9-4cd5-a7c2-1ffe1ac660b2</tstamps>
     </comp>
     <comp ref="L304">
       <value>47u SRN6045TA</value>
@@ -7353,7 +7357,7 @@
       <property name="ki_keywords" value="inductor choke coil reactor magnetic"/>
       <property name="ki_fp_filters" value="Choke_* *Coil* Inductor_* L_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>31f9b689-1922-42fe-8da6-d8f0c2d1b234</tstamps>
+      <tstamps>d9054cd2-d7d1-4d5f-bfb0-35fc7ca05776</tstamps>
     </comp>
     <comp ref="L305">
       <value>68u 1:1</value>
@@ -7374,7 +7378,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>59012bbb-78c2-4876-9cc7-ec716105155b</tstamps>
+      <tstamps>5c6b14e1-5fb8-423a-9f76-736706b8fe21</tstamps>
     </comp>
     <comp ref="Q301">
       <value>2N7002</value>
@@ -7398,7 +7402,7 @@
       <property name="ki_keywords" value="N-Channel Switching MOSFET"/>
       <property name="ki_fp_filters" value="SOT?23*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>0aafb7b9-5272-43e1-9a0f-740043093491</tstamps>
+      <tstamps>870ee423-9570-40b1-8f1f-3d433871fdcf</tstamps>
     </comp>
     <comp ref="Q302">
       <value>2N7002</value>
@@ -7422,7 +7426,7 @@
       <property name="ki_keywords" value="N-Channel Switching MOSFET"/>
       <property name="ki_fp_filters" value="SOT?23*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>cc3e6759-c48d-4d19-a577-8044797facf2</tstamps>
+      <tstamps>6571841e-7b5c-4846-8ee6-39439eaeae38</tstamps>
     </comp>
     <comp ref="R301">
       <value>0R 1206</value>
@@ -7448,7 +7452,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a49f040f-2137-41f1-97cd-a1038013ed77</tstamps>
+      <tstamps>e45a0485-c11b-4fc1-bdf3-59d80e36918d</tstamps>
     </comp>
     <comp ref="R302">
       <value>1M 0805</value>
@@ -7472,7 +7476,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>52964eab-13b2-4d17-aadb-6ad72527abc2</tstamps>
+      <tstamps>16e79113-7073-4411-a0dc-e31d8e09f3df</tstamps>
     </comp>
     <comp ref="R303">
       <value>52.3k</value>
@@ -7496,7 +7500,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c3849134-4992-47d8-a2ff-6b2d950a89d6</tstamps>
+      <tstamps>b30b2185-776b-4c61-a23e-eedb431013d2</tstamps>
     </comp>
     <comp ref="R304">
       <value>64.9k</value>
@@ -7520,7 +7524,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>0290e207-c81c-45d7-a9da-2487e42216ac</tstamps>
+      <tstamps>ba1c629a-a27c-4876-a265-29657eb4110c</tstamps>
     </comp>
     <comp ref="R305">
       <value>31.6k 0.5%</value>
@@ -7544,7 +7548,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>4afdc74a-a33f-492d-b9cc-0040ab888fcb</tstamps>
+      <tstamps>e069682c-00a8-476f-9a57-261ec24f8b54</tstamps>
     </comp>
     <comp ref="R306">
       <value>100k 0.5%</value>
@@ -7568,7 +7572,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e32c9423-2148-4482-ab9f-7c09f85799e5</tstamps>
+      <tstamps>0c58b922-5796-4478-a2d8-12274fc46489</tstamps>
     </comp>
     <comp ref="R307">
       <value>330k 0805</value>
@@ -7592,7 +7596,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>cd3967a6-b726-47af-b9f7-dbffae958ead</tstamps>
+      <tstamps>7eb6547f-1fe3-4420-93c4-71dbd8126cef</tstamps>
     </comp>
     <comp ref="R308">
       <value>0R 1206</value>
@@ -7618,7 +7622,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>7c4452fe-d342-40da-af59-d1e8a45b5c74</tstamps>
+      <tstamps>51f80683-df8d-4711-a0bd-1d2705c5fb21</tstamps>
     </comp>
     <comp ref="R309">
       <value>56k</value>
@@ -7642,7 +7646,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>28cb2f87-bd72-430b-9e13-79cd139d751f</tstamps>
+      <tstamps>7afd59d5-541b-4375-8206-54688223d0a9</tstamps>
     </comp>
     <comp ref="R310">
       <value>100k</value>
@@ -7666,7 +7670,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ea7af4cf-60c1-4dc4-a564-3e671eaf4af8</tstamps>
+      <tstamps>c31db0aa-038c-4d98-88c1-a381e9eed982</tstamps>
     </comp>
     <comp ref="R311">
       <value>100k</value>
@@ -7690,7 +7694,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>75cc0869-19a2-4035-a9d1-4685f52d7edf</tstamps>
+      <tstamps>6262566e-58e1-40d2-912b-1fef37da976a</tstamps>
     </comp>
     <comp ref="R312">
       <value>22.0k 0.1%</value>
@@ -7714,7 +7718,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>bc1f34ec-c78b-4d50-9c7f-54944cae4075</tstamps>
+      <tstamps>23935970-4dc7-466c-948a-8fbff9165c4d</tstamps>
     </comp>
     <comp ref="R313">
       <value>100k 0.1%</value>
@@ -7738,7 +7742,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>7df8e787-9c75-4c2e-80db-3a0cf9e0fc0c</tstamps>
+      <tstamps>dd6f4fce-d23e-4e35-977a-0549f3542248</tstamps>
     </comp>
     <comp ref="R314">
       <value>100k</value>
@@ -7762,7 +7766,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>63bb15f4-d5f1-4b8f-9867-2fad18220969</tstamps>
+      <tstamps>6412193a-807b-44ba-9395-78b08daac6dd</tstamps>
     </comp>
     <comp ref="R315">
       <value>100k</value>
@@ -7786,7 +7790,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c1e02a06-6339-49f5-86ac-815ed4e5d0f1</tstamps>
+      <tstamps>0402315b-f1e5-46d1-b782-92928556a3e2</tstamps>
     </comp>
     <comp ref="R316">
       <value>84.5k</value>
@@ -7810,7 +7814,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e3f9a61b-5ccc-409a-a927-28c7c9b210c3</tstamps>
+      <tstamps>08a50f86-a831-4057-86d8-ce7de7c1af34</tstamps>
     </comp>
     <comp ref="R317">
       <value>0R 1206</value>
@@ -7836,7 +7840,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>cf422c2b-3881-4d05-9301-b456bbc94331</tstamps>
+      <tstamps>995faa84-1fe6-41c1-be2e-eea70767095d</tstamps>
     </comp>
     <comp ref="R318">
       <value>191k 0805</value>
@@ -7860,7 +7864,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>725c4ec9-7ca9-4e5c-9d73-150b8cb82cfc</tstamps>
+      <tstamps>c9df31f3-8d1a-4363-987b-10f5728619ee</tstamps>
     </comp>
     <comp ref="R319">
       <value>100k</value>
@@ -7884,7 +7888,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ef62ac8c-15e4-4fd0-a264-d986f9524dc2</tstamps>
+      <tstamps>c3c34db4-cd3e-4813-8945-3a6b7a2496d5</tstamps>
     </comp>
     <comp ref="R320">
       <value>10k</value>
@@ -7908,7 +7912,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c60af2e7-d390-4fa3-8e3a-b738f3f06d42</tstamps>
+      <tstamps>ef3bf676-6eba-4e9d-80d4-39ceb5137d3d</tstamps>
     </comp>
     <comp ref="R321">
       <value>10k</value>
@@ -7932,7 +7936,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>0909cf8a-8e29-4ac4-8969-a2d5970f9251</tstamps>
+      <tstamps>0dda59b4-f66f-46de-a613-ea405c696d47</tstamps>
     </comp>
     <comp ref="R322">
       <value>46.4k</value>
@@ -7956,7 +7960,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>ccff7a3a-7894-4320-bd7e-8344ae005876</tstamps>
+      <tstamps>6d8cd20a-e600-4d6b-898d-b4bab5594225</tstamps>
     </comp>
     <comp ref="R323">
       <value>330k 0805</value>
@@ -7980,7 +7984,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>c51db1e7-cd29-4a2b-9774-6120a5dbb132</tstamps>
+      <tstamps>6989db3b-7812-45a2-b923-ec9c3b4715fc</tstamps>
     </comp>
     <comp ref="R324">
       <value>150k</value>
@@ -8004,7 +8008,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>06bb8424-48ce-4d75-b50a-0e3f30862a8f</tstamps>
+      <tstamps>572bee79-8e67-482b-886f-d13107f29c3f</tstamps>
     </comp>
     <comp ref="R325">
       <value>10k</value>
@@ -8028,7 +8032,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>fbb726fc-043d-4bab-9289-644e48f65986</tstamps>
+      <tstamps>e520c2da-5bf2-4f70-9f6b-acc2f6607ff4</tstamps>
     </comp>
     <comp ref="R326">
       <value>4.7k</value>
@@ -8052,7 +8056,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>aaf618e4-0bba-4ba5-bea9-bf4c072d9abe</tstamps>
+      <tstamps>8476cdff-c9ad-4660-a8fc-73af4fd69827</tstamps>
     </comp>
     <comp ref="R327">
       <value>2.7k</value>
@@ -8076,7 +8080,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>74bf5d28-87e6-4f61-badc-755d9af5205b</tstamps>
+      <tstamps>95f7706d-a1cf-4046-8d07-ef93cab5907c</tstamps>
     </comp>
     <comp ref="R328">
       <value>4.7k</value>
@@ -8100,7 +8104,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>10e2b4cb-39ab-4810-8da9-8d3397a7f809</tstamps>
+      <tstamps>0f3b8328-e794-4475-8b69-ccee8253dbb5</tstamps>
     </comp>
     <comp ref="R329">
       <value>4.7k</value>
@@ -8124,7 +8128,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a0c4b0d7-510b-4207-ba47-fb8f1bd4c3f8</tstamps>
+      <tstamps>b03fea72-396b-4428-9ae4-7ce11208b5bb</tstamps>
     </comp>
     <comp ref="R330">
       <value>47k</value>
@@ -8148,7 +8152,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>f88120e9-ebc3-4a06-895c-3871cb1bd628</tstamps>
+      <tstamps>da4f4688-cf0e-4862-bbb4-df9a411d7afa</tstamps>
     </comp>
     <comp ref="R331">
       <value>10k</value>
@@ -8172,7 +8176,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>34f487e8-37ab-4f15-9300-1ddaa6718238</tstamps>
+      <tstamps>129b2c61-e1fd-4d27-bfa9-2045152bc0bb</tstamps>
     </comp>
     <comp ref="R332">
       <value>22.0k 0.1%</value>
@@ -8196,7 +8200,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>1b7b7ee9-b053-45ef-bd02-060499ddc464</tstamps>
+      <tstamps>7f72df4e-ab49-4975-b944-7ed162896d5b</tstamps>
     </comp>
     <comp ref="R333">
       <value>931k</value>
@@ -8220,7 +8224,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>72562ce1-b1d3-49e5-a235-e7f7dba7dfdd</tstamps>
+      <tstamps>b32bc622-cfac-4198-a7ad-3b4e211aae66</tstamps>
     </comp>
     <comp ref="R334">
       <value>68.1k</value>
@@ -8244,7 +8248,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>8122c301-7f09-4825-823b-bd83e58cd57b</tstamps>
+      <tstamps>b72bf761-9a0d-49df-a9dc-c14f45d16e47</tstamps>
     </comp>
     <comp ref="R335">
       <value>100k</value>
@@ -8268,7 +8272,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>40b3971e-8e8f-441e-9077-758feea21f48</tstamps>
+      <tstamps>75ac78d6-da92-4b2c-acc7-bed3bb4e8d6d</tstamps>
     </comp>
     <comp ref="R336">
       <value>16.7k 0.1%</value>
@@ -8292,7 +8296,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>9001c359-8fa0-4bc4-8687-97f3e2bf90a8</tstamps>
+      <tstamps>5aff1c6c-c736-456b-bf71-411fc261329e</tstamps>
     </comp>
     <comp ref="R337">
       <value>715k</value>
@@ -8316,7 +8320,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e3c6718e-1104-4491-9599-8fed813d775a</tstamps>
+      <tstamps>0368ca9b-6aa0-4f53-a115-433b5a506f33</tstamps>
     </comp>
     <comp ref="R338">
       <value>68.1k</value>
@@ -8340,7 +8344,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>77c464b3-2cd2-44f1-882a-556294a204ab</tstamps>
+      <tstamps>b23c9767-53b5-48d1-bb4a-d8d307f7b58a</tstamps>
     </comp>
     <comp ref="R339">
       <value>0R 1206</value>
@@ -8366,7 +8370,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>de3e370d-4201-48b0-8192-5a7c2ae6e234</tstamps>
+      <tstamps>dbe5e1cb-7f5d-456a-b64f-4befd0f4127f</tstamps>
     </comp>
     <comp ref="R340">
       <value>330k 0805</value>
@@ -8390,7 +8394,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a446af20-2122-4ad7-b6a1-994e1b4f998b</tstamps>
+      <tstamps>3a3b691e-b6e6-4b4c-9725-c20ee0bbae0e</tstamps>
     </comp>
     <comp ref="R341">
       <value>124k 0805</value>
@@ -8414,7 +8418,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>1887fd50-0763-46a7-8824-e493cfee89af</tstamps>
+      <tstamps>80ba944a-9bdf-41ed-bf59-631f066c2f88</tstamps>
     </comp>
     <comp ref="R342">
       <value>5.36k</value>
@@ -8438,7 +8442,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>93d5bb62-dec5-4f93-87ef-bad7153b463c</tstamps>
+      <tstamps>c11aae04-3bc0-4e72-b660-b3bb930ac8ce</tstamps>
     </comp>
     <comp ref="R343">
       <value>10k</value>
@@ -8462,7 +8466,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>18cd22e3-b84d-4786-ba92-d5582380b9d5</tstamps>
+      <tstamps>ff0c69fe-ed9d-4439-859d-d3a6ce8a4c4f</tstamps>
     </comp>
     <comp ref="R344">
       <value>137k</value>
@@ -8486,7 +8490,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>53f002bb-f2f9-488d-8c37-fcce89da670f</tstamps>
+      <tstamps>a398f31d-8de1-4dc1-bf6e-b4ec183e2153</tstamps>
     </comp>
     <comp ref="R345">
       <value>390k 0805</value>
@@ -8510,7 +8514,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>bdafc431-2639-4d9e-9b6f-96f5fffdaff2</tstamps>
+      <tstamps>fb3d5311-469a-40db-9a42-f2242755026e</tstamps>
     </comp>
     <comp ref="R346">
       <value>100R 1206</value>
@@ -8537,7 +8541,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>198e4443-b4bd-4fe5-9f5f-c2c7b6f537a9</tstamps>
+      <tstamps>5281ea29-ec5f-46a6-9810-d50f372e2329</tstamps>
     </comp>
     <comp ref="R347">
       <value>10k</value>
@@ -8561,7 +8565,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b067b135-d736-49ae-8836-6857e6a23211</tstamps>
+      <tstamps>cf24b77a-f728-4bd9-8c97-1d7e84094e4b</tstamps>
     </comp>
     <comp ref="R348">
       <value>113k</value>
@@ -8585,7 +8589,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>85baa238-8f08-4ac8-9e30-015a9d1d0de5</tstamps>
+      <tstamps>d28a0559-d3fb-4c51-9fc2-58d9cedda0b0</tstamps>
     </comp>
     <comp ref="R349">
       <value>9.76k</value>
@@ -8609,7 +8613,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>da385f59-2632-4783-90e0-14b2a5fc8e4a</tstamps>
+      <tstamps>279b274f-0552-43b9-868c-dbe343c3772c</tstamps>
     </comp>
     <comp ref="R350">
       <value>118k</value>
@@ -8633,7 +8637,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b74bbd58-ccb9-43ee-9892-003185f7705d</tstamps>
+      <tstamps>ebcca1c3-8d4f-4ce9-b2d2-3c88a47a9a49</tstamps>
     </comp>
     <comp ref="R351">
       <value>10k</value>
@@ -8657,7 +8661,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>2e5c595a-5fef-420a-9c50-87468a4645b0</tstamps>
+      <tstamps>9d092863-44a0-42ae-8657-510ebd9e9a62</tstamps>
     </comp>
     <comp ref="R352">
       <value>32.4k</value>
@@ -8681,7 +8685,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>388e9754-0d06-498a-bb04-a80f4e291afc</tstamps>
+      <tstamps>50b67da3-75c4-4ab7-ac46-797f930c7b4f</tstamps>
     </comp>
     <comp ref="R353">
       <value>10k</value>
@@ -8705,7 +8709,7 @@
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>58f2fad0-9ecf-4117-bbbc-3b9ce364a7f0</tstamps>
+      <tstamps>852e9ce2-fe36-4e9c-810c-0455420fdf32</tstamps>
     </comp>
     <comp ref="TP301">
       <value>TP VBUS</value>
@@ -8729,7 +8733,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>12fda8a6-44c6-421a-b640-4f2ae624ef92</tstamps>
+      <tstamps>d5fb0c40-21ab-4ac6-aec2-ed278a415f44</tstamps>
     </comp>
     <comp ref="TP302">
       <value>TP +5V_BUCK</value>
@@ -8753,7 +8757,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>aca15a45-bf09-42c8-9434-cd7d92bb1857</tstamps>
+      <tstamps>5fbdcaba-3bb5-44ee-891c-ee22cc321607</tstamps>
     </comp>
     <comp ref="TP303">
       <value>TP +5V</value>
@@ -8777,7 +8781,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>286607da-e9a6-4025-9d92-d6e03fcae8e7</tstamps>
+      <tstamps>021eefc8-6509-4d2d-be09-f6acc68263f4</tstamps>
     </comp>
     <comp ref="TP304">
       <value>TP +3V3</value>
@@ -8801,7 +8805,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d9ed93dc-9345-4c5f-8dd0-66cf68805b94</tstamps>
+      <tstamps>e56c0169-285f-4a73-8609-3711244df85e</tstamps>
     </comp>
     <comp ref="TP305">
       <value>TP +1V1</value>
@@ -8825,7 +8829,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>07bef262-7669-4ac8-91d6-9eaf5281166b</tstamps>
+      <tstamps>71bf00a3-a7eb-4616-825b-79f589d13e50</tstamps>
     </comp>
     <comp ref="TP306">
       <value>TP VBUS</value>
@@ -8849,7 +8853,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>e9e3dbba-09af-445d-83c9-9e7534b8a492</tstamps>
+      <tstamps>ca072976-4c65-4eda-aa81-ec9c24efa69d</tstamps>
     </comp>
     <comp ref="TP307">
       <value>TP VDRV</value>
@@ -8873,7 +8877,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>230bf95d-eadd-48e2-bb90-2171de5f1eaa</tstamps>
+      <tstamps>f4ff7998-5c2f-4054-9b8b-496ba3153d96</tstamps>
     </comp>
     <comp ref="TP308">
       <value>TP +3V3_Q</value>
@@ -8897,7 +8901,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>77b5bfbb-8b51-49a2-871e-df1aa6cc68d6</tstamps>
+      <tstamps>35b0f6eb-7749-47db-a3a0-0269ca03c76a</tstamps>
     </comp>
     <comp ref="TP309">
       <value>TP +2V5</value>
@@ -8921,7 +8925,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>32baafc7-d86e-43c8-8947-ec61bd2884b3</tstamps>
+      <tstamps>562b7b47-a3e5-4cbf-af47-e91a1626ecc0</tstamps>
     </comp>
     <comp ref="TP310">
       <value>TP VBUS</value>
@@ -8945,7 +8949,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>00665242-1e74-43c0-9149-3fea1b717d79</tstamps>
+      <tstamps>100cacaa-da65-445d-a048-fe32ae3e35df</tstamps>
     </comp>
     <comp ref="TP311">
       <value>pad +18V_PRE</value>
@@ -8964,7 +8968,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>df5a4731-90f5-4b74-8a9b-0afe4fce781b</tstamps>
+      <tstamps>efef89f3-ee13-4ead-a6f9-686ad3b8a4d4</tstamps>
     </comp>
     <comp ref="TP312">
       <value>pad -18V_PRE</value>
@@ -8983,7 +8987,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>4a00a85e-d560-4c06-9dda-cb0d0c4dbe64</tstamps>
+      <tstamps>b1193cd8-d92d-46a2-b8cc-c90b25f5f5da</tstamps>
     </comp>
     <comp ref="TP313">
       <value>TP +15V</value>
@@ -9007,7 +9011,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b826fd66-7b2b-4c5c-8252-44ac230ea5e8</tstamps>
+      <tstamps>28b21e97-a27c-480f-a7e8-4d6e147d85bd</tstamps>
     </comp>
     <comp ref="TP314">
       <value>TP -15V</value>
@@ -9031,7 +9035,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>b725da62-bcef-4bf9-b11b-71c1b15d19de</tstamps>
+      <tstamps>46dae964-6f18-4e6a-98b3-eef319fcf894</tstamps>
     </comp>
     <comp ref="TP315">
       <value>TP +5V_A</value>
@@ -9055,7 +9059,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a229c175-120b-4103-b999-be7b6c9d59bd</tstamps>
+      <tstamps>37726778-bc1e-487e-9acb-c849201c603e</tstamps>
     </comp>
     <comp ref="TP316">
       <value>TP +3V3_A</value>
@@ -9079,7 +9083,7 @@
       <property name="ki_keywords" value="test point tp"/>
       <property name="ki_fp_filters" value="Pin* Test*"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>bf8794b1-8211-495c-b792-e1cae6e261d6</tstamps>
+      <tstamps>5470e0b7-bd87-42a0-ad6f-4cbeddd98093</tstamps>
     </comp>
     <comp ref="U301">
       <value>LM5013</value>
@@ -9100,7 +9104,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d65d0296-8165-4392-9888-b0ca2f27c903</tstamps>
+      <tstamps>6e0c543c-1cb3-4f94-a6e3-8bd162b331e8</tstamps>
     </comp>
     <comp ref="U302">
       <value>TPS2116</value>
@@ -9121,7 +9125,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>5ad66af7-876b-4e1e-b977-f283901a65be</tstamps>
+      <tstamps>f01365c8-1cb1-4c90-976e-257f2aec0824</tstamps>
     </comp>
     <comp ref="U303">
       <value>TPS62A02A</value>
@@ -9142,7 +9146,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>a99a6bb3-ab21-456c-9ffa-4021a9205767</tstamps>
+      <tstamps>eb666b7a-bd53-41f2-9a27-0472bbad0227</tstamps>
     </comp>
     <comp ref="U304">
       <value>TPS62A02A</value>
@@ -9163,7 +9167,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>439d8157-db1d-4417-89e9-fde7b7ef0743</tstamps>
+      <tstamps>6d81353d-2b56-4b24-8841-d8d7c701e808</tstamps>
     </comp>
     <comp ref="U305">
       <value>LM5017</value>
@@ -9184,7 +9188,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>3241fb7f-15b4-491a-a740-597f4b3067da</tstamps>
+      <tstamps>80d79af8-55f4-48b4-b5a0-21e10a4e720d</tstamps>
     </comp>
     <comp ref="U306">
       <value>TLV6703</value>
@@ -9205,7 +9209,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>30766c30-f6a4-49f5-9b86-ad7f0701307c</tstamps>
+      <tstamps>36207cbf-4303-40d6-b2c6-2d9cdd4d8d2c</tstamps>
     </comp>
     <comp ref="U307">
       <value>TPS7A9401</value>
@@ -9226,7 +9230,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>bd423914-7c4c-4a99-a85a-b57323e80b3c</tstamps>
+      <tstamps>cadee2a8-0f94-4e15-a88f-dad8f6b2d8b9</tstamps>
     </comp>
     <comp ref="U308">
       <value>TPS7A9401</value>
@@ -9247,7 +9251,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>d65f5b0f-2a2a-425a-8ba2-58791c195ec0</tstamps>
+      <tstamps>a539c61d-97d3-43ea-b2fe-ca941466f78d</tstamps>
     </comp>
     <comp ref="U309">
       <value>LM5017</value>
@@ -9268,7 +9272,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>84eecb1e-0ee7-4842-b2fc-34aeec902605</tstamps>
+      <tstamps>a3c49830-6c89-4a83-a7ed-2c9a2c0e4563</tstamps>
     </comp>
     <comp ref="U310">
       <value>TPS7A4901</value>
@@ -9289,7 +9293,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>160435ed-b44b-456c-ba35-09c3e8533257</tstamps>
+      <tstamps>39cc2a71-67ac-4622-a041-afeb528718d6</tstamps>
     </comp>
     <comp ref="U311">
       <value>TPS7A3001</value>
@@ -9310,7 +9314,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>00ad2b3d-837b-49af-abb4-4720112ebe29</tstamps>
+      <tstamps>d9d4efc1-0482-4506-b469-adb2646b40f3</tstamps>
     </comp>
     <comp ref="U312">
       <value>TPS7A4901</value>
@@ -9331,7 +9335,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>8b34c47c-bbfe-4596-b136-0ac47cc8ec82</tstamps>
+      <tstamps>5a9f13d3-a3ac-4fe7-8adc-6e7478bb2df4</tstamps>
     </comp>
     <comp ref="U313">
       <value>TPS7A2033P 3.3V</value>
@@ -9352,7 +9356,7 @@
       <property name="Sheetname" value="rails"/>
       <property name="Sheetfile" value="rails.kicad_sch"/>
       <sheetpath names="/rails/" tstamps="/5a7e1117-0005-4000-8000-000000000005/"/>
-      <tstamps>29d4bd02-803a-459c-bf44-4e581cf8ac59</tstamps>
+      <tstamps>c07a60c8-6750-4573-9b95-418f09bed453</tstamps>
     </comp>
     <comp ref="C401">
       <value>10p C0G</value>
