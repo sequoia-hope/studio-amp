@@ -80,3 +80,12 @@ capped at 100 mA; the 6.35 mm jack waiver; shared headphone/line DAC path; LED c
   ≥ 2 cm² of copper on each BCP56/53 tab; back-panel heat path for the GaN; the MEMS mic vent; the
   isolation keepout; trace from the 5 V buck to the mux ≤ 10 mΩ.
 - Display module pin order (user, when the module arrives).
+
+## Re-recorded after phase 2 (2026-11-08)
+
+Drawing the schematic corrected several part audits: values and part numbers made final, footprints
+built and checked, and the BAV99, ferrite, transformer-footprint and short-detector fixes. Each owner
+recorded these in its `*-interfaces.md` "Phase 2" section. The independent phase 2 parts cross-checks
+(`review-phase2-parts-AD.md`, `review-phase2-parts-EFG.md`) judged the audits and the schematic
+together, including these corrections, and passed blocks A–G. Gate 1's inputs are re-recorded on that
+basis rather than re-running the phase 1 review.

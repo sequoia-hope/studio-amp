@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "gate": 2,
-  "judged_at": "2026-11-08T03:39:06Z",
+  "judged_at": "2026-11-08T03:39:18Z",
   "skill": "boardroom 66be834 (skill 2e92638, working tree incl. uncommitted LESSONS.md), vendored 2026-11-07",
   "files": {
     "design/parts/A-bridge-fets.md": "sha256:538825cfdf280cf39ac404b30d3c52315327912b11ce60c8ab9e40cc0b566da7",
