@@ -158,3 +158,20 @@ open whenever the coil is off (power loss, FPGA unconfigured, DC fault).
 - None. Block C confirmed +5V ≥ 4.84 V worst case at the relays (5.20 V max; `C-5v-buck.md`).
   Coil voltage ≥ 4.84 − 0.0015 = **4.84 V ≥ 4.75 V**. Max coil voltage 5.20 V < 10 V. Relays are
   off on USB-only power. The driver question is closed by the AO3400A (review B1).
+
+## Phase 2 correction (schematic, 2026-11-08)
+
+- **The gate OR diodes are one BAT54A per relay gate**, not two BAT54C shared across the gates.
+  - Common anode (pin 3) on the gate.
+  - K1 (pin 1) to the /DC_TRIP = HP_FAULT_N bus.
+  - K2 (pin 2) to the POE_LOSS_N bus.
+  - It is the same Schottky die, so VF is the same: datasheet `bat54a.pdf`, VF ≤ 240 mV at 0.1 mA
+    and ≤ 320 mV at 1 mA. The trip analysis above (gate ≤ 0.37 V) is unchanged.
+  - Why: with one part per gate the two buses run straight under both drivers, with no crossings.
+  - `C130910 BAT54A,215 (Nexperia, SOT-23): extended, JLC stock 110105, lifecycle normal, checked 2026-11-07`
+- Gate drive: FPGA → 10 kΩ → gate, with 100 kΩ to GND (no series resistor at block E): 3.0 V.
+- DC detector inputs, all on the amplifier side of the relays:
+  - HPA_L and HPA_R (OUT_HP, after R_OUT);
+  - FILT_L and FILT_R (op-amp pins, before R_BO).
+- Schematic: `hw/satellite/a/audio_out.kicad_sch` (K1001 HP, K1002 line; Q1013/Q1014; D1016/D1018
+  BAT54A; detector Q1015/Q1016, C1037, R1084-R1090).

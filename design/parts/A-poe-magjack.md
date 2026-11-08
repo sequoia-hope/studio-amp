@@ -5,7 +5,8 @@ Read: both sheets (schematic, electrical spec, mechanical, suggested PCB layout)
 MPN: LPJK6078AHNL ("RJ45 Connector with 1000 Base-T Integrated Magnetics For PoE++ Application")
 Supplier: `C49274795 LPJK6078AHNL (LINK-PP, Through Hole): extended, JLC stock 58, lifecycle normal, checked 2026-11-07`
 Build need: 5 + 2 = 7. OK (58). Through-hole: hand-solder allowed (R-70).
-Footprint: custom from sheet 2 "Suggested PCB Layout (Top View)": 16 x Ø0.89 mm signal pins (2.03 mm
+Footprint (phase 2): `studio_A:LINKPP_LPJK6078AHNL_RJ45_PoE` (gen/lib_A.py), coordinates in its docstring;
+body outline on F.Fab is approximate, phase 4 checks it against the side views. Original note: custom from sheet 2 "Suggested PCB Layout (Top View)": 16 x Ø0.89 mm signal pins (2.03 mm
 row pitch, two staggered rows 1.02 mm offset), 4 x Ø1.03 mm LED pins, 2 x Ø3.20 mm plastic posts,
 2 x Ø1.57 mm shield tabs; body 16.30 x 23.5 mm, 13.50 mm tall. Phase 2 builds it from the drawing and
 checks pin 1 against the schematic numbering (pins 1–16, LEDs 17–20).

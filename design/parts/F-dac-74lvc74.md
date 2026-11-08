@@ -127,3 +127,10 @@ trace to this package row's VCC.
 
 - Block E confirms that 8 DAC pins are available. If not, fit the single-tap option, which
   tightens the jitter requirement to ≤ 0.3 ps.
+
+## Phase 2 notes (schematic, 2026-11-08)
+
+- The 33 Ω series resistors on DAC_L0–3/DAC_R0–3 are drawn on `audio_out` (R1001…), with Note
+  "place at the FPGA ball". Layout must put them at the ECP5 end.
+- 74LVC74 units are drawn with KiCad's `74xx:74HC74` symbol (identical pinout), with value
+  74LVC74A and MPN 74LVC74APW,118. nSD and nRD are tied to +3V3_Q.

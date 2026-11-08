@@ -83,3 +83,10 @@ Semtech "option 1" connection; pin 2 GND).
 - Block E: `DISP_BL_PWM` assigned to G15 (done). The Hi-Z rule for the BLK-jumpered line is recorded in
   block E's gateware notes.
 - Block E: assigned bank 2 B16 C16 C15 D16 E15 E16 F15 F16 (done).
+
+## Phase 2 correction (schematic, 2026-11-07)
+
+The switched backlight rail is named **`DISP_BL_SW`** on the schematic (AO3401A drain, JPn_B
+jumpers). `DISP_BLK` is already the FPGA line to header position 8 (E-pinmap.md); giving the rail
+the same name would have tied the FPGA pin to the switch output. Header position → FPGA line:
+1 DISP_AUX7, 2 DISP_AUX8, 3 DISP_SCL, 4 DISP_SDA, 5 DISP_RES, 6 DISP_DC, 7 DISP_CS, 8 DISP_BLK.

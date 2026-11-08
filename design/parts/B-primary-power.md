@@ -146,3 +146,11 @@ damps cable/ceramic ringing.
 
 1. MLCC DC-bias figures above are assumptions.
 2. Bench: main-FET Vds peak at 57 V and in a load step (see converter design note on DMAX).
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- FDMS86200 (Power 56) is placed on KiCad's `Infineon_PG-TDSON-8_6.15x5.15mm`: the onsemi
+  recommended land (datasheet p.7: 5.10 × 6.61 mm, 0.61 × 1.27 mm leads at 1.27 mm, 3.91 × 3.75 mm
+  paddle) matches the TDSON land within ≈ 0.12 mm, pin 1–3 S, 4 G, 5–8 / paddle D. Symbol:
+  `Transistor_FET:BSC026N08NS5` (same 1–3 S, 4 G, 5 D).
+- IRFR6215 on `TO-252-2` with the `IRF9540N` P-FET symbol (1 G, 2 D, 3 S = DPAK pin-out).

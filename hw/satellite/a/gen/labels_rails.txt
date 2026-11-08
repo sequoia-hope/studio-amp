@@ -1,0 +1,5 @@
+VDRV_EN in
+VDRV_PG out
+PG_5V_N out
+PG_3V3_N out
+PG_3V3Q out

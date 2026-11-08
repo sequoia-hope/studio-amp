@@ -80,3 +80,22 @@ tip. A TS plug shorting ring to sleeve then draws only 5 V/4.4 kΩ ≈ 1.1 mA. H
   must align its nose with the back-panel cut-out and allow for the 4 mm board-to-pin stand-off.
 - None of these jacks is SMT. JLC THT or hand soldering (R-70).
 - R-42 ESD on every signal pin: see `F-esd.md`.
+
+## Phase 2 corrections (schematic, 2026-11-08)
+
+- **Plug detect uses SN, not TN.** With no plug, SN is shorted to S (GND), so HP_DET reads low.
+  Inserting a plug opens SN, and the 47 kΩ pull-up to +3V3 takes HP_DET high. TN and RN are not
+  connected (no-connect flags). The spare PESD15VL1BA sits on the HP_DET node.
+  - Using TN would have tied HP_DET to the tip line through the normal contact.
+  - Bring-up still confirms the normal's sense on the part in hand.
+- J_HP uses the project symbol `studio_F:NMJ6HCD2_F`. Its pins are ordered TN, RN, T, R, SN, S so
+  the wiring has no crossings. The pin names match KiCad's
+  `Jack_6.35mm_Neutrik_NMJ6HCD2_Horizontal` pads, which were checked against the Neutrik drawing:
+  - T–R–S pitch 6.35 mm;
+  - normals row 16.23 mm away.
+- RCA: 2 × RCJ-014 (black), symbol `studio_F:RCJ-01`. Footprint `studio_F:RCA_CUI_RCJ-01_Horizontal`
+  is built from rcj-014.pdf p.2:
+  - pin 1 (shell): Ø2.6 at (±5, 0) and (0, −4.5);
+  - pin 2 (centre): Ø1.7 at (0, 0).
+  Each jack has its own 100 kΩ to GND and a PESD15VL1BA.
+- Mic jack: KiCad `Jack_3.5mm_CUI_SJ1-3523N_Horizontal`, pads T/R/S.

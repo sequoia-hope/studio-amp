@@ -64,3 +64,13 @@ This clamps the node between −15 − VF and +15 + VF.
 
 - Jack pin → TVS → ferrite (HP only) → relay NO. The TVS ground goes straight to the GND plane
   near the jack sleeve's GND via.
+
+## Phase 2 correction (schematic, 2026-11-08)
+
+- Ferrite between the TVS and the relay on HP T and R: **Murata BLM18AG601SN1D**, 600 Ω ±25 % at
+  100 MHz, 500 mA, Rdc 0.38 Ω typ / 0.48 Ω max (datasheet `blm18ag601.pdf`).
+  `C19330 BLM18AG601SN1D (muRata, 0603): extended, JLC stock 418424, lifecycle normal, checked 2026-11-07`
+  - Its Rdc adds to R_OUT: Zout ≈ 5.3 Ω, so a −0.15 dB level loss into 300 Ω.
+  - The phase 1 text's "≤ 0.1 Ω DC" figure was wrong for this part. It doesn't matter here.
+- The line clamp BAV99 sits on the op-amp side of R_BO (D1001/D1002); the HP clamp sits at OUT_HP
+  (D1008/D1014).

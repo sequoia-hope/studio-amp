@@ -1,0 +1,13 @@
+AMP_ARM in
+AMP_CLK_T in
+AMP_EN_T in
+DC_T_n out
+FAULT_T_n out
+ISNS_T_A out
+ISNS_T_B out
+PF_T_A out
+PF_T_B out
+PWM_T_A in
+PWM_T_B in
+T_T_FET out
+T_T_IND out

@@ -89,3 +89,9 @@ within ≈ 1 ms.
 
 - CIN across VIN–GND first; short SW to L; FB divider at FB. Place the 1V1 converter next to the
   ECP5's VCC balls.
+
+## Phase 2 correction (schematic, 2026-11-07)
+
+453 kΩ 0.5 % 0603 is not stocked at LCSC. The +3V3 divider is now **R1 = 100 kΩ 0.1 % (C122538)
+over R2 = 22.0 kΩ 0.1 % (C469656)**: 0.6 V × (1 + 100/22.0) = **3.327 V** (±0.2 % from the
+resistors, plus the VFB tolerance above). Schematic: rails sheet, U-buck "3V3".

@@ -96,3 +96,13 @@ Rds(on) test condition region (VGS(th) ≤ 4 V). Rds rises a few %, which is acc
 
 1. 10 µF 25 V 1206 X7R part number to be picked with the shared passive list (generic; many basic
    options).
+
+## Phase 2 schematic notes (2026-11-08)
+
+- VB_PRI buck on iso_dcdc (U202, L201, R221–R226, C216–C222); **VSR buck moved to iso_aux** (U251, L251,
+  R251–R256, C251–C257) to keep iso_dcdc inside 200–249.
+- CIN 1 µF 100 V X7R 0805: Taiyo Yuden HMK212BC7105KGHTE (`C385977`); the Samsung part was not
+  found on LCSC.
+- SM5845 inductor footprint `studio_B:L_SXN_SM5845` made from the datasheet table (p.2): pads
+  2.15 × 1.7 mm at ±1.675 mm. **Provisional** — the table's column labels are ambiguous; check
+  against a sample or the LCSC drawing before phase 6.

@@ -139,3 +139,14 @@ Parts:
 1. Measure SR Vds peaks at 57 V and at 38.4 V, full load; clamp node temperature and TVS dissipation.
 2. If the clamps run hot, the RC snubber needs more C (loss rises with C·V²·f) or the layout less loop
    inductance.
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- **Snubber resistor changed:** one **47 Ω 5 % 2512 1 W** (UNI-ROYAL 25121WJ0470T4E,
+  `C15261`) per SR replaces the 2 × 22 Ω 2010 pair (44 Ω). Worst loss 0.33 W (forward SR, 37.6 V
+  corner) is 33 % of the 1 W rating; damping 47 Ω is still near the 55–60 Ω critical value. Saves
+  two parts per board and keeps iso_dcdc inside its R201–R249 range.
+- NCP4306 symbol made in `lib/studio_B` (pins from Table 2 p.4: 1 DRV, 2 GND, 3 CS, 4 MIN_TON,
+  5 MIN_TOFF, 6 VCC); CS is drawn on the right beside DRV. Footprint: KiCad `SOT-23-6` (TSOP-6,
+  case 318G, same 0.95 mm pitch land).
+- BSC500N20NS3 G uses KiCad `Infineon_PG-TDSON-8_6.15x5.15mm` (exact package).

@@ -1,0 +1,16 @@
+DAC_L0 in
+DAC_L1 in
+DAC_L2 in
+DAC_L3 in
+DAC_R0 in
+DAC_R1 in
+DAC_R2 in
+DAC_R3 in
+MCLK_Q in
+MCLK_ADC out
+FILT_L out
+HP_EN in
+LO_EN in
+HP_FAULT_N out
+POE_LOSS_N in
+HP_DET out

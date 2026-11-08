@@ -156,3 +156,11 @@ not follow (its voltage moves only with energy, layer 1).
    (review n1).
 2. KZN gives no surge rating; the scheme above never relies on one.
 3. KZN lead option "ML25S" pitch/length for the footprint.
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- **Footprint correction:** the CDRH127/LD land pattern (datasheet p.1, "Land pattern") is **two
+  pads**, 5.4 × 2.9 mm, outer edges 12.8 mm apart; the 7.0 mm band in the drawing is silk, not
+  copper. The "4-pad" line above is wrong. Made as `studio_B:L_Sumida_CDRH127`.
+- Drawn as above: L202, C231–C236 (6 × 4.7 µF 100 V 1210, GCM32DC72A475KE02L `C913445`), R233
+  30 mΩ shunt, C241–C247 (C247 DNP), D208 SMCJ51A.

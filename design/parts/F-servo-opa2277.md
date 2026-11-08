@@ -23,7 +23,8 @@ large film part in the signal path. The servo keeps the signal path DC-coupled a
 ## Circuit (per channel)
 
 FILT_x → R_S 1 MΩ → inverting input of the OPA2277 half. C_S 100 nF C0G goes from that input to
-its output. The + input goes to GND through 1 MΩ, to match bias currents. The output V_S drives
+its output. The + input goes **directly to GND** (phase 2; the 1 MΩ bias-matching resistor was dropped,
+see below). The output V_S drives
 R_INJ (20 kΩ) into the filter's X+ node. R_BAL (20 kΩ) goes from X− to GND, to keep the two
 networks matched (`F-filter-passives.md`).
 
@@ -49,8 +50,8 @@ networks matched (`F-filter-passives.md`).
 - **Servo range:** correcting ±50 mV needs V_S = 50 mV × R_INJ/R3 = ±0.26 V. The OPA2277 swings
   ±13 V, so it has ±2.5 V of correction range: plenty, but also enough to hide a fault, which is
   why the DC detector exists.
-- **Residual output offset:** VOS (UA, 25 °C) ±50 µV max, plus IB ±2.8 nA (full range) × 1 MΩ
-  (the + input carries 1 MΩ too, so only IOS matters, ±2.8 nA worst case) = 2.8 mV. Total
+- **Residual output offset:** VOS (UA, 25 °C) ±50 µV max, plus IB ±2.8 nA (full range) × R_S 1 MΩ
+  = 2.8 mV (+ input to GND directly, so IB, not IOS, counts; the worst case is the same 2.8 mV). Total
   **≤ 2.9 mV worst**, typically < 0.6 mV. HP output: ×1.3, plus the SA5532 HP stage's own
   5 mV + 0.8 mV, so ≤ 9.6 mV worst case at the headphone jack.
 - **AC signal at the injection point:** V_S at 20 Hz for 5.65 Vpk out = 5.65/(2π·20·0.1 s) =
@@ -79,3 +80,10 @@ networks matched (`F-filter-passives.md`).
 ## Open questions
 
 - None.
+
+## Phase 2 correction (schematic, 2026-11-08)
+
+- The + input of each servo half goes straight to GND. The 1 MΩ bias-matching resistor in phase 1
+  only cancelled IB against IOS. Both are ±2.8 nA worst case for the OPA2277UA, so dropping it
+  leaves the worst-case output offset at 2.8 mV and saves a part and a crossing in the drawing.
+- Schematic: `hw/satellite/a/audio_out.kicad_sch` (U1003, R_S = R1021/R1043, C_S = C1007/C1014).

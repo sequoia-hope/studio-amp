@@ -168,3 +168,9 @@ current 7.04/47 k = 0.15 mA, well under 5 mA. Response tpd(HL) 18 µs.
 
 - Block D: confirm VIN-pin (LDO) operation and the final GaN Qg and fsw; VDRV current scales
   linearly.
+
+## Phase 2 correction (schematic, 2026-11-07)
+
+360 kΩ 0805 has only 7 pcs at LCSC. **Rr = 330 kΩ 0805 (C17629, 150 V)**, Cr 1 nF: FB ripple at
+TON min ≈ 40 mV (above the 25 mV floor), still inside the 330–390 kΩ range the review allowed.
+RON resistors sit on VIN, so they are 0805 (150 V): 191 kΩ C17511.

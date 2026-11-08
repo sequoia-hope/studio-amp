@@ -46,7 +46,7 @@
 		(exclude_from_sim no)
 		(at 21.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "9b7bbe21-c054-45ed-a820-95abe9ce3efc")
+		(uuid "84e0723a-400f-450b-94d5-73296155bb05")
 	)
 	(sheet
 		(at 100 50)
@@ -81,7 +81,7 @@
 		(exclude_from_sim no)
 		(at 101.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "9bdedfde-4b5b-4796-ac8d-51defc2bcc9d")
+		(uuid "a8cb5c8e-98a2-4637-ad8b-3ed86bfaf4e7")
 	)
 	(sheet
 		(at 100 95)
@@ -116,7 +116,7 @@
 		(exclude_from_sim no)
 		(at 101.27 97.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "972298be-3756-432a-a95e-d412c2c60dda")
+		(uuid "b2ed7014-f486-4705-bce2-af1159cafed6")
 	)
 	(sheet
 		(at 180 50)
@@ -151,7 +151,7 @@
 		(exclude_from_sim no)
 		(at 181.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "337b9380-4807-4377-91e9-b1289b967ac5")
+		(uuid "c12f2f21-353b-47dd-a365-0875c0fbb11b")
 	)
 	(sheet
 		(at 260 50)
@@ -186,7 +186,7 @@
 		(exclude_from_sim no)
 		(at 261.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "8e5bcf7c-c387-4ccf-b50b-1aa39a03aca8")
+		(uuid "aa10607d-1683-4eb9-b0fd-cd10f944e881")
 	)
 	(sheet
 		(at 260 95)
@@ -221,7 +221,7 @@
 		(exclude_from_sim no)
 		(at 261.27 97.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "392a395a-85b3-4da4-88e0-6bd27f816d4c")
+		(uuid "1992d4f1-2be4-4bae-a2d2-3b51befe9aa4")
 	)
 	(sheet
 		(at 180 95)
@@ -256,7 +256,7 @@
 		(exclude_from_sim no)
 		(at 181.27 97.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "23634b47-7e97-4646-a55a-97c9968b6d54")
+		(uuid "2c577329-8cf3-44cd-8ba5-7b610b08270b")
 	)
 	(sheet
 		(at 180 160)
@@ -291,7 +291,7 @@
 		(exclude_from_sim no)
 		(at 181.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "9997f330-0516-49d9-ba19-698c1fb8d1b8")
+		(uuid "0f2d0582-a430-4fe8-883d-6bf0f706ead7")
 	)
 	(sheet
 		(at 100 160)
@@ -326,7 +326,7 @@
 		(exclude_from_sim no)
 		(at 101.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "765b23d2-f200-498f-a123-748c8d2cd2c5")
+		(uuid "0c273ef0-89a8-4d4d-86d3-318f5b131c5a")
 	)
 	(sheet
 		(at 20 160)
@@ -361,7 +361,7 @@
 		(exclude_from_sim no)
 		(at 21.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "5242856d-eda9-4ef7-9be6-aeea1abd09e8")
+		(uuid "3eee6783-2080-41ff-a9cc-12b407033f83")
 	)
 	(sheet
 		(at 260 160)
@@ -396,7 +396,7 @@
 		(exclude_from_sim no)
 		(at 261.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "0f351346-6158-41b8-a6d9-e2a01d9d2200")
+		(uuid "886512e5-ebfe-4de4-bb8a-20d2a31085d1")
 	)
 	(sheet
 		(at 260 210)
@@ -431,7 +431,7 @@
 		(exclude_from_sim no)
 		(at 261.27 212.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "338f6f5d-a8fa-4b1d-8ff3-36d98dcd6e3a")
+		(uuid "efd2f674-963d-4749-abdc-1a13b7cba7c6")
 	)
 	(sheet
 		(at 180 210)
@@ -466,7 +466,7 @@
 		(exclude_from_sim no)
 		(at 181.27 212.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "737a9da5-83eb-4a7a-be79-868579061d58")
+		(uuid "99071f96-ff6c-4a88-9a2b-8663235392ea")
 	)
 	(rectangle
 		(start 15 36)
@@ -475,13 +475,13 @@
 		(fill
 			(type none)
 		)
-		(uuid "80abc497-0360-41b4-946d-a47a6002c600")
+		(uuid "9d95ab4a-ca86-473f-987b-7ac44af81db7")
 	)
 	(text "POWER AND AMPLIFIER"
 		(exclude_from_sim no)
 		(at 16.27 38.54 0)
 		(effects (font (size 1.778 1.778)) (justify left))
-		(uuid "1d3a8ebe-6904-4422-aac1-2cc75642e78a")
+		(uuid "e08820dd-9c26-4785-abf1-92d977170351")
 	)
 	(rectangle
 		(start 15 140)
@@ -490,31 +490,31 @@
 		(fill
 			(type none)
 		)
-		(uuid "fe18953b-a3d5-4690-b1e2-196f74d20f87")
+		(uuid "3004a95f-d775-4820-870f-83c0022bcbdc")
 	)
 	(text "COMPUTE, NETWORK, AUDIO AND I/O"
 		(exclude_from_sim no)
 		(at 16.27 142.54 0)
 		(effects (font (size 1.778 1.778)) (justify left))
-		(uuid "1c50b422-40ea-49c6-ab9f-d7dfb718e971")
+		(uuid "b84497c1-b9fb-4395-8cff-6356de168e42")
 	)
 	(text "PoE (primary side, isolated 1500 Vrms) -> isolated forward converter -> VBUS 48 V -> rails and GaN bridges"
 		(exclude_from_sim no)
 		(at 20 30 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "11f9d0e7-4eaf-4677-87b2-d5e00b5c103e")
+		(uuid "641bcaf1-a7bc-4cd2-98be-317a947039c1")
 	)
 	(text "Compute: LAN8720A RMII <-> ECP5 (PWM, MAC, PTP, 1-bit DAC) <-> PIO 8-bit link <-> RP2350B"
 		(exclude_from_sim no)
 		(at 20 150 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "e0dcc5e7-7670-42a0-898c-ac49272bcaed")
+		(uuid "fd8a302f-9096-496d-b7c7-8c36391ee686")
 	)
 	(text "Inter-sheet signals are global labels; rails are power symbols. Net names: design/parts/*-interfaces.md"
 		(exclude_from_sim no)
 		(at 20 255 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "30ec4956-b5e2-43e3-addc-c91ef86c92b2")
+		(uuid "b63f184d-43af-4ad7-911e-e44e43b5300b")
 	)
 	(sheet_instances
 		(path "/"

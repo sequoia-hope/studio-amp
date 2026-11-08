@@ -35,3 +35,18 @@ ADC_AVDD gets its own 100 nF and, per R-17, may be fed from a filtered reference
 ## Layout
 
 Transplant the RP2350B Minimal Board's regulator corner and decoupler ring exactly (`chips/rp2350.md` table: L1 (2.0, −7.2), C7 (2.0, −5.55), C6 (2.0, −4.6), C9 (4.2, −5.05, −90°), R (4.2, −6.9, −90°) for the QFN-60; take the B board's own coordinates from RP-006442-DD in phase 2). C6/C7 use the "small pads" 0402 footprint. USB 27 Ω at the chip.
+
+## Phase 2 schematic additions (2026-11-08)
+
+| Function | Value | Part | Supplier line | Qty |
+|---|---|---|---|---|
+| ADC_AVDD filter (feeds block G's KNOB_REF too) | 10 Ω 0402 + 4.7 µF 0402 (+ the 100 nF above) | 0402WGF100JTCE / CL05A475MP5NRNC | `C25077 0402WGF100JTCE (UNI-ROYAL, 0402): basic, JLC stock 2724182, lifecycle normal, checked 2026-11-07`; C23733 as above | 1 + 1 |
+| BOOTSEL and RUN buttons (moved from block G to the mcu sheet) | tact switch, 5.1 × 5.1 mm SMD | TS-1187A-B-A-B (XKB) | `C318884 TS-1187A-B-A-B (XKB Connection, SMD-4P,5.1x5.1mm): basic, JLC stock 872524, lifecycle normal, checked 2026-11-07` | 2 |
+
+- ADC_AVDD: 10 Ω × (≤ 1.3 mA knob current + ADC) ≤ 15 mV; corner 1/(2π · 10 Ω · 4.8 µF) = 3.3 kHz. ADC_AVDD
+  is also the ADC reference, so the knob readings stay ratiometric (G-knob.md).
+- TS-1187A (`datasheets/xkb-ts-1187a.pdf`, read): 50 mA / 12 V contacts (RUN 0.33 mA, BOOTSEL 3.3 mA OK),
+  −30…+85 °C. Land 1.0 × 0.75 mm pads at ±3.0 / ±1.875 mm, A–B and C–D common: matches KiCad
+  `Button_Switch_SMD:SW_Push_1P1T_XKB_TS-1187A` exactly.
+- Footprints: C6/C7 (CIN, COUT) use `studio_E:C_0402_1005Metric_RPi_SmallPads`, L1 uses
+  `studio_E:L_Abracon_AOTA-B201610S3R3_pol`, both copied from the Raspberry Pi Minimal board library.

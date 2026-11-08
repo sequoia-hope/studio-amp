@@ -193,3 +193,12 @@ volt-second margin is twice that of the 750343576 build.
 2. Hipot duration of the 2250 V DC rating (60 s?), for R-32.
 3. Core material, Ae/Ve and Bsat(100 °C): decide whether the 750343576 is safe at 57 V hot
    (review M3); asked in the email above. Measure ΔT and run the forced-DMAX test at bring-up.
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- Symbol `studio_B:750343576` draws the 1:2 wiring: N5 at the top left, N1 inverted so the two
+  dotted starts (2, 3) sit together and join VPRI, the finishes (4, 5) join SW_PRI outside; N3
+  over N4 on the right with the 10 → 8 series link. Dots at each start.
+- Footprint `studio_B:Wurth_750343576_ER19` from the datasheet p.1 land (3.13 × 1.89 mm pads,
+  2.8 mm pitch, 21.23 mm outer span). **Provisional**: the drawing is not fully dimensioned;
+  confirm against the Würth samples before phase 6.

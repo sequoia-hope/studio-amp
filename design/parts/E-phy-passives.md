@@ -46,3 +46,13 @@ Serves: U-PHY (`E-phy-lan8720.md`). Datasheets: `datasheets/lan8720a.pdf` (Tab 2
   - **Pairs and centre taps:** PHY TX± → pins 11/10 (MD1±, CT pin 12); PHY RX± → pins 4/5 (MD2±, CT pin 6). The 49.9 Ω terminations and CT bypasses go on those nets. The PHY-side CTs 12 and 6 go to the filtered analog 3.3 V. Pins 1–3 and 7–9 (MD3/MD4 and their CTs) stay open.
   - **LEDs:** green 20(+)/19(−) on LAN8720A **LED1** (link/activity, active-high): LED1 → 270 Ω → pin 20, pin 19 → GND. Yellow 18(+)/17(−) on **LED2** (100 Mb/s, active-low): VDD2A → pin 18, pin 17 → 270 Ω → LED2. This is exactly Fig 3-10/3-11, so REGOFF reads 0 and nINTSEL reads 1.
   - **LED current:** (3.3 − VF 1.8–2.6 V) / 270 Ω = 2.6–5.6 mA, within the LED2/LED1 O12 drive. The LED pins sit on the secondary side, inside A's barrier note: route them away from CT pins 13–16.
+
+## Phase 2 schematic notes (2026-11-08)
+
+- `ETH_AVDD` is a power net (bead output). Block A's J101 pins 12, 6 (PHY-side CTs) and 18 (yellow anode)
+  use the same power symbol; the two CT bypass 100 nF are drawn on the ethernet sheet with a placement note
+  (at J101 pins 12 and 6).
+- MDI and LED nets use block A's names: `ETH_TXP/TXN/RXP/RXN`, `ETH_LED_G_A`, `ETH_LED_Y_K`.
+- RXER/PHYAD0 goes to a test pad only (PHYAD0 = 0 by its internal pull-down).
+- PHY symbol `studio_E:LAN8720AI` (pins rearranged from KiCad's LAN8720A, same numbers and types).
+  Footprint KiCad `QFN-24-1EP_4x4mm_P0.5mm_EP2.5x2.5mm`.

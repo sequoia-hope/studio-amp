@@ -203,3 +203,13 @@ B's VBUS-facing side is unchanged: CC limits 0.44 / 0.94 / 1.30 A, the overvolta
 Block D check of the rule against its hardware: the ADS7042 divider (÷ 25.8, LSB 20.8 mV) puts 40.5 V at 1.570 V and 44.0 V at 1.705 V, both well inside the 3.3 V range. Its ±2 % gain tolerance (≈ ±0.8 V at 40 V) is covered by the one-time calibration already required for feedforward (D-vbus-adc.md). 288 samples at 576 kS/s = 0.5 ms ✓.
 
 **Block B hardware droop comparator (B, 2026-11-08), next to the 55/52 V overvoltage stop:** `POE_LOSS_N` goes low below **39.5 V (38.5–40.5 V)** and is released above 41.1 V (40.0–42.2 V; ±2.6 %, fourth pass; output FET 2N7002), filtered at 0.31 ms. It never asserts in the ≤ 10 % burst sag (≥ 43.2 V). After PoE loss at 60 W it asserts in 18–41 ms, and the rails then hold **≈ 150 ms** (B's fourth-pass figure: from the 38.5 V worst-case assert level down to block C's ≈ 30.2 V UVLO-off including divider tolerance; supersedes ≈ 160 ms to 29.6 V), with the amp muted within 5 ms. The shared rule text (step 2) now carries these figures (lead update 2026-11-08). B's earlier 45.0/43.0 V VBUS_VALID proposal is **withdrawn**: B-interfaces.md now carries the shared rule verbatim (items 1–6).
+
+## Phase 2 schematic (2026-11-08)
+
+Sheets `amp_woofer` (U/Q/R/C 401…, 148 parts), `amp_tweeter` (501…, 150) from `gen/amp.py`; `amp_sense` (601…, 58) from `gen/amp_sense.py`. ERC clean on all three, style check clean. Every global label is partnered (fpga or the other D sheet) with opposite directions. From now on the schematic is the source of truth for block D.
+
+Corrections and choices made while drawing:
+- **D_off dropped** (D-driver-passives.md): gate-loop area; tune R_G instead.
+- **LCSC numbers fixed for passives the audits left to phase 2:** 470 p C0G snubber C326973; 2.2 Ω 2512 snubber C25480; OCP/short ladders 9.09 k C11549, 15 k C25756, 6.2 k C25915, 12 k C25752, 2.2 k C25879, 1 k C11702; DC-detect 82 k C23254, 88.7 k C23258, 1.21 M C422998; PF divider 140 k 0.1 % C326761, 10 k 0.1 % C95204; kickback 20 Ω C138031 + 1 nF C237166; REFIO 10 µF C19702; AMP_ARM pull-down 10 k C25744 (on amp_sense).
+- **Project symbols (lib/studio_D)**: IGB070S10S1, LMG1210 (pins by function; HS 9/13/16/21 stacked, verified joined to SW_x_y in the netlist), INA241A1 (DDF), TLV3502 (DCN), 74LVC1G74 (DCU), ADS7038-Q1 (RTE), ADS8353 (PW), OPA836 (DBV). ADS7042 uses KiCad's `ADS7042xDCU` (pins checked against SBAS608C p.6).
+- **Footprints made:** IGB070S10S1 PG-TSON-4 (datasheet Fig. 2), LMG1210 RVR WQFN-19 2-EP (p.24), SER2915H, MX2EDGRC 5.08 mm 2-pin, B32774 31.5 × 22 mm, 2512 Kelvin shunt with net-tie.

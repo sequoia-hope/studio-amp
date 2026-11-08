@@ -1,0 +1,7 @@
+MCLK_ADC in
+MADC_BCK in
+MADC_LRCK in
+MADC_DOUT out
+PDM_CLK in
+PDM_DAT out
+FILT_L in

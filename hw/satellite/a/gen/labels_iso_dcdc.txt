@@ -1,0 +1,7 @@
+ACF_SYNC in
+DRV_FWD out
+IBUS_SENSE out
+ILIM_SEL0 in
+ILIM_SEL1 in
+PD_PG in
+UCC_SS out

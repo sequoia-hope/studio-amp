@@ -136,3 +136,12 @@ current (EMI, R-90).
 
 1. CTR at 0.2–1 mA is not in the datasheet table (only at 5 mA); measure, or bench-check fc.
 2. Loop values are starting points; phase 8 simulation and bench Bode plot.
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- CV Rtop 47.5 kΩ 0.1 % **0805**: YAGEO RT0805BRD0747K5L, `C865514 (extended, JLC stock 9416,
+  checked 2026-11-08)`; Rbot 2.61 kΩ 0.1 % 0603 `C861301`.
+- INA281 output RC: 100 Ω (`C22775`) + 470 nF; IBUS_SENSE 200 k / 100 k; CC divider 4.99 k /
+  88.7 k with 4.22 k and 5.90 k switched by AO3400A (ILIM_SEL0/1, 100 k pull-downs on the gates).
+- LTV-217 drawn with KiCad's `Isolator:PC817` symbol (same 1 A, 2 K, 3 E, 4 C pin-out, datasheet
+  p.2), footprint `SOP-4_4.4x2.6mm_P1.27mm`.

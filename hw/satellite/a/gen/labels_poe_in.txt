@@ -1,0 +1,16 @@
+# Global labels on poe_in (block A), direction as seen from this sheet.
+# Power nets are power symbols, not labels: VPRI, VPRI_RTN, VB_PRI (shared with iso_dcdc), GND, +3V3.
+# ETH_AVDD (block E's filtered PHY analog 3.3 V) is a power symbol at J101 pins 12, 6, 18.
+# VPD_N and VISO_P5V are power symbols used on this sheet only.
+PD_TPH_N out
+PD_TPL_N out
+PD_BT_N out
+PD_PG_N out
+PD_PG out
+UCC_SS in
+ETH_TXP bidir
+ETH_TXN bidir
+ETH_RXP bidir
+ETH_RXN bidir
+ETH_LED_G_A in
+ETH_LED_Y_K out

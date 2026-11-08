@@ -68,3 +68,9 @@ between VUSB appearing and +3V3 rising, the 15 kΩ limits injection into the unp
 ≤ 0.2 mA (ECP5 DS Table 3.5: IDK_HS ≤ ±1 mA on top/bottom banks; left/right banks need the current
 limited, which 15 kΩ does). Before configuration its 30–150 µA pull-down reads the node at
 1.8–3.1 V. That is informational only and controls no power.
+
+## Phase 2 (schematic, 2026-11-07)
+
+USB net names on the io sheet: `USB_DP`, `USB_DM` (after the USBLC6-2SC6), matching block E's
+labels. Shell: net `USB_SHIELD` → 0 Ω 0603 to GND (fitted, C21189); isolated-shell option 1 MΩ 0603
+(C22935) ‖ 4.7 nF 2 kV 1206 (1206B472K202NT, C41017), both DNP.

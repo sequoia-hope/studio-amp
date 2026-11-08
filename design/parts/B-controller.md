@@ -188,3 +188,11 @@ Two ways exist (TPS2373 §7.3.7, §7.4.8). B uses the second:
 
 1. Synced DMAX (tOFF tolerance at 737 kHz) is extrapolated; measure at bring-up.
 2. Controller heating at 737 kHz (≈ 0.38 W in the die, TSSOP): check at bring-up; QFN is the alternate.
+
+## Phase 2 schematic notes (iso_dcdc, 2026-11-08)
+
+- UCC2897A symbol made in `lib/studio_B` (TSSOP-20 pin table p.4–5): line inputs left (VIN,
+  LINEUV, SYNC, FB, LINEOV), supplies top (VDD, PVDD, VREF), drivers and CS right, SS/SD and the
+  timing pins plus GND/PGND on the bottom; NC pins 2 and 20 hidden.
+- Parts picked: CF 82 pF C0G `0603CG820J500NT` (FH, `C1683`); FB cap 6.8 nF X7R `0603B682K500NT`
+  (FH, `C1631`) — the Samsung equivalents had no stock. OUT → 2.2 Ω `RC0603FR-072R2L` (`C112307`).

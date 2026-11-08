@@ -198,7 +198,7 @@ The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handle
 | 7 | GPIO9 | `LINK_D1` | io | |
 | 8 | GPIO10 | `LINK_D2` | io | |
 | 9 | GPIO11 | `LINK_D3` | io | |
-| 10 | DVDD | `+1V1` | P | 100 nF |
+| 10 | DVDD | `DVDD_RP` | P | 100 nF (RP2350's own 1.1 V from its regulator; not the ECP5 `+1V1`) |
 | 11 | GPIO12 | `LINK_D4` | io | |
 | 12 | GPIO13 | `LINK_D5` | io | |
 | 13 | GPIO14 | `LINK_D6` | io | |
@@ -220,7 +220,7 @@ The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handle
 | 29 | IOVDD | `+3V3` | P | 100 nF |
 | 30 | XIN | 12 MHz crystal | | `E-xtal-12mhz.md` |
 | 31 | XOUT | 12 MHz crystal via 1 kΩ | | |
-| 32 | DVDD | `+1V1` | P | 100 nF |
+| 32 | DVDD | `DVDD_RP` | P | 100 nF |
 | 33 | SWCLK | `SWCLK` | in | Debug Probe header (R-21, block G) |
 | 34 | SWDIO | `SWDIO` | io | |
 | 35 | RUN | `RUN` | in | 10 kΩ pull-up, reset button / debug |
@@ -239,7 +239,7 @@ The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handle
 | 48 | GPIO39 | `SPARE_MCU_I` | io | spare |
 | 49 | GPIO40/ADC0 | `KNOB1` | ain | R-17 knob header, RC filtered (block G) |
 | 50 | IOVDD | `+3V3` | P | 100 nF |
-| 51 | DVDD | `+1V1` | P | 100 nF + 4.7 µF (second DVDD cap rule) |
+| 51 | DVDD | `DVDD_RP` | P | 100 nF + 4.7 µF (second DVDD cap rule) |
 | 52 | GPIO41/ADC1 | `KNOB2` | ain | |
 | 53 | GPIO42/ADC2 | `KNOB3` | ain | |
 | 54 | GPIO43/ADC3 | `KNOB4` | ain | |
@@ -247,13 +247,13 @@ The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handle
 | 56 | GPIO45/ADC5 | `SPARE_ADC5` | ain | spare analog input (NTCs moved to block D's ADS7038) |
 | 57 | GPIO46/ADC6 | `SPARE_ADC6` | ain | spare analog input (NTCs moved to block D's ADS7038) |
 | 58 | GPIO47/ADC7 | `SPARE_ADC7` | ain | spare analog input (NTCs moved to block D's ADS7038) |
-| 59 | ADC_AVDD | `+3V3` (or filtered ref, block G/C) | P | 100 nF |
+| 59 | ADC_AVDD | `ADC_AVDD` | P | +3V3 → 10 Ω → 4.7 µF + 100 nF at the pin; power net shared with block G's KNOB_REF (phase 2) |
 | 60 | IOVDD | `+3V3` | P | 100 nF |
-| 61 | VREG_AVDD | `+3V3` via 33 Ω / 4.7 µF | P | |
+| 61 | VREG_AVDD | `VREG_AVDD` (+3V3 via 33 Ω / 4.7 µF) | P | |
 | 62 | VREG_PGND | GND (two vias, one point) | P | |
 | 63 | VREG_LX | L1 | P | |
 | 64 | VREG_VIN | `+3V3` | P | C6 4.7 µF |
-| 65 | VREG_FB | `+1V1` at COUT | | |
+| 65 | VREG_FB | `DVDD_RP` at COUT | | |
 | 66 | USB_DM | 27 Ω → USB-C D− | io | block G |
 | 67 | USB_DP | 27 Ω → USB-C D+ | io | |
 | 68 | USB_OTP_VDD | `+3V3` | P | 100 nF shared with 69 |
@@ -316,3 +316,14 @@ RP2350 pads reset to Hi-Z with a 36–113 kΩ pull-down (§9.3):
 | FPGA configuration (SSPI) | 7 | RP2350 GPIO22–28 ↔ FPGA R9, T9, T7, R8, N9, T8, P9 |
 | FPGA JTAG header (R-22) | 4 | FPGA T10, R11, M10, T11 (direct, 3.3 V) |
 | Block G I2C, LED data/clock, encoders, knobs, UART, SWD, USB | | RP2350 (unchanged from the Gowin version) |
+
+## Phase 2 schematic (2026-11-08)
+
+The sheets `mcu`, `fpga` and `ethernet` are generated from this file (`hw/satellite/a/gen/e_pins.py`
+parses both tables; `lib_E.py` checks every ECP5 ball against the Lattice CSV and every RP2350B pin
+name against the table above). Corrections made while drawing:
+- RP2350 core net renamed `DVDD_RP` (was written `+1V1`, which is the ECP5 core rail).
+- `ADC_AVDD` is now a filtered net: +3V3 → 10 Ω → 4.7 µF + 100 nF (`E-mcu-passives.md`).
+- The VCXO's block F branch is the net `MCLK_Q` (block F's existing name).
+- MDI centre taps and the yellow LED anode are the power net `ETH_AVDD` (block A asked to use the
+  power symbol in place of three labels).

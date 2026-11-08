@@ -21,6 +21,8 @@ Revision note: rewritten after the phase 1 review for IGC033S10S1 (dead-time set
 | C_PWM, C_EN | optional input filter cap, **DNP** | 10 pF C0G 50 V 0402, 0402N100J500CT | `C301961 0402N100J500CT (Walsin, 0402): extended, JLC stock 53393, lifecycle normal` | walsin-0402n102.pdf |
 | D_off (DNP) | optional split turn-off path parallel to R_G | footprint only (SOD-323) + 0 Ω DNP | — | — |
 
+> **Phase 2 (schematic, 2026-11-08): D_off dropped.** A SOD-323 pad pair across each 0402 R_G adds area to the gate loop that the ≤ 1 nH layout is fighting for; on/off tuning is done by changing R_G (2.2 Ω, 0402) on the bench instead. Not on amp_woofer / amp_tweeter.
+
 ## Calculations
 ### VDD capacitance (§7.3.2, §8.2.2.1, §9)
 Required ≥ 0.3 µF effective (ESR < 0.5 Ω) and ≥ 5 × CBST,eff (375 nF) = 1.9 µF. 2 × 2.2 µF 16 V X5R 0603 at 5 V: taken as ≈ 35 % DC-bias loss (Samsung CL gives no per-part curve) → ≈ 2.8 µF, plus 100 nF X7R (≈ 90 nF) → **≈ 2.9 µF ≥ 1.9 µF ✓**. If the real loss were 50 %, 2.3 µF still passes. 16 V ≥ 3× 5.25 V ✓.

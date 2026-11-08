@@ -171,3 +171,16 @@ Decode TPH/TPL/BT per the truth table in `A-pd-tps2373.md`.
 | A-n6 VB_PRI vs UCC2897A UVLO-on | Closed by block B: VB_PRI now 14.3 V (min 13.9 V > 13.2 V); item 6 above. |
 | A-n7 E-phy-passives centre-tap question | Block E's file; answer is in `A-poe-magjack.md` pin map (MDCT1 pin 12, MDCT2 pin 6, LEDs 17–20). Team lead to close in `E-interfaces.md`. |
 | A-n8, A-n9 | No action. |
+
+## Phase 2 (schematic `poe_in`, 2026-11-08)
+
+- Global labels: `PD_TPH_N`, `PD_TPL_N`, `PD_BT_N`, `PD_PG_N` (out, to the FPGA); `PD_PG` (out, TPS2373 PG to
+  block B's 1 kΩ) and `UCC_SS` (in, block B's UCC2897A SS/SD node, to Q110's gate) — both names match
+  `gen/iso_dcdc.py`; `ETH_TXP`, `ETH_TXN`, `ETH_RXP`, `ETH_RXN` (J101 PHY-side windings), `ETH_LED_G_A` (pin 20),
+  `ETH_LED_Y_K` (pin 17); pin 19 to GND on this sheet. J101 pins 12 and 6 (PHY-side centre taps) and 18 (yellow
+  LED anode) take block E's `ETH_AVDD` power symbol (filtered PHY analog 3.3 V); their CT bypass caps are on the
+  ethernet sheet, to be placed at J101 pins 12 and 6. Agreed with block E. List: `hw/satellite/a/gen/labels_poe_in.txt`.
+- Power symbols: `VPRI`, `VPRI_RTN`, `VB_PRI` (shared with iso_dcdc), `VPD_N` and `VISO_P5V` (this sheet only),
+  `GND`, `+3V3`.
+- CBULK is drawn once, on iso_dcdc (block B's C215 47 µF + C211–C213); block A's sheet only notes it.
+- Isolator channels reordered (BT → A, TPL → B, TPH → C, PG → D) so the schematic routes without crossings.

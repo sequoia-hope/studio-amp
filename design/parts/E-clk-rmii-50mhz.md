@@ -56,3 +56,8 @@ Trace length mismatch inside the RMII group: ±10 mm (≤ 65 ps), irrelevant at 
 ## Open questions
 
 - Minimum ECP5 tCO for the TX hold check: nextpnr-ecp5 timing report, phase 2.
+
+## Phase 2 schematic notes (2026-11-08)
+
+- Footprint `studio_E:Oscillator_SMD_3225-4Pin_YXC_SX3V` (YXC's recommended land exactly; shared with the VCXO).
+- Branches: 33 Ω → PHY XTAL1; 33 Ω → `RMII_REFCLK` (ECP5 C8).

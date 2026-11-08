@@ -7,8 +7,10 @@ Build need: 5 boards x 1 + attrition = 7. OK. Single source (TI only); no pin-co
 (TPS2372-4RGWR C470955 has 49 in stock but no TPH/TPL/BT advanced start; it is not a drop-in).
 Footprint: RGW0020B VQFN-20, 5.0 x 5.0 mm, 0.65 mm pitch, exposed pad 2.2 x 2.2 mm (p.40 package outline,
 p.41 land pattern: pads 0.75 x 0.31 mm, EP land 2.2 mm, 3 x 3 vias of 0.2 mm on 0.85 mm pitch). **KiCad's
-stock `VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm` does not match this EP**; phase 2 must use or make a
-footprint to TI's land pattern (EP 2.2 mm, stencil 4 x 0.98 mm windows, p.42).
+stock `VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm` does not match this EP**. Phase 2 made
+`studio_A:TI_RGW0020B_VQFN-20-1EP_5x5mm_P0.65mm_EP2.2x2.2mm` (gen/lib_A.py) to TI's land pattern: pads 0.75 x
+0.31 mm at ±2.325 mm, EP 2.2 mm (pad 21) with 3 x 3 vias 0.2 mm on 0.85 mm, stencil 4 x 0.98 mm windows (p.41–42).
+Symbol `studio_A:TPS2373-4` (pins from p.4).
 
 ## Role
 

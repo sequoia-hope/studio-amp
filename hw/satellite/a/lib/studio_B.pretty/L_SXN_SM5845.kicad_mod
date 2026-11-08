@@ -1,0 +1,107 @@
+(footprint "L_SXN_SM5845"
+	(version 20241229)
+	(generator "studio_B_lib.py")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "SXN SM5845 5.8x5.2 mm unshielded inductor, land per datasheet p.2 (provisional)")
+	(property "Reference" "REF**"
+		(at 0 -4.1 0)
+		(layer "F.SilkS")
+		(uuid "14647c03-395a-4ce7-8f1b-7a0174159df1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "L_SXN_SM5845"
+		(at 0 4.1 0)
+		(layer "F.Fab")
+		(uuid "8855bebd-615e-49db-8731-2caaedda545e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.9 -2.6)
+		(end 2.9 -2.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "00805d01-7f77-47a7-a65b-239a55163eb8")
+	)
+	(fp_line
+		(start 2.9 -2.6)
+		(end 2.9 2.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "7f94b7fd-cb11-4dd4-aaf0-e396f8400a72")
+	)
+	(fp_line
+		(start 2.9 2.6)
+		(end -2.9 2.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "7a505940-97de-4d80-98dd-a0154094fe40")
+	)
+	(fp_line
+		(start -2.9 2.6)
+		(end -2.9 -2.6)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "2a5765b4-e8a4-4217-8177-1491953c6fe9")
+	)
+	(fp_rect
+		(start -3.4 -3.1)
+		(end 3.4 3.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "b09c0b23-6f69-4830-b24e-be15ed54cb68")
+	)
+	(fp_rect
+		(start -3.05 -2.75)
+		(end 3.05 2.75)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "1dcd9055-1247-4595-b2a0-2d81ffe95549")
+	)
+	(pad "1" smd roundrect
+		(at -1.675 0)
+		(size 2.15 1.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "ce79cf2f-69e4-40e1-8521-4fc2a99d20f4")
+	)
+	(pad "2" smd roundrect
+		(at 1.675 0)
+		(size 2.15 1.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "833a23dc-eeed-4fc7-b459-0142dd0370ba")
+	)
+	(embedded_fonts no)
+)

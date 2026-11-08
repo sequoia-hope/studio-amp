@@ -99,3 +99,11 @@ Proposed handling, for the lead to decide with block F:
 
 - PLL + ODDRX2F uncorrelated jitter and the slow (≤ 5 ns) PLL input edge: measure (above).
 - The master-clock policy (speaker as grandmaster, BMCA priority) is firmware's job; it keeps the VCXO inside its APR.
+
+## Phase 2 schematic notes (2026-11-08)
+
+- Footprint `studio_E:Oscillator_SMD_3225-4Pin_YXC_SX3V`, built from both drawings: YXC's recommended
+  1.3 × 1.2 mm pads at 2.1 × 1.9 mm centres contain SX3V's 1.2 × 0.95 mm pads at 2.2 × 1.75 mm
+  (checked by script in `lib_E.py`), so either part fits the one land.
+- VDD: BLM18PG221 + 4.7 µF 0603 (C19666) + 100 nF; PWR_FLAG on `VCXO_VDD`.
+- Nets: `VCXO_TUNE` (from ECP5 N4), `VCXO_CLK` (to ECP5 P6, no series R), `MCLK_Q` (33 Ω, to block F).

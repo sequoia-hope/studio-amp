@@ -112,3 +112,14 @@ Replaced: YXC X49SM73728MSD2SC (C2242). LCSC lists it as −20…+70 °C, which 
 The clock sits next to the UCC2897A on its GND island (SYNC and VREF are small-signal pins), with the
 crystal and its caps tight to the inverter, away from the main-FET drain and T1. VREF decoupling
 (0.22 µF) at the pin, plus 100 nF at each logic IC.
+
+## Phase 2 schematic notes (iso_aux, 2026-11-08)
+
+- **Clock-OK trigger input swapped:** CO drives the LVC1G123's **A** input (falling-edge trigger)
+  with **B held high** (V5_CLK), instead of B ← CO with A low. Same function (retriggered once per
+  1.356 µs CO period, tw ≈ 4.5 µs from 10 k / 470 pF; datasheet function table: A ↓ with B high
+  triggers), and it lets the sheet tie B and CLR straight to V5_CLK without a crossing.
+- The 100 Ω series resistor and the 10 kΩ SYNC pull-down sit at the LVC1G08 output on iso_aux
+  (R260, R261); ACF_SYNC is a global label to iso_dcdc. Place both at the UCC2897A SYNC pin in
+  layout.
+- 74HC4017 CP1 (CKEN) and MR tied to VPRI_RTN; Q0, Q2–Q9 unconnected.

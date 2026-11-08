@@ -81,7 +81,7 @@ J_MIC tip ─ PESD15 ─┬─ R_BIAS 2.2k ─ N_B (47 µF Al-elec to AGND) ─ 
 U_MIC1A: gain 1 + 3.0k/1.0k = 4.0 (+12 dB), Cf 1 nF
 U_MIC1A out ─ 1 µF PET film ─ R_A 2.2 kΩ ─┬─ R_B 1.0 kΩ ─ VINL (1 nF C0G to AGND)
                                           BAT54S to 5V_A/AGND
-Loopback (optional, DNP default): line-out L (FILT_L) ─ 10k/2.7k divider ─ U_MIC1B buffer ─ 1 µF film ─ 2.2k ─┬─ 1.0k ─ VINR (same clamp)
+Loopback (optional, DNP default): line-out L (FILT_L) ─ 10k/2.2k divider ─ U_MIC1B buffer ─ 1 µF film ─ 2.2k ─┬─ 1.0k ─ VINR (same clamp)
 ```
 
 **Dielectric per position (review M2; the board is bolted to a loudspeaker panel, R-41):**
@@ -190,3 +190,20 @@ pin 2 to 5V_A, pin 3 to the R_A/R_B junction.
   caps at the pins; AGND/DGND tie under the IC.
 - Route DOUT, BCK and LRCK back to the FPGA with series resistors, not over the analog inputs.
 - Keep the mic input trace from the jack short, and guard it with GND.
+
+## Phase 2 corrections (schematic, 2026-11-08)
+
+- **Loopback divider is 10 kΩ / 2.2 kΩ** (it was drawn as 10k/2.7k). 4 Vrms becomes 0.72 Vrms,
+  under the 1.06 Vrms full scale. Not fitted by default: R1110 and C1116 are DNP.
+- **The loopback source is the global net FILT_L** (filter output L, op-amp pin). The phase 1
+  name "LOOP_L" is dropped, so the net has a single name across both sheets.
+- **T3902 footprint** `studio_F:TDK_T3902_LGA-5_3.5x2.65mm` is built from t3902.pdf Fig. 14/16 and
+  the p.10 top-view pinout:
+  - pads 0.522 × 0.725, columns 0.822 apart, rows 1.675 apart;
+  - ring Ø1.625/Ø1.025 as pin 3;
+  - Ø0.8 mm NPTH sound hole at the ring centre.
+- **PCM1808 symbol** `studio_F:PCM1808`: pins arranged by function. Analog inputs on the left;
+  clock and serial port on the right; VREF, grounds and mode straps along the bottom. Pin numbers
+  are from p.5.
+- A PWR_FLAG marks the MK1101 VDD node behind its 10 Ω filter resistor.
+- Schematic: `hw/satellite/a/audio_in.kicad_sch`.

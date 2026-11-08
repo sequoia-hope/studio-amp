@@ -1,0 +1,4 @@
+ACF_PULSE out
+ACF_SYNC out
+DRV_FWD in
+POE_LOSS_N out

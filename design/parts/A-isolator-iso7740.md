@@ -28,8 +28,11 @@ Primary side (ground = `VPRI_RTN`, the TPS2373 RTN):
 
 - `VB_PRI` (= TPS2373 VC_IN; block B's 14.3 V (13.9–14.8 V) LM5019 bias buck on VPRI) → 330 nF → 78L05 → `VISO_P5V` (5 V) → 100 nF → ISO7740 VCC1 (pin 1),
   GND1 (pins 2, 8) to RTN.
-- TPS2373 TPH → INA (pin 3), TPL → INB (pin 4), BT → INC (pin 5), each with 10 kΩ to `VISO_P5V`.
-- PG buffer: TPS2373 PG → 1 kΩ (block B) → UCC2897A SS/SD. The 2N7002 gate sits on the **SS/SD side** of that 1 kΩ; drain → IND
+- TPS2373 BT → INA (pin 3), TPL → INB (pin 4), TPH → INC (pin 5), each with 10 kΩ to `VISO_P5V` (channel order
+  changed in phase 2 so the schematic routes without crossings; outputs follow: OUTA = `PD_BT_N`, OUTB =
+  `PD_TPL_N`, OUTC = `PD_TPH_N`, OUTD = `PD_PG_N`). Schematic refs: U103 ISO7740, U104 78L05, Q110 2N7002,
+  R114–R117 pull-ups, C107–C110.
+- PG buffer: TPS2373 PG → 1 kΩ (block B) → UCC2897A SS/SD. The 2N7002 gate sits on the **SS/SD side** of that 1 kΩ; drain → IND (pin 6), global labels `UCC_SS` (from block B's SS/SD node, after its 1 kΩ) and `PD_PG` (to block B's 1 kΩ). Drain
   (pin 6) with 10 kΩ to `VISO_P5V`; source to RTN.
 
 Secondary side (ground = `GND`): VCC2 (pin 16) = `+3V3` with 100 nF; GND2 (pins 9, 15); EN2 (pin 10)

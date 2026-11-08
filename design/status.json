@@ -2,7 +2,7 @@
   "schema": 1,
   "board": "satellite",
   "phase": "2 schematic",
-  "doing": "Gate 1 passed 2026-11-08 after four independent review passes (92 part audits, 253 datasheets). Next: phase 2, the KiCad schematic for hw/satellite/a.",
+  "doing": "Phase 2: schematic. Project skeleton and 13-sheet hierarchy in hw/satellite/a (ERC clean on placeholders). Six block agents are drawing their sheets with generator scripts: A poe_in; B iso_dcdc + iso_aux; C/G rails + io; D amp_woofer/tweeter/sense; E mcu/fpga/ethernet; F audio_out/in.",
   "needs_user": [
     {
       "id": "wurth-samples",
@@ -57,7 +57,7 @@
       "href": "design/decisions.md"
     }
   ],
-  "updated": "2026-11-08T01:30:50Z",
+  "updated": "2026-11-08T01:54:21Z",
   "gates_passed": [
     0,
     1

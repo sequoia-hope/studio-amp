@@ -98,3 +98,10 @@ TPS2553 soft start (rise 0.7–1.5 ms) limits inrush into them.
 SN74LV1T125 has no Ioff figure. With `+5V_LED` off and LED_DATA/LED_CLK driven high, measure any
 back-feed into `+5V_LED` at bring-up. If it is above ≈ 100 µA, have firmware hold both lines low
 whenever `LED_EN` is low.
+
+## Phase 2 (schematic, 2026-11-07)
+
+TPS2553DRVR kept (θJA 75 °C/W). Symbol `studio_G:TPS2553DRV` from the DRV pin column (1 OUT,
+2 ILIM, 3 FAULT, 4 EN, 5 GND, 6 IN, thermal pad = pad 7 on GND). Footprint: KiCad
+`Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm`, checked against the DRV drawing (2.0 × 2.0 mm,
+P 0.65, exposed pad 1.0 × 1.6 mm, datasheet pp. 31–32).

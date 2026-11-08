@@ -182,3 +182,11 @@ VOUT1 to VCC. VCC stays internal: ≈ 3 mA × 48 V = 0.15 W.
 ## Open questions
 
 - Block F's real ±15 V load. Above ≈ 120 mA per rail, revisit the LDO dissipation (3 V × I).
+
+## Phase 2 correction (schematic, 2026-11-07)
+
+125 kΩ 0805 is not stocked. **RUV2 = 124 kΩ 0805 (C17440)** with RUV1 5.36 kΩ: rising
+1.225 × (1 + 124/5.36) = **29.6 V**, falling 29.6 − 20 µA × 124 kΩ = **27.1 V** (typ). The PoE-loss
+hold-up margin in C-sequencing.md is unchanged to within 0.2 V. The RC snubber across D1 is
+drawn DNP: 100 Ω 1206 (C17901; ≈ 0.27 W at 50 V, 498 kHz) + 220 pF C0G 100 V 0603
+(AC0603JRNPO0BN221, C2982813). The 50 V-rated 220 pF parts are too low for the 56 V reverse swing.
