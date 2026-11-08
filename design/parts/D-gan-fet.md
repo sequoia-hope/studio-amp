@@ -1,4 +1,64 @@
-# Q (×8) — power-stage GaN FET: Infineon IGC033S10S1 (CoolGaN 100 V G3, 3.3 mΩ) — **user decision 2026-11-07**
+# Q (×8) — power-stage GaN FET: Infineon IGB070S10S1 (CoolGaN 100 V G3, 7 mΩ) — **user decision 2026-11-08**, at fsw 576 kHz
+
+Datasheet: datasheets/igb070s10s1.pdf (Final datasheet, Rev 1.0, 2025-01-27). Read: all sections; diagrams 9–16 rendered and read off the curves; footprint Fig. 2 p.14.
+MPN: IGB070S10S1XTMA1. Supplier: `C44179579 IGB070S10S1XTMA1 (Infineon, PG-TSON-4-2): extended, JLC stock 80, lifecycle normal, checked 2026-11-07`.
+**Order early: 8 per board × 5 boards = 40, + 10 % attrition = 44 needed, against 80 in stock (1.8×). Reserve or buy ≈ 50 now.** Fallback IGC033S10S1 (C41381300, 985 in stock), analysed in the second section of this file.
+History: IGB070 was recommended on 2026-11-07; the user chose IGC033 for stock; on 2026-11-08 the user reverted to IGB070 to cut idle loss at the 576 kHz baseline (block E's ×12 FPGA grid).
+
+## Footprint: one land pattern or two?
+**Two land patterns are needed.**
+- IGB070S10S1: PG-TSON-4, **3.2 × 3.0 mm**, three pad rows (drain row, source row, gate + source row; Fig. 2 p.14 of its datasheet).
+- IGC033S10S1: PG-TSON-6, **3 × 5 mm**, five rows alternating drain/source plus a gate + source row (Fig. 2 p.14 of its datasheet).
+The pad rows do not coincide (row pitch 1.505 vs 1.075 mm, different row counts), and both use solder-mask-defined pads with split stencil apertures, so a combined "dual" pattern would leave unsoldered exposed copper under either part. Plan: draw the IGB070 footprint; in phase 6, **reserve the 3 × 5 mm IGC033 courtyard** at each FET site (≈ 2 mm extra length along the drain/source axis), so a fallback variant swaps footprints without moving neighbours. Pinouts: IGB070 pin 1 gate, 2 drain, 3–4 source; IGC033 pin 1 gate, 2/4 drain, 3/5/6 source.
+
+## Operating point
+fsw **576 kHz** (12 × 48 kHz; D-interfaces.md), BD, duty clamp 8–92 %, L = 10 µH, VBUS 48 V, LMG1210 dead-time setting **20 ns** (20.0 kΩ; datasheet spread 16–26 ns).
+
+### Effective dead time with IGB070's edges
+- Outgoing FET turn-off: Ciss 740 pF max from 5 V to the 2.8 V plateau through 1.6 Ω sink + 2.2 Ω Rg + 0.5 Ω Rg,int = 4.3 Ω → 4.3 × 0.74 nF × ln(5/2.8) = 1.9 ns. Then Qgd 1.7 nC at 2.8 V/4.3 Ω = 0.65 A → 2.6 ns. **≈ 4.5 ns.**
+- Incoming FET to Vth (2.1 V): 5.9 Ω × 0.74 nF × ln(5/2.9) = **2.4 ns**.
+- Effective window ≈ td − 4.5 + 2.4 ≈ td − 2 ns → **≈ 18 ns nominal (14–24 ns over the spread)**. ≥ 14 ns, so no shoot-through.
+- Idle loss vs effective window (576 kHz, both channels): 14 ns 2.43 W, **18 ns 1.80 W**, 22 ns 1.26 W. 20 ns is kept: it is the characterised point and the same resistor as for the IGC033 fallback. The dead-time error grows (per leg 48 V × 18 ns × 576 kHz = 0.50 V; ≈ 1.5 % H3 at 50 W/8 Ω uncompensated) and is compensated in gateware with per-board calibration via the post-filter sense.
+
+## Absolute max vs our worst case
+| Parameter | Rating (p.3–4) | Our worst case | Margin |
+|---|---|---|---|
+| VDS | 100 V; 120 V pulsed (1 h total) | normal 48 V + overshoot I·√(L_loop/Coss) = 16 A × √(1 nH/340 pF) = **27 V** (13 A: 22 V) → ≤ 75 V; 55 V stop → 82 V; SMBJ51A clamp 82.4 V + 27 = **109 V** | normal ✓ (Infineon's 80 V guidance met at 48 V); the clamp case relies on the 120 V pulsed rating, as for IGC033 (review m3; independent rare events). **Phase 6 loop target ≤ 1 nH** (lower Coss → more ringing per nH than IGC033) |
+| VGS | recommended −4.0…5.0…**5.5 V**; ±6.5 V pulsed (100 h) | LO ≤ 5.25 V; HO ≤ **5.32 V** worst case (VDD 5.25 V − VF 0.10 V + 16 A × 10.5 mΩ; D-bootstrap.md) | 0.18 V to the recommended max ✓ (but above the LMG1210 HB−HS ROC 5.25 V: see D-bootstrap.md) |
+| ID pulsed | 360 A (25 °C), 170 A (150 °C) | ≤ 16.7 A (ramp OCP), ≤ 13.7 A (hard short), residual ≤ 21 A | ≫ |
+| ID continuous | 38 A (TC 25 °C), 13 A (TA 25 °C, RthJA 48) | 6.0 A rms burst, 3.5 A rms continuous | ✓ |
+| IS reverse | 7.4 A continuous, 152 A pulsed | dead-time and post-trip freewheel only (≤ 16 A for ≈ 3 µs) | ✓ (pulsed) |
+| Tj | 150 °C; R-40 limit 125 °C | ≤ 83 °C with the panel path; **129 °C at 144 W/4 Ω without it** (upper bound) | panel path (R-61) **required** for the 144 W case, as before |
+
+## Losses at 576 kHz (model as below; t_sw = 9 ns at the LMG1210's minimum source current: plateau current (5 − 2.8 V)/8.6 Ω = 0.26 A → Qgd 1.7 nC/0.26 A = 6.6 ns + ≈ 2 ns current rise; ZVS window 18 ns; Rds(on) 7.0 mΩ × 1.5 = 10.5 mΩ at 100 °C)
+| Case | Coss+overlap / leg | dead time / leg | conduction / leg | **FET loss / channel** | per FET | Tj, 4 °C/W region | Tj, 15 °C/W (no panel) |
+|---|---|---|---|---|---|---|---|
+| idle | 0.446 W | 0 | 0.004 | **0.90 W** | 0.22 W | 62 °C | 73 °C |
+| 1 W / 8 Ω | 0.476 | 0 | 0.005 | 0.96 W | 0.24 W | 62 °C | 74 °C |
+| 50 W / 8 Ω | 0.822 | 0.062 | 0.068 | 1.90 W | 0.48 W | 69 °C | 92 °C |
+| **46 W / 4 Ω (continuous case)** | 0.912 | 0.107 | 0.124 | **2.29 W** | 0.57 W | **72 °C** | **100 °C** |
+| 144 W / 8 Ω | 1.064 | 0.155 | 0.190 | 2.82 W | 0.70 W | 76 °C | 110 °C |
+| 144 W / 4 Ω (burst; upper bound if continuous) | 1.230 | 0.260 | 0.380 | **3.74 W** | 0.94 W | **83 °C** | **129 °C** |
+**Idle FET loss, both channels: 1.80 W at 576 kHz** (448 kHz: 0.89 W; 768 kHz: 3.34 W). IGC033S10S1 at the same point: 6.02 W → the switch back saves **4.2 W** at idle.
+Tj = 55 °C + P_region·R_region + P_FET·R_jb, with R_jb = RthJC(bottom) 5.4 max + 6 °C/W = 11.4 °C/W; P_region = channel FETs + 2 drivers (0.07 W) + 2 shunts.
+
+## Gate drive (IGB070S10S1: Qg 6.1 / 7.9 nC max, Ciss 650 / 740 pF, Crss 3.6 / 4.7 pF, Vplateau 2.8 V, Vth 1.2 / 2.1 / 2.9 V)
+- Gate loop √(2 nH/0.74 nF) = 1.64 Ω → critical damping needs ≥ 3.3 Ω; on 5.9–8.6 Ω, off 4.3–5.2 Ω (Rg 2.2 Ω) → over-damped ✓.
+- dV/dt 48 V/(1.7 nC/0.37 A = 4.6 ns) ≈ 10 V/ns (7 V/ns at IOH min) ≪ 300 V/ns CMTI ✓. Miller: 4.7 pF × 10 V/ns × 4.3 Ω = 0.20 V ≪ Vth(min) 1.2 V ✓.
+- Rg power 7.9 nC × 5 V × 576 kHz = 23 mW per gate, ≤ 12 mW in the 0402 Rg ✓.
+
+## Fine print, layout
+As in the sections below: 80 %-of-max guidance; recommended VGS 5.5 V (6.5 V pulsed only); exposed top die at source potential (insulating TIM if top-cooled; the baseline is bottom/board cooling); MSL1; solder-mask-defined pads (Fig. 2). HS/LS side by side, 2 × 100 nF 0603 across each half-bridge, return on L2, driver ≤ 5 mm, loop ≤ 1 nH.
+
+## Open questions
+1. Order early (above).
+2. HO worst-case 5.32 V vs the LMG1210 HB−HS ROC of 5.25 V (D-bootstrap.md).
+
+---
+
+# Fallback: Infineon IGC033S10S1 (CoolGaN 100 V G3, 3.3 mΩ) — chosen 2026-11-07, reverted to fallback by the user 2026-11-08
+
+> **fsw update (block E review, ECP5 −7I grid now 1.695 ns, PLL ×12): baseline fsw = 576 kHz (12 × 48 kHz, 1024 steps); 768 kHz option; 448/512/672 kHz only with E's ×14 bring-up option.** IGC033S10S1 at 576 kHz (20 ns setting ≈ 15 ns effective, t_sw 11 ns, 10 µH): **idle 6.02 W both channels** (448 kHz: 4.04 W; 768 kHz: 9.04 W). Per channel: idle 3.01 W (Tj 74 / 110 °C), 50 W/8 Ω 3.28 W (76 / 115 °C), **46 W/4 Ω 3.43 W (78 / 119 °C)**, 144 W/8 Ω 3.88 W (81 / 127 °C), 144 W/4 Ω 4.52 W (85 / **141** °C) — Tj with 4 °C/W panel path / 15 °C/W no panel. **The R-61 panel path is mandatory at 576 kHz.** Option: XAL1510-682MED 6.8 µH (C3911560, 152 in stock; SER2915H-682 has 0 stock) → idle 4.69 W (D-interfaces.md, user decision). Tables below are at 448 kHz.
 
 Datasheet: datasheets/igc033s10s1.pdf (Final datasheet, Rev 1.1, 2025-04-22). Read: all sections, diagrams 9–16 rendered and read off the curves, footprint Fig. 2 p.14, package outline p.13.
 MPN: IGC033S10S1. Supplier: `C41381300 IGC033S10S1 (Infineon, PG-TSON-6): extended, JLC stock 985, lifecycle normal, checked 2026-11-07`. Build need 8 × 5 + 4 = 44 ≪ 985 ✓.
@@ -7,51 +67,52 @@ Footprint: **PG-TSON-6, 3 × 5 mm** (project footprint from Fig. 2 p.14). The co
 Chosen by the user over the earlier recommendation IGB070S10S1: IGB070 had 80 in stock for a 44-part build, and IGC033 has 985. The cost is higher switching-charge loss. The IGB070 analysis is kept below as the rejected alternative.
 
 ## Operating point (with block E's ECP5 grid; D-interfaces.md)
-fsw **448 kHz** baseline (512 / 672 kHz per-build options), BD, **dead time 16 ns** (raised from 12 ns for this part: its larger Qoss gains more soft-switching from a longer dead time; the extra dead-time error is calibrated out with the post-filter sense, which the user decided to fit on all prototypes), L = 10 µH, VBUS 48 V.
+fsw **448 kHz** baseline (512 / 672 kHz per-build options), BD, duty clamp 8–92 %, L = 10 µH, VBUS 48 V. **Dead-time setting 20 ns** (LMG1210 20.0 kΩ), which gives an **effective ≈ 15 ns** window at the FETs once IGC033's ≈ 8 ns turn-off and ≈ 3 ns turn-on-to-Vth are accounted for (review m1; D-lmg1210.md). The earlier 16 ns setting would have left an ≈ 11 ns window. The dead-time error is calibrated out with the post-filter sense, fitted on all prototypes.
 
 ## Absolute max vs our worst case
 | Parameter | Rating (p.3–4) | Our worst case | Margin |
 |---|---|---|---|
-| VDS | 100 V continuous; 120 V pulsed (1 h total) | 48 V normal, 55 V gateware stop; **SMBJ51A clamp 82.4 V at 7.3 A** + switching overshoot ≈ 10 V = 92 V (D-vbus-tvs.md) | normal ≥ 45 V; clamp event 8 V; Infineon's 80 %-of-max guidance (80 V) is met except during a TVS clamp |
-| VGS | recommended −4.0…5.0…**5.5 V**; ±6.5 V pulsed (100 h total) | HO ≤ 5.13 V (D-bootstrap.md), LO ≤ 5.25 V | 0.25 V to the recommended max |
-| ID pulsed | 700 A (25 °C), 330 A (150 °C) | 16 A (14.9 A trip + 1 A overshoot) | ≫ |
+| VDS | 100 V continuous; 120 V pulsed (1 h total life) | normal: 48 V + switching overshoot I·√(L_loop/Coss) = 16 A × √(1 nH/590 pF) = **21 V** (12 A: 16 V) → ≤ 69 V; gateware stop 55 V + 21 = 76 V; **SMBJ51A clamp 82.4 V + 21 V = 103 V** | normal ✓ and within Infineon's 80 %-of-max guidance; the clamp case exceeds 100 V continuous and rests on the 120 V pulsed rating (review m3). Accepted because a 7.3 A TVS pulse and a hard edge at the trip current are independent rare events. **Phase 6 target: commutation loop ≤ 1 nH** |
+| VGS | recommended −4.0…5.0…**5.5 V**; ±6.5 V pulsed (100 h) | HO ≤ 5.24 V (D-bootstrap.md), LO ≤ 5.25 V; HO ≥ 4.03 V at sustained max duty | 0.26 V to the recommended max |
+| ID pulsed | 700 A (25 °C), 330 A (150 °C) | ≤ 16.7 A (ramp-regime OCP), ≤ 13.7 A (hard short), residual ≤ 21 A (D-current-sense.md) | ≫ |
 | ID continuous | 76 A (TC 25 °C); 21 A (TA 25 °C, RthJA 38) | 6.0 A rms (144 W/4 Ω), 3.5 A rms continuous | ✓ |
 | IS reverse | 16 A continuous, 304 A pulsed | dead-time and post-trip freewheel only | ✓ |
-| Tj | 150 °C; R-40 limit 125 °C | ≤ 77 °C (4 °C/W panel path); ≤ 119 °C (no panel path, 144 W continuous upper bound) | ✓ |
+| Tj | 150 °C; R-40 limit 125 °C | ≤ 79 °C with the panel path; **124 °C** with no panel path at 144 W/4 Ω (upper bound) | ✓, with 1 °C of margin in the no-panel case: the R-61 panel path is **required** (below) |
 
 ## Data read off the datasheet / curves
 - Rds(on) 2.4 typ / **3.3 mΩ max** at 25 °C, VGS 5 V, 20 A. Diagram 11: ×1.65 at 100 °C, ×2.0 at 125 °C → 5.4 mΩ max at 100 °C (used in the model).
-- Qoss (Diagram 15): 20 nC at 15 V, 30 at 25, 38 at 40, 43 at 50 (47 max), 67 at 100 V. Fit 43 nC × (V/50)^0.62 → **41.9 nC at 48 V**. Eoss(48 V) ≈ 0.85 µJ (Diagram 16).
-- Gate: Qg 11 typ / **14 nC max**; Qgs 2.8, Qgd 2.6, Qg(th) 2.1 nC; **Vplateau 2.6 V**; Ciss 1200 / 1400 max pF; Crss 6.1 / 8.0 max pF; Rg,int 0.5 Ω; Vth 1.2 / 1.9 / 2.9 V (min/typ/max).
+- Qoss (Diagram 15): 20 nC at 15 V, 30 at 25, 38 at 40, 43 at 50 (47 max), 67 at 100 V. Fit 43 nC × (V/50)^0.62 → **41.9 nC at 48 V**. Eoss(48 V) ≈ 0.85 µJ (Diagram 16). Coss 540 / 590 pF max at 50 V (Table 6).
+- Gate: Qg 11 typ / **14 nC max**; Qgs 2.8, Qgd 2.6, Qg(th) 2.1 nC; **Vplateau 2.6 V**; Ciss 1200 / 1400 max pF; Crss 6.1 / 8.0 max pF; Rg,int 0.5 Ω; Vth 1.2 / 1.9 / 2.9 V.
 - VSD: 2.0 V at 0.5 A, 2.4 typ / 3.1 max V at 20 A (Table 8) → model 2.2 V + 0.045 Ω·I.
 - Thermal: RthJC(top) 0.5/0.6, **RthJC(bottom) 1.9 typ / 2.8 max °C/W**; RthJA 38 °C/W (2s2p with vias).
 
-## Loss model (same model and script as for the rejected part below)
-Switching-edge time t_sw = 8 ns: plateau gate current (5 − 2.6 V)/(3.2 Ω driver + 2.2 Ω Rg + 0.5 Ω) = 0.41 A → Qgd 2.6 nC/0.41 A = 6.4 ns, plus ≈ 1.7 ns current rise ((Qgs − Qg(th))/0.41 A).
+## Loss model
+Same model and script as for the rejected part below. **Switching-edge time t_sw = 11 ns, at the LMG1210's minimum source current** (review m2): IOH min 0.85 A (p.6) → ≈ 5.9 Ω source + 2.2 Ω Rg + 0.5 Ω → plateau current (5 − 2.6 V)/8.6 Ω = 0.28 A → Qgd 2.6 nC/0.28 A = 9.3 ns, plus ≈ 1.7 ns current rise. (With typical IOH: 8 ns.) ZVS window = effective dead time 15 ns.
 
-**Idle (zero signal), both channels (4 half-bridges), L = 10 µH:**
-| fsw | td 12 ns | **td 16 ns** | td 20 ns |
-|---|---|---|---|
-| **448 kHz** | 4.62 W | **3.86 W** | 3.16 W |
-| 512 kHz | 5.62 W | 4.83 W | 4.09 W |
-| 672 kHz | 8.15 W | 7.32 W | 6.52 W |
+**Idle (zero signal), both channels (4 half-bridges), L = 10 µH, t_sw 11 ns:**
+| fsw | 16 ns setting (≈ 11 ns effective) | **20 ns setting (≈ 15 ns effective)** |
+|---|---|---|
+| **448 kHz** | 4.82 W | **4.04 W** |
+| 512 kHz | 5.82 W | 5.02 W |
+| 672 kHz | 8.36 W | 7.52 W |
 
-**Loaded, per channel (2 legs), 448 kHz, td 16 ns, Rds at 100 °C:**
+**Loaded, per channel (2 legs), 448 kHz, 20 ns setting, Rds at 100 °C:**
 | Case | FET loss / channel | per FET | Tj, 4 °C/W region | Tj, 15 °C/W (no panel) |
 |---|---|---|---|---|
-| idle | 1.93 W | 0.48 W | 68 °C | 91 °C |
-| 50 W / 8 Ω | 2.29 W | 0.57 W | 70 °C | 98 °C |
-| **46 W / 4 Ω (continuous case)** | **2.42 W** | 0.60 W | **71 °C** | 101 °C |
-| 144 W / 4 Ω (burst; upper bound if continuous) | 3.23 W | 0.81 W | 77 °C | **119 °C** |
-At 512 kHz, td 16 ns: 46 W/4 Ω → 2.82 W/ch, Tj 74 / 108 °C; 144 W/4 Ω → 3.69 W, Tj 80 / 127 °C (no-panel case exceeds 125 °C, so the panel path is required).
-At 672 kHz: 46 W/4 Ω → 3.83 W/ch, Tj 80 / 125 °C; 144 W/4 Ω → Tj 87 / 146 °C. **The 672 kHz build needs the R-61 back-panel path** (≤ 4 °C/W per channel region).
-Tj = 55 °C + P_region·R_region + P_FET·R_jb, with R_jb = RthJC(bottom) 2.8 max + 6 °C/W solder/via/plane spreading = 8.8 °C/W, and P_region = channel FETs + 2 drivers (0.09 W each) + 2 shunts.
+| idle | 2.02 W | 0.51 W | 68 °C | 92 °C |
+| 50 W / 8 Ω | 2.42 W | 0.60 W | 71 °C | 100 °C |
+| **46 W / 4 Ω (continuous case)** | **2.57 W** | 0.64 W | **72 °C** | 104 °C |
+| 144 W / 8 Ω | 2.98 W | 0.74 W | 75 °C | 112 °C |
+| 144 W / 4 Ω (burst; upper bound if continuous) | 3.52 W | 0.88 W | 79 °C | **124 °C** |
+512 kHz: 46 W/4 Ω 3.00 W/ch (Tj 75/111 °C), 144 W/4 Ω 4.02 W (82/**132** °C). 672 kHz: 4.09 W (82/130 °C), 5.28 W (90/154 °C).
+**The R-61 back-panel path (≤ 4 °C/W per channel region) is required at every fsw** for the 144 W upper bound (review m2), and for continuous operation at 512/672 kHz. Phase 4 must provide it.
+Tj = 55 °C + P_region·R_region + P_FET·R_jb, with R_jb = 2.8 + 6 = 8.8 °C/W; P_region = channel FETs + 2 drivers (0.09 W) + 2 shunts.
 
-Comparison at the same point (448 kHz, td 16 ns, idle both channels): IGB070S10S1 1.14 W vs IGC033S10S1 3.86 W. That is the +2.7 W cost of the user's sourcing choice.
+Comparison at the same point (448 kHz, idle, both channels): IGB070S10S1 ≈ 1.1–1.4 W vs IGC033S10S1 4.04 W. That is the ≈ +2.7 W cost of the user's sourcing choice.
 
 ### Gate-drive margins
 - Gate loop: √(L/C) = √(2 nH/1.4 nF) = 1.2 Ω; R_total on 5.9 Ω / off 4.3 Ω ≥ 2.4 Ω → over-damped with **Rg = 2.2 Ω** (unchanged; D-driver-passives.md).
-- dV/dt ≈ 48 V/6.4 ns = 7.5 V/ns ≪ LMG1210 CMTI 300 V/ns.
+- dV/dt ≈ 48 V/6.4–9.3 ns = 5–7.5 V/ns ≪ LMG1210 CMTI 300 V/ns.
 - Miller at the 0 V off state: Crss 8 pF × 7.5 V/ns × 4.3 Ω = 0.26 V ≪ Vth(min) 1.2 V ✓.
 - Gate power: Qg·V·f = 14 nC × 5 V × 448 kHz = 31 mW per gate, ≤ 16 mW of it in the 0402 Rg ✓.
 
@@ -65,12 +126,14 @@ Comparison at the same point (448 kHz, td 16 ns, idle both channels): IGB070S10S
 As below for the rejected part, with the 3 × 5 mm package: HS and LS side by side, 2 × 100 nF 0603 across each half-bridge, return on L2, driver ≤ 5 mm from the gates, via arrays per nets.csv, thermal pad / plate path under the bridge (R-61). The bottom-side RthJC is half of IGB070's, so the board path matters more.
 
 ## Open questions
-1. Idle VBUS power is now ≈ 3.9 W of FET loss alone at 448 kHz. Gateware auto-idle is strongly recommended (D-interfaces.md).
-2. The 672 kHz option requires the back-panel thermal path (phase 4).
+1. Idle VBUS power is ≈ 4.0 W of FET loss alone at 448 kHz. Gateware auto-idle is strongly recommended (D-interfaces.md).
+2. The back-panel thermal path (R-61) is required at every fsw for the 144 W upper bound (phase 4).
 
 ---
 
-# Rejected alternative: Infineon IGB070S10S1 (original recommendation, kept for the record)
+---
+
+# Earlier IGB070S10S1 analysis at 480 kHz (2026-11-07; superseded by the 576 kHz section at the top; the selection table and datasheet readings remain valid)
 
 Datasheet: datasheets/igb070s10s1.pdf (Final datasheet, Rev 1.0, 2025-01-27). Read: all sections, including diagrams 9–16 (rendered and read off the curves) and the footprint drawing (Fig. 2, p.14).
 MPN: IGB070S10S1XTMA1. Supplier: `C44179579 IGB070S10S1XTMA1 (Infineon, PG-TSON-4-2): extended, JLC stock 80, lifecycle normal, checked 2026-11-07`

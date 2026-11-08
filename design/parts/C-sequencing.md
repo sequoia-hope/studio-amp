@@ -27,19 +27,23 @@ VDRV, ±15 V, +5V_A, +3V3_Q and +5V_LED stay off. There is no VBUS, so neither L
 
 RP2350 boot (after +3V3):
 1. Load the FPGA bitstream over SSPI, then wait for the FPGA's DONE (block E).
-2. Check `PD_PG` (isolated, block A), `PG_5V` high, and VBUS_SENSE within 44–55 V (block D ADC).
+2. Check `PD_PG_N` **low** (= PD power good; isolated, active low, block A), `POE_LOSS_N` **high**
+   (= no pulse loss; open drain, active low, block B), `PG_5V_N` **low** (= 5 V buck good; buffered
+   copy, active low), and VBUS_SENSE within 44–55 V (block D ADC).
 3. Assert `VDRV_EN`. Wait ≥ 1 ms (TLV6703 needs 150 µs of valid VDD, plus LM5017 start-up), then
    require `VDRV_PG` high.
 4. Tell the FPGA to start PWM at zero modulation and ramp the volume (block D/E: pop-free start).
 
 The FPGA keeps a hardware gate in its fabric: PWM is held off (all LI/HI low) unless
-`VDRV_PG & PD_PG & !fault` is true, independent of firmware. On PoE loss (R-32a: PD_PG low or the
-fast comparator), the FPGA ramps the output to zero in ≤ 5 ms, then stops switching. After that,
+`VDRV_PG_ok & !PD_PG_N & POE_LOSS_N & !fault` is true (VDRV_PG reaches the FPGA over the RP2350 link,
+per block D), independent of firmware. On PoE loss (R-32a: `PD_PG_N` goes **high**, or block B's
+`POE_LOSS_N` goes **low**, whichever comes first), the FPGA ramps the output to zero in ≤ 5 ms, then stops switching. After that,
 firmware de-asserts `VDRV_EN`.
 
-Hardware backstops while the FPGA is unconfigured (the ECP5 replaced the Gowin part. Block E reports
-ECP5 pins default to pull-down; the figures below were sized against the Gowin's 30–150 µA weak
-pull-ups, which is conservative):
+Hardware backstops while the FPGA is unconfigured. **ECP5 GPIO default to tristate with weak
+pull-downs of 30–150 µA** (TN-02039 §5, TN-02038 Table 9.1). The rule after the phase 1 review (B1/B2):
+**no power-control or strapping node may be loaded by an unconfigured ECP5 pin.** See the sweep table
+in C-interfaces.md, "Review response". Other backstops:
 - VDRV is off (VDRV_EN has a 100 kΩ pull-down), so the drivers have no supply.
 - Block D (D-interfaces.md): each channel's LMG1210 EN comes from a 74LVC1G74 latch whose CLR is held
   low by a 10 kΩ pull-down on the FPGA's AMP_ARM, so EN = 0 until the configured FPGA drives ARM high.
@@ -61,7 +65,9 @@ pull-ups, which is conservative):
 |---|---|
 | +5V_BUCK in regulation, PG_5V | ≈ 3.5 ms |
 | +3V3 up, PG_3V3 | ≈ 4.5 ms |
-| +1V1, +2V5 up | ≈ 5.5–6 ms |
+| +1V1 up | ≈ 5.5 ms |
+| +2V5 up (TPS7A94: fast charge to ≈ 93 %, then 150 µA, review) | ≈ 6.8 ms |
+| +3V3_Q up (CNR 4.7 µF: 6.9 + 7.2 ms, then the 1.5 Hz NR filter settles) | ≈ 14 ms after +15V ≥ 7.1 V |
 | ±15 V up | ≈ 15 ms |
 | RP2350 boot + FPGA load (block E) | tens to hundreds of ms |
 | VDRV_EN → VDRV_PG | ≤ 1 ms after firmware asserts it |
@@ -75,3 +81,11 @@ Bridged solder jumpers (cut to isolate), or 0 Ω where the current exceeds a jum
 - VDRV → each LMG1210 (4 links, block D side).
 - +15V / −15V LDO outputs → block F.
 A test point sits on each side of every link (see G-testpoints.md).
+
+## Note: TPS2116 start-up blip on PoE-only power (review note)
+
+While +5V_BUCK ramps from 0 to ≈ 1 V, MODE (tied to VIN1) is still low and PR1 low, so the TPS2116
+passes the higher input and +5V follows the buck up to ≈ 1 V. When MODE crosses its 1 V threshold
+with PR1 still low, VIN2 (absent) is selected and +5V collapses until PG_5V asserts ≈ 3.5 ms later.
+This is harmless (the TPS62A02A UVLO is ≈ 2.4 V) but visible on a scope at bring-up. It is expected,
+not a fault.

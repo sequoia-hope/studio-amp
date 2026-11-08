@@ -2,12 +2,22 @@
   "schema": 1,
   "board": "satellite",
   "phase": "1 architecture and parts",
-  "doing": "Phase 1: blocks A, B, F audited; C+G finishing; D running; E redoing for ECP5 LFE5U-25F. Then cross-block reconciliation and independent datasheet reviews.",
+  "doing": "Phase 1: all block audits done and reconciled (88 audit files, 226 datasheets). Six independent reviewers are re-reading the datasheets and recomputing every calculation, one per block.",
   "needs_user": [
     {
       "id": "wurth-samples",
       "kind": "action",
-      "text": "Request W\u00fcrth 750343576 samples (\u22657) and a quote for a custom 8T:16T part on the same core (spec draft in design/parts/B-transformer.md)."
+      "text": "Email W\u00fcrth: samples of 750343576 (\u22657) and a custom-part quote; text ready in design/parts/B-transformer.md, 'Request to W\u00fcrth'."
+    },
+    {
+      "id": "led-pinout",
+      "kind": "question",
+      "text": "LED connector pin order 1=5V, 2=GND, 3=Data, 4=Clock: does it match your LED panels?"
+    },
+    {
+      "id": "display-pinout",
+      "kind": "question",
+      "text": "Confirm the ST7735S module's pin order when it arrives."
     }
   ],
   "checks": {},
@@ -35,5 +45,5 @@
       "href": "PoE++ GaN Speaker Amplifier \u2014 System Specification.md"
     }
   ],
-  "updated": "2026-11-07T23:20:02Z"
+  "updated": "2026-11-07T23:46:17Z"
 }

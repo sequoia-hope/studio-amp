@@ -12,120 +12,147 @@ All seven FPGA banks run at **VCCIO = 3.3 V**, so there is no level translation 
 - **Right (banks 2, 3):** audio (block F) and display/LED/Qwiic (block G).
 - **Bottom (bank 8):** configuration. The RP2350 and its flash sit below the FPGA, with the link and SSPI as short traces.
 
-## FPGA signal assignments (108 balls incl. configuration/JTAG)
+## FPGA signal assignments (109 balls incl. configuration/JTAG)
 
 Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have their differential pair partner left **NC** and a series resistor; outputs default to tri-state + weak pull-down until configured.
 
-| Ball | Pad / dual function | Bank | Net | Dir | Block | Notes |
-|---|---|---|---|---|---|---|
-| A2 | PT4A | 0 | `PD_PG` | in | A | isolator, 1 kΩ series |
-| A3 | PT6A | 0 | `PD_TPH_N` | in | A | 1 kΩ series |
-| A4 | PT6B | 0 | `PD_TPL_N` | in | A | 1 kΩ series |
-| A5 | PT18A | 0 | `PD_BT_N` | in | A | 1 kΩ series |
-| A6 | PT18B | 0 | `POE_LOSS_N` | in | B/C | 1 kΩ series |
-| B3 | PT4B | 0 | `PG_5V` | in | C | divided from +5V_BUCK to 3.24 V (not open-drain) |
-| B4 | PT11B | 0 | `PG_3V3` | in | C | block C 100 kΩ pull-up already fitted |
-| B5 | PT15B | 0 | `PG_3V3Q` | in | C/F | TPS7A94 PG, open-drain, block C 100 kΩ pull-up; 1 kΩ series; gateware holds DAC_* low until high |
-| A10 | PT42B | 1 | `RMII_TXD0` | out | E |  |
-| A11 | PT53A | 1 | `RMII_RXD0` | in | E | input delay (DELAYG) |
-| A12 | PT53B | 1 | `RMII_RXD1` | in | E | input delay |
-| A13 | PT65A | 1 | `PHY_MDC` | out | E |  |
-| A14 | PT65B | 1 | `PHY_MDIO` | io | E | 1.5 kΩ pull-up |
-| A9 | PT42A | 1 | `RMII_TXEN` | out | E | 10 kΩ pull-down |
-| B10 | PT44A | 1 | `RMII_TXD1` | out | E |  |
-| B11 | PT49A | 1 | `RMII_CRSDV` | in | E | input delay |
-| B12 | PT56A | 1 | `PHY_NRST` | out | E | 10 kΩ pull-down |
-| B13 | PT60A | 1 | `PHY_NINT` | in | E | 10 kΩ pull-up |
-| C8 | PT35A/PCLKT1_0 | 1 | `RMII_REFCLK` | in | E | PCLKT1_0, 50 MHz |
-| B16 | PR2A | 2 | `DISP_SCL` | out | G | series R at header |
-| C14 | PR2C | 2 | `QWIIC_FAULT_N` | in | C/G | open-drain; 1 kΩ series, partner D14 NC |
-| C15 | PR5B | 2 | `DISP_RES` | out | G |  |
-| C16 | PR5A | 2 | `DISP_SDA` | out | G |  |
-| D16 | PR8A | 2 | `DISP_DC` | out | G |  |
-| E14 | PR5C | 2 | `VUSB_DET` | in | G | 1 kΩ series, partner F14 NC |
-| E15 | PR8B | 2 | `DISP_CS` | out | G |  |
-| E16 | PR11D | 2 | `DISP_BLK` | out | G |  |
-| F15 | PR11C | 2 | `DISP_AUX7` | out | G | header position 7 (pin-order remap) |
-| F16 | PR14A | 2 | `DISP_AUX8` | out | G | header position 8 |
-| G15 | PR14B | 2 | `DISP_BL_PWM` | out | G | backlight FET switch gate (2N7002, 100 kΩ pull-down at G); 4 mA drive, PWM ≤ 2 kHz, default low |
-| G16 | PR20A/GR_PCLK2_1 | 2 | `PTP_PPS` | out | G | PTP-second test point |
-| H15 | PR20B | 2 | `LED_EN` | out | C/G | 100 kΩ pull-down at EN |
-| J16 | PR23A/PCLKT2_1 | 2 | `QWIIC_PWR_EN` | out | C/G | 100 kΩ pull-down at EN |
-| K16 | PR23C/PCLKT2_0 | 2 | `LED_FAULT_N` | in | C/G | open-drain, 10 kΩ pull-up; 1 kΩ series, partner K15 NC |
-| K13 | PR29A/GR_PCLK3_0 | 3 | `HP_DET` | in | F | always driven: 1 kΩ series, partner K12 NC |
-| L14 | PR32C | 3 | `PDM_CLK` | out | F | 3.072 MHz |
-| L16 | PR26A/PCLKT3_1 | 3 | `MADC_DOUT` | in | F | always driven: 330 Ω series, partner L15 NC |
-| M14 | PR32D | 3 | `HP_EN` | out | F | pull-down at block F |
-| M16 | PR26C/PCLKT3_0 | 3 | `LINK_CLK` | in | E | PCLKT3_0 |
-| N13 | PR38A | 3 | `PDM_DAT` | in | F | always driven: 330 Ω series, partner P14 NC |
-| N14 | PR35D | 3 | `LO_EN` | out | F | pull-down at block F |
-| N16 | PR32A | 3 | `DAC_L0` | out | F |  |
-| P11 | PR47C/LRC_GPLL0T_IN | 3 | `HP_FAULT_N` | in | F | always driven: 1 kΩ series, partner P12 NC |
-| P13 | PR41A | 3 | `MADC_BCK` | out | F | PCM1808 BCK 3.072 MHz |
-| P15 | PR32B | 3 | `DAC_L1` | out | F |  |
-| P16 | PR35A | 3 | `DAC_L2` | out | F |  |
-| R12 | PR44A | 3 | `DAC_R2` | out | F |  |
-| R13 | PR41C | 3 | `DAC_R0` | out | F |  |
-| R14 | PR41B | 3 | `MADC_LRCK` | out | F | 48 kHz |
-| R15 | PR38C | 3 | `LINK_DIR` | in | E |  |
-| R16 | PR35B/VREF1_3 | 3 | `DAC_L3` | out | F |  |
-| T13 | PR44B | 3 | `DAC_R3` | out | F |  |
-| T14 | PR41D | 3 | `DAC_R1` | out | F |  |
-| T15 | PR38D | 3 | `LINK_STB` | in | E |  |
-| M10 | TDO | 40 | `FPGA_TDO` | out | G | 4.7 kΩ pull-up |
-| R11 | TDI | 40 | `FPGA_TDI` | in | G | 4.7 kΩ pull-up |
-| T10 | TCK | 40 | `FPGA_TCK` | in | G | JTAG header; 4.7 kΩ pull-down |
-| T11 | TMS | 40 | `FPGA_TMS` | in | G | 4.7 kΩ pull-up |
-| K4 | PL29A/GR_PCLK6_0 | 6 | `PF_CS_n` | out | D | reserved, optional 2 × ADS8353 (R-51); 4.7 kΩ pull-up |
-| K5 | PL29B | 6 | `PF_SDI` | out | D | reserved |
-| L1 | PL26A/PCLKT6_1 | 6 | `FAULT_W_n` | in | D | always driven: 330 Ω series, partner L2 NC |
-| L3 | PL32C | 6 | `IS_CS_n` | out | D | ADS7038-Q1; 4.7 kΩ pull-up |
-| L4 | PL29C/GR_PCLK6_1 | 6 | `PF_SCLK` | out | D | reserved |
-| L5 | PL29D | 6 | `PF_SDO_WA` | in | D | reserved |
-| M1 | PL26C/PCLKT6_0 | 6 | `FAULT_T_n` | in | D | always driven: 330 Ω series, partner M2 NC |
-| M3 | PL32D | 6 | `IS_SCLK` | out | D | ≤ 60 MHz |
-| M4 | PL35C | 6 | `VB_SDO` | in | D | partner N3 is an FPGA output |
-| M5 | PL44C | 6 | `PF_SDO_WB` | in | D | reserved |
-| N1 | PL32A | 6 | `PWM_W_A` | out | D | ODDRX2F; LMG1210 PWM mode, high = HS on; matched routing, 100 Ω at driver |
-| N3 | PL35D | 6 | `VB_SCLK` | out | D | ≤ 16 MHz |
-| N4 | PL38A | 6 | `VCXO_TUNE` | out | E | ΔΣ → 2-pole RC → VCXO Vc |
-| N5 | PL44D | 6 | `PF_SDO_TA` | in | D | reserved |
-| N6 | PL47B | 6 | `PF_SDO_TB` | in | D | reserved |
-| P1 | PL35A | 6 | `PWM_W_B` | out | D | ODDRX2F |
-| P2 | PL32B | 6 | `AMP_CLK_W` | out | D | fault-latch clock |
-| P3 | PL38B | 6 | `IS_SDO` | in | D | partner N4 is an FPGA output |
-| P6 | PL47C/LLC_GPLL0T_IN | 6 | `VCXO_CLK` | in | E | LLC_GPLL0T_IN: PWM/audio PLL reference; partner P5 left NC |
-| R1 | PL35B/VREF1_6 | 6 | `AMP_ARM` | out | D | block D 10 kΩ pull-down |
-| R2 | PL38C | 6 | `PWM_T_A` | out | D | ODDRX2F |
-| R3 | PL41B | 6 | `IS_SDI` | out | D |  |
-| R4 | PL41C | 6 | `PWM_T_B` | out | D | ODDRX2F |
-| R5 | PL44A | 6 | `AMP_EN_W` | out | D | fault-latch D input |
-| T2 | PL38D | 6 | `AMP_CLK_T` | out | D | fault-latch clock |
-| T3 | PL41D | 6 | `VB_CS_n` | out | D | ADS7042; 4.7 kΩ pull-up |
-| T4 | PL44B | 6 | `AMP_EN_T` | out | D | fault-latch D input |
-| G1 | PL20A/GR_PCLK7_1 | 7 | `DC_T_n` | in | D | open-drain + 10 kΩ pull-up at D; 1 kΩ series, partner H2 NC |
-| J1 | PL23A/PCLKT7_1 | 7 | `DC_W_n` | in | D | open-drain + 10 kΩ pull-up at D; 1 kΩ series, partner J2 NC |
-| K1 | PL23C/PCLKT7_0 | 7 | `CLK_AUX` | in | E | PCLKT7_0, spare clock input (external low-jitter clock option) |
-| M7 | PB9B/D2/IO2 | 8 | `LINK_D0` | io | E | D2 |
-| M8 | PB15B/DOUT/CSON | 8 | `LINK_D7` | io | E | DOUT/CSON |
-| M9 | PB18A/WRITEN | 8 | `LINK_IRQ` | out | E | WRITEN |
-| N10 | CFG_0 | 8 | `FPGA_CFG0` | in | E | 4.7 kΩ to VCCIO8 (CFG = 001 SSPI) |
-| N7 | PB9A/D3/IO3 | 8 | `LINK_D1` | io | E | D3 |
-| N8 | PB15A/HOLDN/DI/BUSY/CSSPIN/CEN | 8 | `FPGA_HOLDN` | in | E | 4.7 kΩ pull-up, not driven |
-| N9 | CCLK/MCLK/SCK | 8 | `FPGA_CCLK` | in | E | SSPI clock from RP2350 SPI1 SCK; 33 Ω series at RP2350 |
-| P10 | CFG_1 | 8 | `FPGA_CFG1` | in | E | to GND |
-| P7 | PB6B/D4/MOSI2/IO4 | 8 | `LINK_D2` | io | E | D4 |
-| P8 | PB13B/CS1N | 8 | `LINK_D6` | io | E | CS1N |
-| P9 | DONE | 8 | `FPGA_DONE` | io | E | 4.7 kΩ pull-up |
-| R10 | CFG_2 | 8 | `FPGA_CFG2` | in | E | to GND |
-| R6 | PB4B/D6/IO6 | 8 | `LINK_D4` | io | E | D6 |
-| R7 | PB6A/D5/MISO2/IO5 | 8 | `LINK_D3` | io | E | D5 |
-| R8 | PB13A/SN/CSN | 8 | `FPGA_SN` | in | E | SSPI chip select, 4.7 kΩ pull-up |
-| R9 | PROGRAMN | 8 | `FPGA_PROGRAMN` | in | E | 4.7 kΩ pull-up; RP2350 open-drain |
-| T6 | PB4A/D7/IO7 | 8 | `LINK_D5` | io | E | D7 |
-| T7 | PB11A/D1/MISO/IO1 | 8 | `FPGA_MISO` | out | E | SSPI MISO (D1) |
-| T8 | PB11B/D0/MOSI/IO0 | 8 | `FPGA_MOSI` | in | E | SSPI MOSI (D0) |
-| T9 | INITN | 8 | `FPGA_INITN` | io | E | 4.7 kΩ pull-up |
+| Ball | Pad / dual function | Bank | Net | Dir | Block | Notes | Needed before configuration / with the ECP5 unpowered | Guaranteed by |
+|---|---|---|---|---|---|---|---|---|
+| A2 | PT4A | 0 | `PD_PG_N` | in | A | isolator, active low, high when primary unpowered; 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
+| A3 | PT6A | 0 | `PD_TPH_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
+| A4 | PT6B | 0 | `PD_TPL_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
+| A5 | PT18A | 0 | `PD_BT_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
+| A6 | PT18B | 0 | `POE_LOSS_N` | in | B | block B input-voltage (PoE-loss) detector, open-drain active low, latches ~10 ms; 4.7 kΩ pull-up to +3V3 on the net (E), 1 kΩ series; net also to block F /DC_TRIP (F fits the OR diode) | high (not tripped) — the net also feeds block F's /DC_TRIP OR diode | **pull-up changed to 4.7 kΩ** (≥ 2.6 V vs 150 µA; 10 kΩ gave 1.8 V); LPF PULLMODE=NONE |
+| B3 | PT4B | 0 | `PG_5V_N` | in | C | buffered active-low copy (block C 2N7002 + 4.7 kΩ pull-up): low = 5 V good | high (= not good) until 5 V good; FPGA-only reader | block C buffer: 2N7002 + 4.7 kΩ pull-up; LPF PULLMODE=NONE |
+| B4 | PT11B | 0 | `PG_3V3_N` | in | C | buffered active-low copy (block C 2N7002 + 4.7 kΩ pull-up): low = 3V3 good | high (= not good) until 3V3 good; FPGA-only reader | block C buffer: 2N7002 + 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA); real PG_3V3 (1V1 EN) no longer reaches the FPGA; LPF PULLMODE=NONE |
+| B5 | PT15B | 0 | `PG_3V3Q` | in | C/F | TPS7A94 PG, open-drain, block C 100 kΩ pull-up; 1 kΩ series; gateware holds DAC_* low until high | high when 3V3_Q good (FPGA-only reader) | block C 100 kΩ pull-up dragged low before config → reads "not good", which is the safe state (DAC lines held low); after config **LPF PULLMODE=NONE**. If any other block reads it in hardware, its pull-up must be ≤ 4.7 kΩ |
+| B6 | PT22B | 0 | `ACF_PULSE` | in | B | 3.3 V push-pull (TLV3202 on +3V3, same rail as the FPGA, so no injection), 620 kHz ±10 %; 4.7 kΩ series; gateware measures f_acf | don't care before config | push-pull TLV3202 on +3V3 (same rail): no injection; LPF PULLMODE=NONE |
+| A10 | PT42B | 1 | `RMII_TXD0` | out | E |  | don't care (TXEN low) | ECP5 weak pull-down (TN-02039 §5.2) |
+| A11 | PT53A | 1 | `RMII_RXD0` | in | E | DELAYG; PHY MODE0 strap: 4.7 kΩ pull-up to 3V3, LPF PULLMODE=UP | **high (LAN8720A MODE = 111 strap)** | 4.7 kΩ pull-ups (≥ 2.6 V) + LPF PULLMODE=UP; PHY held in reset until after config |
+| A12 | PT53B | 1 | `RMII_RXD1` | in | E | DELAYG; MODE1 strap: 4.7 kΩ pull-up, PULLMODE=UP | **high (LAN8720A MODE = 111 strap)** | 4.7 kΩ pull-ups (≥ 2.6 V) + LPF PULLMODE=UP; PHY held in reset until after config |
+| A13 | PT65A | 1 | `PHY_MDC` | out | E |  | don't care | ECP5 weak pull-down (TN-02039 §5.2) |
+| A14 | PT65B | 1 | `PHY_MDIO` | io | E | 1.5 kΩ pull-up | idle high | 1.5 kΩ pull-up (3.08 V vs 150 µA) |
+| A9 | PT42A | 1 | `RMII_TXEN` | out | E | 10 kΩ pull-down | low (PHY not transmitting) | ECP5 weak pull-down (TN-02039 §5.2) + 10 kΩ pull-down |
+| B10 | PT44A | 1 | `RMII_TXD1` | out | E |  | don't care (TXEN low) | ECP5 weak pull-down (TN-02039 §5.2) |
+| B11 | PT49A | 1 | `RMII_CRSDV` | in | E | DELAYG; MODE2 strap: 4.7 kΩ pull-up, PULLMODE=UP | **high (LAN8720A MODE = 111 strap)** | 4.7 kΩ pull-ups (≥ 2.6 V) + LPF PULLMODE=UP; PHY held in reset until after config |
+| B12 | PT56A | 1 | `PHY_NRST` | out | E | 10 kΩ pull-down | low (PHY in reset) | ECP5 weak pull-down (TN-02039 §5.2) + 10 kΩ pull-down |
+| B13 | PT60A | 1 | `PHY_NINT` | in | E | 10 kΩ pull-up | don't care (PHY in reset) | 10 kΩ pull-up; LPF PULLMODE=NONE after config |
+| C8 | PT35A/PCLKT1_0 | 1 | `RMII_REFCLK` | in | E | PCLKT1_0, 50 MHz | don't care (driven by XO) | push-pull source |
+| B16 | PR2A | 2 | `DISP_SCL` | out | G | series R at header | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| C14 | PR2C | 2 | `QWIIC_FAULT_N` | in | C/G | open-drain; 1 kΩ series, partner D14 NC | don't care (FPGA-only readers) | block C 10 kΩ pull-ups → 1.8 V before config; **LPF PULLMODE=NONE** after config |
+| C15 | PR5B | 2 | `DISP_RES` | out | G |  | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| C16 | PR5A | 2 | `DISP_SDA` | out | G |  | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| D16 | PR8A | 2 | `DISP_DC` | out | G |  | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| E14 | PR5C | 2 | `VUSB_DET` | in | G | 1 kΩ series, partner F14 NC | don't care (FPGA-only reader) | block C 15k/22k divider (8.9 kΩ Thevenin) → **LPF PULLMODE=NONE** after config |
+| E15 | PR8B | 2 | `DISP_CS` | out | G |  | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| E16 | PR11D | 2 | `DISP_BLK` | out | G |  | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| F15 | PR11C | 2 | `DISP_AUX7` | out | G | header position 7 (pin-order remap) | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| F16 | PR14A | 2 | `DISP_AUX8` | out | G | header position 8 | low (RES low = display held in reset; harmless) | ECP5 weak pull-down (TN-02039 §5.2) |
+| G15 | PR14B | 2 | `DISP_BL_PWM` | out | G | backlight FET switch gate (2N7002, 100 kΩ pull-down at G); 4 mA drive, PWM ≤ 2 kHz, default low | low (backlight off) | ECP5 weak pull-down (TN-02039 §5.2) + block G 100 kΩ pull-down |
+| G16 | PR20A/GR_PCLK2_1 | 2 | `PTP_PPS` | out | G | PTP-second test point | don't care | ECP5 weak pull-down (TN-02039 §5.2) |
+| H15 | PR20B | 2 | `LED_EN` | out | C/G | 100 kΩ pull-down at EN | low (switch off) | ECP5 weak pull-down (TN-02039 §5.2) + block C 100 kΩ pull-down |
+| J16 | PR23A/PCLKT2_1 | 2 | `QWIIC_PWR_EN` | out | C/G | TPS2553 EN and TCA9617B EN; 100 kΩ pull-down | low (switch off) | ECP5 weak pull-down (TN-02039 §5.2) + block C 100 kΩ pull-down |
+| K16 | PR23C/PCLKT2_0 | 2 | `LED_FAULT_N` | in | C/G | open-drain, 10 kΩ pull-up; 1 kΩ series, partner K15 NC | don't care (FPGA-only readers) | block C 10 kΩ pull-ups → 1.8 V before config; **LPF PULLMODE=NONE** after config |
+| K13 | PR29A/GR_PCLK3_0 | 3 | `HP_DET` | in | F | always driven: 1 kΩ series, partner K12 NC | don't care (FPGA-only readers) | block F pull-ups: LPF PULLMODE=NONE after config; if F reads them in hardware, pull-ups ≤ 4.7 kΩ |
+| L14 | PR32C | 3 | `PDM_CLK` | out | F | 3.072 MHz | low (clocks halted; PCM1808/mic on +3V3, same rail) | ECP5 weak pull-down (TN-02039 §5.2) |
+| L16 | PR26A/PCLKT3_1 | 3 | `MADC_DOUT` | in | F | always driven: 330 Ω series, partner L15 NC | don't care (FPGA input) | driven/tri-stated by F parts; pull-down harmless |
+| M14 | PR32D | 3 | `HP_EN` | out | F | pull-down at block F | low (relays open, outputs muted) | ECP5 weak pull-down (TN-02039 §5.2) + block F 100 kΩ gate pull-downs |
+| M16 | PR26C/PCLKT3_0 | 3 | `LINK_CLK` | in | E | PCLKT3_0 | don't care (RP2350 Hi-Z until DONE) | ECP5 weak pull-down (TN-02039 §5.2) |
+| N13 | PR38A | 3 | `PDM_DAT` | in | F | always driven: 330 Ω series, partner P14 NC | don't care (FPGA input) | driven/tri-stated by F parts; pull-down harmless |
+| N14 | PR35D | 3 | `LO_EN` | out | F | pull-down at block F | low (relays open, outputs muted) | ECP5 weak pull-down (TN-02039 §5.2) + block F 100 kΩ gate pull-downs |
+| N16 | PR32A | 3 | `DAC_L0` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| P11 | PR47C/LRC_GPLL0T_IN | 3 | `HP_FAULT_N` | in | F | always driven: 1 kΩ series, partner P12 NC | don't care (FPGA-only readers) | block F pull-ups: LPF PULLMODE=NONE after config; if F reads them in hardware, pull-ups ≤ 4.7 kΩ |
+| P13 | PR41A | 3 | `MADC_BCK` | out | F | PCM1808 BCK 3.072 MHz | low (clocks halted; PCM1808/mic on +3V3, same rail) | ECP5 weak pull-down (TN-02039 §5.2) |
+| P15 | PR32B | 3 | `DAC_L1` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| P16 | PR35A | 3 | `DAC_L2` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| R12 | PR44A | 3 | `DAC_R2` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| R13 | PR41C | 3 | `DAC_R0` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| R14 | PR41B | 3 | `MADC_LRCK` | out | F | 48 kHz | low (clocks halted; PCM1808/mic on +3V3, same rail) | ECP5 weak pull-down (TN-02039 §5.2) |
+| R15 | PR38C | 3 | `LINK_DIR` | in | E |  | don't care (RP2350 Hi-Z until DONE) | ECP5 weak pull-down (TN-02039 §5.2) |
+| R16 | PR35B/VREF1_3 | 3 | `DAC_L3` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| T13 | PR44B | 3 | `DAC_R3` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| T14 | PR41D | 3 | `DAC_R1` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
+| T15 | PR38D | 3 | `LINK_STB` | in | E |  | don't care (RP2350 Hi-Z until DONE) | ECP5 weak pull-down (TN-02039 §5.2) |
+| M10 | TDO | 40 | `FPGA_TDO` | out | G | 4.7 kΩ pull-up | high | 4.7 kΩ pull-up |
+| R11 | TDI | 40 | `FPGA_TDI` | in | G | 4.7 kΩ pull-up | high | 4.7 kΩ pull-up |
+| T10 | TCK | 40 | `FPGA_TCK` | in | G | JTAG header; 4.7 kΩ pull-down | low | 4.7 kΩ pull-down |
+| T11 | TMS | 40 | `FPGA_TMS` | in | G | 4.7 kΩ pull-up | high | 4.7 kΩ pull-up |
+| K4 | PL29A/GR_PCLK6_0 | 6 | `PF_CS_n` | out | D | reserved, optional 2 × ADS8353 (R-51); 4.7 kΩ pull-up | high (ADC deselected, SDO tri-stated) | 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA) |
+| K5 | PL29B | 6 | `PF_SDI` | out | D | reserved | don't care (CS high) | ECP5 weak pull-down (TN-02039 §5.2) |
+| L1 | PL26A/PCLKT6_1 | 6 | `FAULT_W_n` | in | D | always driven: 330 Ω series, partner L2 NC | don't care (FPGA input; comparator push-pull output) | driven by block D; pull-down cannot move it |
+| L3 | PL32C | 6 | `IS_CS_n` | out | D | ADS7038-Q1; 4.7 kΩ pull-up | high (ADC deselected, SDO tri-stated) | 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA) |
+| L4 | PL29C/GR_PCLK6_1 | 6 | `PF_SCLK` | out | D | reserved | don't care (CS high) | ECP5 weak pull-down (TN-02039 §5.2) |
+| L5 | PL29D | 6 | `PF_SDO_WA` | in | D | reserved | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| M1 | PL26C/PCLKT6_0 | 6 | `FAULT_T_n` | in | D | always driven: 330 Ω series, partner M2 NC | don't care (FPGA input; comparator push-pull output) | driven by block D; pull-down cannot move it |
+| M3 | PL32D | 6 | `IS_SCLK` | out | D | ≤ 60 MHz | don't care (CS high) | ECP5 weak pull-down (TN-02039 §5.2) |
+| M4 | PL35C | 6 | `VB_SDO` | in | D | partner N3 is an FPGA output | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| M5 | PL44C | 6 | `PF_SDO_WB` | in | D | reserved | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| N1 | PL32A | 6 | `PWM_W_A` | out | D | ODDRX2F; LMG1210 PWM mode, high = HS on; matched routing, 100 Ω at driver | low (bridge legs off) | ECP5 weak pull-down (TN-02039 §5.2) + block D pull-down; latch also held off by AMP_ARM low |
+| N3 | PL35D | 6 | `VB_SCLK` | out | D | ≤ 16 MHz | don't care (CS high) | ECP5 weak pull-down (TN-02039 §5.2) |
+| N4 | PL38A | 6 | `VCXO_TUNE` | out | E | ΔΣ → 2-pole RC → VCXO Vc | any (Vc 0 V = VCXO at its pull limit; servo recentres after config) | ECP5 weak pull-down (TN-02039 §5.2) pulls the RC to 0 V; harmless |
+| N5 | PL44D | 6 | `PF_SDO_TA` | in | D | reserved | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| N6 | PL47B | 6 | `PF_SDO_TB` | in | D | reserved | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| P1 | PL35A | 6 | `PWM_W_B` | out | D | ODDRX2F | low (bridge legs off) | ECP5 weak pull-down (TN-02039 §5.2) + block D pull-down; latch also held off by AMP_ARM low |
+| P2 | PL32B | 6 | `AMP_CLK_W` | out | D | fault-latch clock | low, no rising edge | ECP5 weak pull-down (TN-02039 §5.2); latch ignores CLK while AMP_ARM is low |
+| P3 | PL38B | 6 | `IS_SDO` | in | D | partner N4 is an FPGA output | don't care (ADC tri-stated) | ECP5 weak pull-down (TN-02039 §5.2) |
+| P4 | PL41A | 6 | `VB_CS_n` | out | D | ADS7042; 4.7 kΩ pull-up (moved from T3, which pairs with PWM_T_B and is now left unused) | high (ADC deselected, SDO tri-stated) | 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA) |
+| P6 | PL47C/LLC_GPLL0T_IN | 6 | `VCXO_CLK` | in | E | LLC_GPLL0T_IN: PWM/audio PLL reference; partner P5 left NC | don't care (driven by VCXO) | push-pull source |
+| R1 | PL35B/VREF1_6 | 6 | `AMP_ARM` | out | D | block D 10 kΩ pull-down | low (both bridges disarmed) | ECP5 weak pull-down (TN-02039 §5.2) + block D 10 kΩ pull-down |
+| R2 | PL38C | 6 | `PWM_T_A` | out | D | ODDRX2F | low (bridge legs off) | ECP5 weak pull-down (TN-02039 §5.2) + block D pull-down; latch also held off by AMP_ARM low |
+| R3 | PL41B | 6 | `IS_SDI` | out | D |  | don't care (CS high) | ECP5 weak pull-down (TN-02039 §5.2) |
+| R4 | PL41C | 6 | `PWM_T_B` | out | D | ODDRX2F | low (bridge legs off) | ECP5 weak pull-down (TN-02039 §5.2) + block D pull-down; latch also held off by AMP_ARM low |
+| R5 | PL44A | 6 | `AMP_EN_W` | out | D | fault-latch D input | low, no rising edge | ECP5 weak pull-down (TN-02039 §5.2); latch ignores CLK while AMP_ARM is low |
+| T2 | PL38D | 6 | `AMP_CLK_T` | out | D | fault-latch clock | low, no rising edge | ECP5 weak pull-down (TN-02039 §5.2); latch ignores CLK while AMP_ARM is low |
+| T4 | PL44B | 6 | `AMP_EN_T` | out | D | fault-latch D input | low, no rising edge | ECP5 weak pull-down (TN-02039 §5.2); latch ignores CLK while AMP_ARM is low |
+| G1 | PL20A/GR_PCLK7_1 | 7 | `DC_T_n` | in | D | open-drain + 4.7 kΩ pull-up at D; 1 kΩ series, partner H2 NC | high when idle (D hardware reads it through a diode into the fault node) | block D 4.7 kΩ pull-up (changed from 10 kΩ; ≥ 2.6 V vs 150 µA); fault node also held by AMP_ARM low; LPF PULLMODE=NONE |
+| J1 | PL23A/PCLKT7_1 | 7 | `DC_W_n` | in | D | open-drain + 4.7 kΩ pull-up at D; 1 kΩ series, partner J2 NC | high when idle (D hardware reads it through a diode into the fault node) | block D 4.7 kΩ pull-up (changed from 10 kΩ; ≥ 2.6 V vs 150 µA); fault node also held by AMP_ARM low; LPF PULLMODE=NONE |
+| K1 | PL23C/PCLKT7_0 | 7 | `CLK_AUX` | in | E | PCLKT7_0, spare clock input (external low-jitter clock option) | unconnected unless the option is fitted | — |
+| M7 | PB9B/D2/IO2 | 8 | `LINK_D0` | io | E | D2 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| M8 | PB15B/DOUT/CSON | 8 | `LINK_D7` | io | E | DOUT/CSON | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| M9 | PB18A/WRITEN | 8 | `LINK_IRQ` | out | E | WRITEN | ignored until DONE | WRITEN pulled up during config (Tab 4.5) |
+| N10 | CFG_0 | 8 | `FPGA_CFG0` | in | E | 4.7 kΩ to VCCIO8 (CFG = 001 SSPI) | high (CFG = 001) | 4.7 kΩ pull-up |
+| N7 | PB9A/D3/IO3 | 8 | `LINK_D1` | io | E | D3 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| N8 | PB15A/HOLDN/DI/BUSY/CSSPIN/CEN | 8 | `FPGA_HOLDN` | in | E | 4.7 kΩ pull-up, not driven | high | 4.7 kΩ pull-up (TN-02038 Tab 6.2) |
+| N9 | CCLK/MCLK/SCK | 8 | `FPGA_CCLK` | in | E | SSPI clock from RP2350 SPI1 SCK (8 mA); 33 Ω series at RP2350, 1 kΩ pull-up to VCCIO8 | high/defined | 1 kΩ pull-up to VCCIO8 |
+| P10 | CFG_1 | 8 | `FPGA_CFG1` | in | E | to GND | low | tied to GND |
+| P7 | PB6B/D4/MOSI2/IO4 | 8 | `LINK_D2` | io | E | D4 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| P8 | PB13B/CS1N | 8 | `LINK_D6` | io | E | CS1N | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| P9 | DONE | 8 | `FPGA_DONE` | io | E | 4.7 kΩ pull-up | high | 4.7 kΩ pull-up (TN-02038 Tab 6.2) |
+| R10 | CFG_2 | 8 | `FPGA_CFG2` | in | E | to GND | low | tied to GND |
+| R6 | PB4B/D6/IO6 | 8 | `LINK_D4` | io | E | D6 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| R7 | PB6A/D5/MISO2/IO5 | 8 | `LINK_D3` | io | E | D5 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| R8 | PB13A/SN/CSN | 8 | `FPGA_SN` | in | E | SSPI chip select, 4.7 kΩ pull-up | high | 4.7 kΩ pull-up (TN-02038 Tab 6.2) |
+| R9 | PROGRAMN | 8 | `FPGA_PROGRAMN` | in | E | 4.7 kΩ pull-up; RP2350 open-drain | high | 4.7 kΩ pull-up (TN-02038 Tab 6.2) |
+| T6 | PB4A/D7/IO7 | 8 | `LINK_D5` | io | E | D7 | don't care (RP2350 Hi-Z until DONE) | bank 8 D-pins: no pull; M8 drives high during config (TN-02039 §4.7.2) → RP2350 keeps Hi-Z |
+| T7 | PB11A/D1/MISO/IO1 | 8 | `FPGA_MISO` | out | E | SSPI MISO (D1) | don't care (SN high) | — |
+| T8 | PB11B/D0/MOSI/IO0 | 8 | `FPGA_MOSI` | in | E | SSPI MOSI (D0) | don't care (SN high) | — |
+| T9 | INITN | 8 | `FPGA_INITN` | io | E | 4.7 kΩ pull-up | high | 4.7 kΩ pull-up (TN-02038 Tab 6.2) |
+
+## Pre-configuration sweep (lead's request after the C+G review, 2026-11-07)
+
+Every FPGA ball above now has two extra columns: the level its external circuit needs before configuration (and while the ECP5 core is unpowered), and what guarantees it. The hazard is the ECP5 default: before configuration and on unused pins, a **weak pull-down of 30–150 µA** (TN-02039 §5.2; TN-02038 Tab 9.1). A pull-up of R_pu is dragged to 3.3 V − 150 µA × R_pu, so **any pull-up above ~4.7 kΩ on a net that hardware reads before configuration fails** (VIH 2.31 V for 0.7·VCC CMOS needs R_pu ≤ 6.6 kΩ).
+
+Findings:
+1. **PG_3V3, PG_5V** (block C): deadlock, since PG_3V3 also enables 1V1. **Fixed by block C**: B3/B4 now carry buffered active-low copies `PG_5V_N`/`PG_3V3_N` (2N7002 + 4.7 kΩ), and the real PG nets no longer reach the FPGA. Gateware inverts them.
+2. **RMII_RXD0/RXD1/CRS_DV** (LAN8720A straps): fixed with 4.7 kΩ pull-ups + PULLMODE=UP (review MAJOR-2).
+3. **POE_LOSS_N**: my own 10 kΩ pull-up gave 1.8 V, and the net also feeds block F's /DC_TRIP diode. It fails safe (mutes), but it is wrong: **changed to 4.7 kΩ** (2.6 V).
+4. **DC_W_n, DC_T_n**: block D's hardware reads them through a diode into the fault node. **Fixed by block D**: pull-up now 4.7 kΩ (≥ 2.6 V).
+5. **PG_3V3Q** (block C 100 kΩ): reads "not good" before configuration, which is the safe direction (DAC lines low). Fine as long as only the FPGA reads it; otherwise ≤ 4.7 kΩ.
+6. **FPGA-only readers with weak pull-ups or dividers** (LED_FAULT_N, QWIIC_FAULT_N, PHY_NINT, HP_FAULT_N, HP_DET, VUSB_DET, ACF_PULSE): no pre-configuration consequence, but the gateware must set **PULLMODE=NONE** on them in the LPF, or the post-configuration pull-down leaves them at 1–1.8 V.
+7. Enables, resets, chip-selects and PWM lines: the pull-down puts each in its safe state (bridge off, relays open, PHY in reset, LED/Qwiic power off, backlight off). ADC chip-selects have 4.7 kΩ pull-ups so the ADCs stay deselected. No action.
+8. **VCXO_TUNE**: the pull-down discharges the 2-pole RC to 0 V → VCXO at its pull limit until the servo runs. Harmless.
+
+**Unpowered ECP5 / clamp back-powering:** every external part on an FPGA ball runs from `+3V3`, the same rail as all VCCIO banks. The exceptions:
+- **DAC flip-flops on +3V3_Q** (the reverse case): the FPGA drives low or pulls down until PG_3V3Q.
+- **ACF_PULSE**: closed. Block B drives it from a TLV3202 on +3V3, the same rail as the FPGA, so nothing is injected.
+- **IBUS_SENSE** into RP2350 ADC4 (not an FPGA pin): block B's INA281 runs from VSR (10 V, from VBUS), which can be up before +3V3. Its final source impedance is ≈ 67 kΩ, so the worst injection into an unpowered RP2350 pad is 3 V / 67 kΩ ≈ 45 µA. **Accepted**, closed.
+
+The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handled: partner-NC rule, review MINOR-7.
+
+**Gateware LPF rules collected here:**
+- PULLMODE=UP on A11, A12, B11.
+- PULLMODE=NONE on A6, B3, B4, B5, B6, K16, C14, E14, B13, P11, K13, J1, G1.
+- All other inputs keep the default.
 
 ## FPGA power and dedicated balls
 
@@ -148,15 +175,15 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 
 | Bank | User I/O | Used | Held NC (partner) | Spare | Spare balls (outer ring first) |
 |---|---|---|---|---|---|
-| 0 | 24 | 8 | 0 | 16 | A7 A8 B6 B7 C4 C5 C6 C7 D4 D5 D6 D7 E4 E5 E6 E7 |
+| 0 | 24 | 9 | 0 | 15 | A7 A8 B7 C4 C5 C6 C7 D4 D5 D6 D7 E4 E5 E6 E7 |
 | 1 | 32 | 11 | 0 | 21 | A15 B14 B8 B9 C10 C11 C12 C13 C9 D10 D11 D12 D13 D8 D9 E13 E10 E11 E12 E8 E9 |
 | 2 | 32 | 15 | 3 | 14 | B15 J15 G14 H14 J14 K14 F13 G13 H13 J13 F12 G12 H12 J12 |
 | 3 | 32 | 20 | 4 | 8 | M15 L13 M13 N11 N12 L12 M11 M12 |
-| 6 | 32 | 27 | 3 | 2 | P4 M6 |
+| 6 | 32 | 27 | 3 | 2 | T3 M6 |
 | 7 | 32 | 3 | 2 | 27 | B1 C1 D1 E1 F1 B2 C2 E2 F2 G2 K2 C3 D3 E3 F3 G3 H3 J3 K3 F4 G4 H4 J4 F5 G5 H5 J5 |
 | 8 | 13 | 13 | 0 | 0 |  |
 
-**88 spare I/O.** B15 (PR2B, dual function "S0_IN") is listed as spare but best left unused. All slow status and enables that went to a TCA9535 expander in the Gowin version are now on FPGA pins; the expander is dropped (`E-ioexp-tca9535.md` superseded).
+**87 spare I/O.** B15 (PR2B, dual function "S0_IN") is listed as spare but best left unused. **T3 must stay unconnected** (it pairs with `PWM_T_B` R4; review MINOR-7). All slow status and enables that went to a TCA9535 expander in the Gowin version are now on FPGA pins; the expander is dropped (`E-ioexp-tca9535.md` superseded).
 
 ## RP2350B — QFN-80, all 80 pins + EP
 
@@ -204,8 +231,8 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | 40 | GPIO32 | `SPARE_MCU_D` | io | spare (no I2C expander with the ECP5) |
 | 41 | IOVDD | `+3V3` | P | 100 nF |
 | 42 | GPIO33 | `VDRV_PG` | in | block C gate-drive supply power-good (direct: gates amp start) |
-| 43 | GPIO34 | `SPARE_MCU_E` | io | spare |
-| 44 | GPIO35 | `SPARE_MCU_F` | io | spare |
+| 43 | GPIO34 | `ILIM_SEL0` | out | block B CC-limit select bit 0; B fits 100 kΩ pull-down |
+| 44 | GPIO35 | `ILIM_SEL1` | out | block B CC-limit select bit 1; B fits 100 kΩ pull-down |
 | 45 | GPIO36 | `VDRV_EN` | out | block C gate-drive supply enable (pull-down = off) |
 | 46 | GPIO37 | `SPARE_MCU_G` | io | spare |
 | 47 | GPIO38 | `SPARE_MCU_H` | io | spare |
@@ -216,7 +243,7 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | 52 | GPIO41/ADC1 | `KNOB2` | ain | |
 | 53 | GPIO42/ADC2 | `KNOB3` | ain | |
 | 54 | GPIO43/ADC3 | `KNOB4` | ain | |
-| 55 | GPIO44/ADC4 | `SPARE_ADC4` | ain | spare analog input (NTCs moved to block D's ADS7038) |
+| 55 | GPIO44/ADC4 | `IBUS_SENSE` | ain | block B converter output current, 0–3.0 V for 0–1.5 A (2.0 V/A), ≈ 67 kΩ source; 100 nF at the pin |
 | 56 | GPIO45/ADC5 | `SPARE_ADC5` | ain | spare analog input (NTCs moved to block D's ADS7038) |
 | 57 | GPIO46/ADC6 | `SPARE_ADC6` | ain | spare analog input (NTCs moved to block D's ADS7038) |
 | 58 | GPIO47/ADC7 | `SPARE_ADC7` | ain | spare analog input (NTCs moved to block D's ADS7038) |
@@ -244,9 +271,20 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | 80 | GPIO3 | `I2C1_SCL` | io | |
 | EP | GND | GND | P | |
 
+### RP2350 pre-boot states (same sweep)
+
+RP2350 pads reset to Hi-Z with a 36–113 kΩ pull-down (§9.3):
+- `VDRV_EN`: off via block C's 100 kΩ pull-down.
+- `ILIM_SEL0/1`: 00 = 0.44 A via block B's 100 kΩ pull-downs.
+- `FPGA_PROGRAMN`: held high by its 4.7 kΩ pull-up (≥ 2.92 V against the pad pull-down).
+- `FPGA_SN`: high via its 4.7 kΩ pull-up.
+- `FPGA_CCLK`: high via its 1 kΩ pull-up.
+- Link pins: Hi-Z.
+- `IBUS_SENSE`: ≤ 45 µA into an unpowered pad (closed).
+
 ### RP2350 headroom
 
-48 GPIO: 35 used, **13 spare** (GPIO29–32, 34, 35, 37–39, and ADC4–7 / GPIO44–47), freed by moving PHY management and the slow status to the FPGA. The SSPI configuration uses SPI1 (GPIO24–27) with PROGRAMN/INITN/DONE on GPIO22, 23, 28.
+48 GPIO: 38 used, **10 spare** (GPIO29–32, 37–39, and ADC5–7 / GPIO45–47), freed by moving PHY management and the slow status to the FPGA. The SSPI configuration uses SPI1 (GPIO24–27) with PROGRAMN/INITN/DONE on GPIO22, 23, 28.
 
 ## Interface cross-check
 
@@ -254,7 +292,7 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 |---|---|---|
 | Block D PWM (LMG1210 PWM mode) | 4 | FPGA N1, P1, R2, R4 (bank 6, ODDRX2F) |
 | Block D fault latch: AMP_EN ×2, AMP_CLK ×2, AMP_ARM, FAULT_n ×2, DC_n ×2 | 9 | FPGA R5, T4, P2, T2, R1, L1, M1 (bank 6); J1, G1 (bank 7) |
-| Block D ADS7042 (VBUS) | CS, SCLK, SDO | FPGA T3, N3, M4 |
+| Block D ADS7042 (VBUS) | CS, SCLK, SDO | FPGA P4, N3, M4 |
 | Block D ADS7038-Q1 (I-sense ×4, NTC ×4) | CS, SCLK, SDI, SDO | FPGA L3, M3, R3, P3 |
 | Block D 2 × ADS8353 (optional, pins reserved) | CS, SCLK, SDI, 4 × SDO | FPGA K4, L4, K5, L5, M5, N5, N6 |
 | Block D NTCs | 4 | on the ADS7038-Q1 channels 4–7 (block D's proposal, accepted); RP2350 ADC4–7 now spare |
@@ -265,10 +303,13 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | Block G display (8 header positions) + backlight switch | 8 + 1 | FPGA B16, C16, C15, D16, E15, E16, F15, F16; `DISP_BL_PWM` G15. The header line jumpered to DISP_BLK must be constrained Hi-Z in the gateware |
 | Block G PTP-second test point | 1 | FPGA G16 |
 | Block C/G LED_EN, QWIIC_PWR_EN, LED_FAULT_N, QWIIC_FAULT_N, VUSB_DET | 5 | FPGA H15, J16, K16, C14, E14 |
-| Block C PG_5V, PG_3V3, PG_3V3Q | 3 | FPGA B3, B4, B5 |
+| Block C PG_5V_N, PG_3V3_N (buffered, active low), PG_3V3Q | 3 | FPGA B3, B4, B5 |
+| Block B ILIM_SEL0, ILIM_SEL1 (E → B) | 2 | RP2350 GPIO34, GPIO35 (block B's 100 kΩ pull-downs → reset state 00 = 0.44 A) |
+| Block B IBUS_SENSE (B → E, 0–3.0 V = 0–1.5 A, ≈ 67 kΩ source, RC-filtered 3.4 kHz) | 1 analog | RP2350 ADC4 (GPIO44), 100 nF at the pin |
+| Block B ACF_PULSE (3.3 V push-pull, 620 kHz ± 10 %) | 1 | FPGA B6 (top bank 0), 4.7 kΩ series; gateware measures f_acf |
 | Block C VDRV_EN, VDRV_PG | 2 | RP2350 GPIO36, GPIO33 |
-| Block A PD_PG, PD_TPH_N, PD_TPL_N, PD_BT_N | 4 | FPGA A2–A5 |
-| Block B/C POE_LOSS_N | 1 | FPGA A6 |
+| Block A PD_PG_N, PD_TPH_N, PD_TPL_N, PD_BT_N | 4 | FPGA A2–A5 |
+| Block B POE_LOSS_N (input-voltage PoE-loss detector, open-drain, active low, latches ~10 ms) | 1 | FPGA A6; 10 kΩ pull-up on the net (E); net continues to block F's /DC_TRIP OR diode |
 | PHY RMII + SMI + reset/int | 7 + 4 | FPGA C8, A9–A12, B10, B11; A13, A14, B12, B13 |
 | VCXO clock + tune | 2 | FPGA P6, N4 |
 | RP2350 ↔ FPGA link | 12 | RP2350 GPIO8–19 ↔ FPGA M7, N7, P7, R7, R6, T6, P8, M8 (D0–D7), M9 (IRQ), M16 (CLK), R15 (DIR), T15 (STB) |

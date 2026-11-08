@@ -1,7 +1,7 @@
 # Block B output — output inductor, output ceramics, VBUS bulk electrolytics, VBUS overvoltage scheme and TVS
 
-Converter numbers from `B-converter-design.md` (400 kHz, n = 2, D 0.424–0.590).
-Order on the secondary: T1 → SRs → `SW_SEC` → L_out → output ceramics → IBUS shunt (27 mΩ,
+Converter numbers from `B-converter-design.md` (737 kHz crystal-synced, n = 2, D 0.424–0.655).
+Order on the secondary: T1 → SRs → `SW_SEC` → L_out → output ceramics → IBUS shunt (30 mΩ,
 `B-feedback.md`) → `VBUS` node: bulk electrolytics, TVS, loads (blocks C, D).
 
 ---
@@ -16,13 +16,13 @@ Footprint: 12 × 12 mm, 4-pad SMD per datasheet land pattern.
 |---|---|---|---|
 | L | 68 µH ± 20 % (100 kHz) | 68 µH | |
 | DCR | 120 mΩ max (92 typ) | 156 mΩ hot (×1.3) | |
-| Rated current | 2.60 A (L −25 % or ΔT, whichever first; note 2) | peak 1.87 A at the 1.36 A CC limit and 57 V; rms 1.37 A | 1.39× on peak |
+| Rated current | 2.60 A (L −25 % or ΔT, whichever first; note 2) | peak 1.65 A at the 1.30 A CC limit and 57 V, L −20 %; rms 1.32 A | 1.58× on peak |
 | Operating temperature | −40…+100 °C incl. self-heating | 55 °C air + ≈ 11 °C (1.37/2.6)² × 40 °C | OK; R-40 85 °C ambient case → 96 °C, marginal |
 
-Calculation: ΔIL = Vo(1−D)/(L·fsw): 0.72 A p-p (41 V), 0.91 A (50 V), 1.02 A (57 V); with L at
-−20 %: 1.28 A p-p at 57 V, peak 2.0 A at 1.36 A. CCM boundary at Io = ΔIL/2 ≈ 0.45 A; below it the
-NCP4306s give DCM (no reverse current).
-Loss: 1.37² × 0.156 = 0.29 W + core (ferrite drum, 1 A p-p at 400 kHz, est. ≤ 0.1 W).
+Calculation (737 kHz): ΔIL = Vo(1−D)/(L·fsw): 0.35 A p-p (38.4 V), 0.50 A (50 V), 0.55 A (57 V);
+with L at −20 %: 0.69 A p-p at 57 V, peak 1.65 A at the 1.30 A CC limit. CCM boundary at
+Io = ΔIL/2 ≈ 0.17–0.28 A; below it the NCP4306s give DCM.
+Loss: 1.32² × 0.156 = 0.27 W + core (ferrite drum, 0.55 A p-p at 737 kHz, est. ≤ 0.07 W).
 Choice of L: 100 µH halves ripple but available 100 µH parts are 2.0–2.1 A rated (Bourns SRR1280-101M
 Isat 2.0 A; Sumida -101MC 2.10 A, 151 mΩ), too close to the 2.0 A worst-case peak.
 Alternate (better part, weaker sourcing): Würth 7447709680 WE-PD 68 µH, Isat(10 %) 3.6 A, 89 mΩ
@@ -32,15 +32,17 @@ R-41: 12 × 12 × 7 mm drum, SMD; glue dot for vibration.
 
 ---
 
-## C (out, HF) — 3 × 4.7 µF 100 V X7S 1210, Taiyo Yuden HMK325C7475KMHPE
+## C (out, HF) — 6 × 4.7 µF 100 V X7S 1210, Murata GCM32DC72A475KE02L
 
-Datasheet: datasheets/taiyo-hmk325c7475.pdf. Supplier:
-`C385986 HMK325C7475KMHPE (Taiyo Yuden, 1210): extended, JLC stock 52719, lifecycle normal, checked 2026-11-07`
-- 48 V on 100 V (2.1×) ✓; transient to 64 V (TVS breakdown) still < 100 V.
-- DC bias **assumed** 50 % at 48 V → 3 × 2.35 µF = 7 µF. To confirm.
-- Inductor ripple rms ΔIL/√12 = 0.29 A (57 V) shared with the bulk ✓.
-- Ripple voltage (ceramics alone) ΔIL/(8·f·C) = 1.02/(8 × 400 k × 7 µ) = 46 mV p-p; the bulk
-  lowers it further. These caps sit before the IBUS shunt, at the SR/inductor cell.
+Changed from 3 × Taiyo Yuden HMK325C7475KMHPE (review m7: the fetched sheet was the HMJ catalog,
+not the HMK part) and doubled for the shunt-ripple fix (review m2, `B-feedback.md`).
+Datasheet: datasheets/murata-gcm32dc72a475.pdf (Murata GCM series catalog; 100 Vdc, X7S, 1210).
+Supplier: `C913445 GCM32DC72A475KE02L (muRata, 1210): extended, JLC stock 9059, lifecycle normal, checked 2026-11-07`
+- 48 V on 100 V (2.1×) ✓; at the SMCJ51A clamp (82.4 V) still < 100 V.
+- DC bias **assumed** 50 % at 48 V → 6 × 2.35 µF ≈ 14 µF. Confirm with Murata SimSurfing (n14).
+- Inductor ripple rms ΔIL/√12 = 0.16 A (57 V), about 70 % of it in these caps ✓.
+- Ripple voltage (ceramics alone) ΔIL/(8·f·C) = 0.55/(8 × 737 k × 14 µ) = 7 mV p-p. These caps sit
+  before the IBUS shunt, at the SR/inductor cell.
 
 ---
 
@@ -69,10 +71,14 @@ converter current-limits").
 
 **Ripple current.** The class-D bridges draw P_inst/VBUS; for a sine of average power P, the 2f
 component is P/(VBUS·η·√2) rms, which the bulk carries (the converter loop is too slow).
-- Sustained limit (≈ 46 W at Class 8, R-33a): 46/(48 × 0.9 × 1.414) = 0.75 A rms.
-- 10 ms bursts at 2 × 100 W: ≈ 2.3 A rms (two uncorrelated channels).
-- Rating at 120 Hz, 105 °C: 6 × 2.89 × 0.60 = 10.4 A rms; at 1 kHz 15 A. Margin > 4× in bursts,
-  > 13× sustained, so self-heating is negligible and life is set by ambient.
+- B's own estimate: sustained (≈ 46 W at Class 8, R-33a) 46/(48 × 0.9 × 1.414) = 0.75 A rms; 10 ms
+  bursts at 2 × 100 W ≈ 2.3 A rms.
+- **Design case (aligned with block D, review n9): block D's figures, 2.2 A rms continuous and
+  4.2 A rms in bursts** (they include the bridges' PWM-envelope components B's sine estimate leaves
+  out). Both blocks quote these numbers.
+- Rating at 120 Hz, 105 °C: 6 × 2.89 × 0.60 = 10.4 A rms; at 1 kHz 15 A. Margin 4.7× continuous,
+  2.5× in bursts, so self-heating is small (ΔT ∝ (I/Irated)²: ≈ 2 °C continuous) and life is set by
+  ambient.
 - The PWM-frequency (400 kHz–1 MHz) ripple of the bridges belongs in block D's local ceramics;
   whatever reaches the bulk is within the 100 kHz rating (block D to confirm its split).
 
@@ -145,6 +151,8 @@ not follow (its voltage moves only with energy, layer 1).
 
 ## Open questions
 
-1. MLCC DC-bias assumption (50 % at 48 V).
+1. MLCC DC-bias assumption (50 % at 48 V); close with Murata SimSurfing data (n14).
+4. SMCJ51A leakage at a sustained 55 V (97 % of VBR min) is not specified above VWM; measure it hot
+   (review n1).
 2. KZN gives no surge rating; the scheme above never relies on one.
 3. KZN lead option "ML25S" pitch/length for the footprint.

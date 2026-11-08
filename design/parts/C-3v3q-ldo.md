@@ -65,8 +65,9 @@ back-power 3V3_Q through their clamp diodes. This is block F's part choice.
 ## Fine print
 
 - COUT ESR must be ≤ 20 mΩ: ceramic only, no tantalum.
-- The NR/SS cap also sets the start-up time (fast-charge current 2.1 mA, §NR/SS). With 4.7 µF:
-  3.3 V × 4.7 µF / 2.1 mA ≈ 7 ms, then the 1.5 Hz filter settles. That is slow and monotonic, which
+- The NR/SS cap sets the start-up time (TPS7A94 p. 37, corrected after review): fast charge 2.1 mA to
+  ≈ 93 % (3.07 V × 4.7 µF / 2.1 mA = 6.9 ms), then 150 µA for the last 0.23 V (0.23 V × 4.7 µF / 150 µA =
+  7.2 ms) → **≈ 14 ms** to regulation, then the 1.5 Hz NR filter settles. A slow, monotonic, quiet start. That is slow and monotonic, which
   suits a quiet audio start.
 - SNS (pin 8) is the remote-sense input: connect it to OUT at the flip-flops' supply point (Kelvin)
   to keep trace resistance out of Zout.

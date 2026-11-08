@@ -123,7 +123,7 @@ and the earlier text disagree, this section wins. Each `<X>-interfaces.md` holds
 - **VBUS overvoltage:** bulk absorbs regen (≤ 12.4 mJ, +0.04 V); gateware stop at 55 V; converter
   OVP ≈ 53 V through the aux winding into LINEOV; SMCJ51A at the bulk and SMBJ51A at each bridge.
 - **Block C rails:** `+5V_BUCK` (LM5013, LEDs) and `+5V` (TPS2116 priority mux with `VUSB`);
-  `+3V3` and `+1V1` (TLV62569P / TPS62A02A); `+2V5` (TPS7A9401); `+3V3_Q` (TPS7A2033, enable
+  `+3V3` and `+1V1` (TLV62569P / TPS62A02A); `+2V5` (TPS7A9401); `+3V3_Q` (TPS7A9401, enable
   gated by ±15 V power-good); `+3V3_A` (TPS7A2033, block D sensing); `VDRV` 7.0 V (LM5017);
   `+15V`/`-15V` from an LM5017 Fly-Buck at +18/−17.4 V plus TPS7A4901/TPS7A3001 LDOs, 120 mA
   per rail; `+5V_A` from +15 V for the mic ADC and bias. `+1V2` and `+1V8` are withdrawn.

@@ -37,7 +37,9 @@ FPGA (MCLK domain)                      +3V3_Q                                  
   0.3 Hz high-pass. The output offset is then ≤ 1.1 mV (`F-servo-opa2277.md`).
 - **Headphone stage:** one SA5532 half, gain 1.30, with a BCP56-16/BCP53-16 complementary emitter
   follower inside the loop. The bias spreader is one BAV99, the emitter resistors are 15 Ω, and a
-  BC847/BC857 limiter trips at about 41 mA. A 4.7 Ω resistor sits outside the loop
+  BC847/BC857 limiter trips at about 43 mA. The bias string is fed by ≈ 4 mA current sources, and a
+  1 kΩ resistor separates the op-amp from the spreader, so the op-amp is not in current limit
+  during a short (review M1). A 4.7 Ω resistor sits outside the loop
   (`F-hp-output-stage.md`).
 - **Mute:** two HFD4/5 DPDT signal relays (HP L/R and line L/R) on their normally-open contacts,
   so the output is disconnected whenever the coil is unpowered. They are driven from the FPGA
@@ -68,13 +70,13 @@ The analysis is integrated over 20 Hz–20 kHz, with and without A-weighting. Sc
 
 | Source | Line out, µV A-wt | Notes |
 |---|---|---|
-| Filter resistors + SA5532 en/in | 5.14 | en × noise gain 4.5 dominates (4.35 µV unweighted); R2 750 Ω is next |
+| Filter resistors + SA5532 en/in | 5.8 | en × noise gain 4.5 dominates. 5.14 µV at en = 5 nV typ, 25 °C; **5.8 µV at the SA5532A's en(max) = 6 nV and 55 °C** (review m2 recomputation, used here) |
 | Clock jitter, 4-tap, σ = 1 ps (block E requirement) | 1.6 | see jitter section; 2.0 µV unweighted |
-| Modulator quantisation noise, OSR 128, ≥ 5th order | ≤ 0.5 | requirement on block E: ≤ −135 dB re m = 1 in band |
+| Modulator quantisation noise, OSR 128, ≥ 5th order | ≤ 0.82 | requirement on block E tightened to **≤ −140 dB re m = 1** in band, A-weighted (m = 1 ↔ 8.19 Vrms out, so 0.82 µV) |
 | +3V3_Q noise (idle, common-mode, 0.1 % match) | < 0.1 | 5 µV × CMRR ≈ 46 dB |
 | Servo injection (OPA2277 en, low-passed) | < 0.2 | |
-| **Line out total** | **≈ 5.4 µV A-wt** | target 10 µV, margin 5.4 dB |
-| HP: 1.30 × line + HP stage (en 5 nV, Rf∥Rg 767 Ω → 0.95 µV) | **≈ 7.1 µV A-wt** | margin 3 dB |
+| **Line out total** | **≈ 6.1 µV A-wt** | target 10 µV, margin 4.3 dB |
+| HP: 1.303 × line + HP stage (en 6 nV max, Rf∥Rg 767 Ω → 1.0 µV) | **≈ 8.0 µV A-wt** | margin 1.9 dB (review m2) |
 
 Calculation output (filter only):
 ```
@@ -102,11 +104,12 @@ target.** These are estimates only. R-52 says phase 8 proves the figure by simul
 
 The model: each output transition carries a timing error δ. That produces an error impulse of
 area ΔV·δ, where ΔV is the step in the summed DAC output. For white (edge-to-edge uncorrelated)
-jitter σ, the in-band error power at the DAC is F·E[Δy²]·σ²·f_B, with F = 6.144 MHz and
+jitter σ, the in-band error power at the DAC is 2·F·E[Δy²]·σ²·f_B (one-sided, so the factor 2;
+review n4), with F = 6.144 MHz and
 f_B = 20 kHz.
 - **Single tap**: ΔV = 6.6 V diff and transition probability ≈ 0.5, so E[Δy²] = 21.8 V². The
-  output noise is G·sqrt(F·E·f_B)·σ = 3.51 × sqrt(6.144e6 × 21.8 × 2e4) × σ = **7.9 µV per ps**
-  (20 kHz, unweighted).
+  output noise is G·sqrt(2·F·E·f_B)·σ = 3.51 × sqrt(2 × 6.144e6 × 21.8 × 2e4) × σ =
+  **8.1 µV per ps** (20 kHz, unweighted).
 - **4-tap boxcar**: Δy = (s_k − s_{k−4})·3.3/4, so E[Δy²] is 1/16 of the single-tap value. The
   noise is **2.0 µV per ps**.
 
@@ -121,6 +124,18 @@ Requirement to block E (the 4-tap build is the baseline):
   source series resistor. If the oscillator also has to feed the FPGA, PCM1808 SCKI and others,
   give the FF clock its own branch: a dedicated low-jitter buffer output, powered from `+3V3_Q` or
   its own quiet rail. A VCXO is acceptable only if its datasheet meets the floor above.
+- **What is on file (review n3):**
+  - Block E's VCXO (SX3V24.576B20100F30TNN) datasheet gives **no** phase-noise or jitter figure,
+    so the requirement is **UNVERIFIED** for it. Its bring-up test: idle line-out noise
+    ≤ 6.5 µV A-weighted.
+  - The fallback XO, YXC OT2EL4C4JI-111OLP-24.576M (C5203547): its LCSC-linked datasheet
+    (`datasheets/F-yxc-ot2el-24m576.pdf`, YSO110TR series, image-only, read as rendered pages)
+    states **phase jitter ≤ 0.7 ps max over 12 kHz–20 MHz**, which contains the 20 kHz–12 MHz
+    band. That meets the 4-tap requirement of ≤ 1 ps.
+  - Caveat: the sheet is for the YSO110TR series and does not print the OT2EL… ordering code.
+    Its family, 3225 package and 1.8–3.3 V CMOS output match, so the figure is taken as applying,
+    with that caveat.
+  `C5203547 OT2EL4C4JI-111OLP-24.576M (YXC Crystal Oscillators, SMD3225-4P): extended, JLC stock 6498, lifecycle normal, checked 2026-11-07`
 - The FPGA launches DAC data on the **falling** MCLK edge, and the FF captures on the next rising
   edge. That gives 20.3 ns for the FPGA tco plus the trace, against the FF's tsu = 2.0 ns and
   th = 1.0 ns (74LVC74A Table 8).
@@ -139,7 +154,7 @@ using optimized NTF zeros, plus dither.
 
 | Rail | Typical | Worst continuous | Peak / fault | Main contributors |
 |---|---|---|---|---|
-| +15 V | 62 mA | 120 mA | 200 mA (both HP shorted) | 3 × SA5532 (8 typ / 16 max mA each), OPA2277 1.6 mA, HP bias strings 2 × 6.2 mA, HP Iq 2 × 5 mA (10 max), +5V_A LDO input 12 mA (if derived from +15 V), signal: HP 2 × 7.8 mA average, line 2 × 3 mA average |
+| +15 V | 62 mA | 120 mA | 200 mA (both HP shorted) | 3 × SA5532 (8 typ / 16 max mA each), OPA2277 1.6 mA, HP bias current sources 2 × 4.9 mA (4 mA string + 0.9 mA reference), HP Iq 2 × 5 mA (10 max), +5V_A LDO input 12 mA (if derived from +15 V), signal: HP 2 × 7.8 mA average, line 2 × 3 mA average |
 | −15 V | 50 mA | 110 mA | 190 mA | the same, without the +5V_A LDO |
 | +3V3_Q | 20 mA | 30 mA | — | 4 × 74LVC74. CPD 19.1 pF × 3.3 V × 24.576 MHz × 8 FF = 12.4 mA, plus tap loads 8 × 0.9 mA. Single-tap build: ≈ 7 mA |
 | +5V_A (new) | 12 mA | 15 mA | — | PCM1808 VCC 8.6 / 11 mA + electret bias 0.5 mA |
@@ -172,8 +187,11 @@ Also from block E: MCLK_Q (to the FF clocks) and MCLK to the PCM1808 SCKI. Neith
    skew, Ron(H/L), Zout(3V3_Q) with the data-dependent supply current, and white jitter σ = 0.5,
    1 and 2 ps. Then the SPICE filter with SA5532 and OPA2277 macromodels. Report THD+N at 1 Vrms
    and at full scale, A-weighted noise at idle, and idle tones.
-2. HP stage into 300 Ω, 600 Ω, 32 Ω and a short, plus a 1 nF cable: THD vs level, stability
-   (phase margin), limiter behaviour, the BCP56/53 junction temperature in a short.
+2. HP stage into 300 Ω, 600 Ω, 32 Ω and a short, plus a 0–10 nF cable: THD vs level, stability
+   (phase margin) with the 4.7 nF Zobel, limiter behaviour.
+   **Sustained short of one and of both channels** (review M1): BCP56/53 Tj, the SA5532 output
+   current through R_D 1 kΩ (≤ 11.3 mA) and its Tj (≤ 106 °C at ICC max), current-source and
+   D_RN/D_RP currents.
 3. Iq spread over BAV99 Vf and BCP56/53 Vbe tolerance and temperature.
 4. Out-of-band residue at line out: the actual MFB stopband with the op-amp Zout, out to 30 MHz.
 5. Power-up and power-down transients at the outputs with the relay sequence (R-34).
@@ -181,8 +199,14 @@ Also from block E: MCLK_Q (to the FF clocks) and MCLK to the PCM1808 SCKI. Neith
 
 ## Requirement deviations needing a decision
 
+- **R-40:** the waiver for the NMJ6HCD2 jack (−25 to +70 °C) is **logged in `decisions.md`
+  (user, 2026-11-07)**. No decision is outstanding. Original note:
 - **R-40 (parts rated ≥ 85 °C):** every LCSC-stocked 6.35 mm jack checked is rated to +70 °C
   only. Neutrik NMJ6HCD2: −25 to +70 °C. HOOYA PJ-612: −20 to +70 °C. Worst-case air inside the
   cabinet is 55 °C, and the jack sits at the back-panel edge. Proposal: accept NMJ6HCD2 with a
   logged waiver. The other parts in this block are rated ≥ 85 °C (the Omron G6K relay was rejected
   for its 70 °C rating, and HFD4 was chosen at 85 °C).
+- **R-15 plug-in power (review n6):** the bias is 5.0 V open-circuit through 4.4 kΩ, which puts
+  2.8–3.7 V on a 0.3–0.5 mA electret, against R-15's "~2.5 V". This is a recorded deviation.
+  It is within the usual 2–5 V plug-in-power range for electret capsules, and it gives more
+  headroom.

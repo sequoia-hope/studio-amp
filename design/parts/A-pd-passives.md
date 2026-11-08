@@ -37,17 +37,17 @@ Samsung CL21 caps: generic MLCC, ratings from the part number; no DC-bias curve 
    DC bias at the detection/class voltages (≤ 23 V) on a 100 V-rated part is small; X7R tempco ±15 %
    over –55…125 °C (FH catalogue, X7R row) ⇒ worst ≈ 76–127 nF across temperature. The upper corner
    (cold + tolerance) touches 0.12 µF only in combination; at 0…55 °C the X7R shift is < 5 % ⇒
-   86–116 nF. Accepted. Add the SMBJ58A junction capacitance (`A-smbj58a-littelfuse.pdf` Fig. 5 p.4: ≈ 550 pF at
-   0 V, ≈ 100 pF at VRWM for VBR = 64 V) — ≤ 0.6 nF, under 1 % of C_PD. Voltage: 57 V steady, 93.6 V clamp on a 100 V cap. **Only one
+   86–116 nF. Accepted. Add the SMCJ58A junction capacitance (`A-smcj58a-diodes.pdf` Fig. 2 p.4, unidirectional, zero bias,
+   VRWM 58 V: ≈ 200 pF) — under 0.3 % of C_PD. Voltage: 57 V steady, ≤ 93.6 V clamp (at 16 A) on a 100 V cap. **Only one
    C_PD on the whole VDD–VSS node**; if the LT4321 and TPS2373 can't share it, use 2 x 47 nF
    (LT4321 p.7).
 5. **C_VCIN / C_VCOUT** — VC_OUT is unused (block B powers the UCC2897A from its own VB_PRI buck,
    `A-pd-tps2373.md` calc 6), so the 10x ratio rule for the advanced-startup hold-up (§8.2.2.8 p.35) no
    longer carries the UCC2897A. VC_OUT keeps the 1 µF bypass to RTN the pin table asks for (p.4); VC_IN
    gets a local 100 nF, since VB_PRI is a stiff buck output with its own capacitance (block B). Both are
-   50 V parts at 13.5 V (27 % of rating). Effective values after DC bias (class-typical, ≥ 0.6 µF and
+   50 V parts at ≤ 14.8 V (30 % of rating). Effective values after DC bias (class-typical, ≥ 0.6 µF and
    ≥ 80 nF) still give ratio ≈ 7.5; that is now harmless, because the startup source only charges
-   C_VCOUT up to an already-present 13.5 V before the VC switch closes.
+   C_VCOUT up to an already-present 14.3 V before the VC switch closes.
 6. **R_MPS (DNP)** — 1.3 kΩ (§8.2.2.10 p.35); P = 24² / 1300 x 0.264 = 117 mW < 250 mW (1206).
 
 ## Fine print
@@ -55,13 +55,14 @@ Samsung CL21 caps: generic MLCC, ratings from the part number; no DC-bias curve 
 - R_CLSA, R_CLSB, R_REF, R_DEN return to **VSS** (not RTN). C_VCIN and C_VCOUT return to **RTN**.
 - CLSA/CLSB are current-limited but "should not be shorted to VSS for long periods" (p.25): keep
   their pads apart from VSS copper and test points off these nets.
-- Detection resistance seen at the PI includes the bridge body-diode resistance (p.24); RDEN may need to
-  rise one E96 step (25.5 kΩ) if the first board's signature reads low. Footprint stays.
+- Detection resistance seen at the PI is the bridge body-diode resistance **in series** with RDEN ∥
+  internal loading (p.24), so it reads **high**; the remedy is one E96 step **down** (24.3 kΩ), not up
+  (review A-m1). The LT4321 gate-sense 2.2 MΩ in parallel lowers it ≈ 1 %. Footprint stays.
 
 ## Layout
 
 - R_CLSA/R_CLSB/R_REF/R_DEN within 3 mm of their pins, on the VSS plane side.
-- C_PD between LT4321 OUTP/OUTN and TPS2373 VDD/VSS, both connections ≤ 5 mm; SMBJ58A beside it.
+- C_PD between LT4321 OUTP/OUTN and TPS2373 VDD/VSS, both connections ≤ 5 mm; SMCJ58A beside it.
 - C_VCOUT/C_VCIN at the TPS2373 pins, returned to the RTN plane.
 
 ## Open questions

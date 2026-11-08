@@ -14,7 +14,7 @@ Datasheets:
 | Item | Datasheet | Ours | OK |
 |---|---|---|---|
 | Contacts | T, R, S + 3 normals (TN, RN, SN), Ø1.4 mm holes; pitch 16.7/10.35/4 mm along, 16.23 mm across | 6 pads | — |
-| Rated current per contact | 3 A; switch contacts 0.5 A at 50 V | ≤ 41 mA | OK |
+| Rated current per contact | 3 A; switch contacts 0.5 A at 50 V | ≤ 43 mA | OK |
 | Contact resistance | < 15 mΩ / < 30 mΩ | — | OK |
 | Dielectric / insulation | 1 kVdc; ≥ 1 GΩ at 500 Vdc | — | OK |
 | Mating | A-gauge stereo plugs per EIA RS-453 (standard 1/4 in TRS headphone plugs) | — | OK |
@@ -24,8 +24,8 @@ Datasheets:
 Why this part: every LCSC-stocked 6.35 mm jack checked is rated to 70 °C or less. HOOYA PJ-612
 (C309284, 1058 in stock, `datasheets/pj-612.pdf`) is −20 to +70 °C, rated 30 VDC 0.5 A, and
 50 mΩ. CAX PJ-612-5P (`datasheets/pj-612-5p.pdf`) gives no temperature rating. The Neutrik has
-the best contacts (2 µm Ag on CuSn6, > 10,000 cycles) and normalling contacts. **Needs a waiver
-in `decisions.md`: the user decides.**
+the best contacts (2 µm Ag on CuSn6, > 10,000 cycles) and normalling contacts. **The R-40 waiver is logged in
+`decisions.md` (user, 2026-11-07).**
 
 Normals: TN and RN open when a plug is inserted (normalling contacts; confirm the sense on the
 part with a meter at bring-up, since the drawing doesn't state it). SN goes to GND. TN goes to

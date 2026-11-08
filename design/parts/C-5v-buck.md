@@ -3,7 +3,7 @@
 Datasheet: datasheets/lm5013.pdf (SNVSCB3, Oct 2022). Read: all sections (features, pins, abs max,
 ROC, EC, feature description 8.3.1–8.3.11, modes, application 9.2 incl. Type 3 ripple, layout).
 MPN: LM5013DDAR   Supplier: `C5383001 LM5013DDAR (TI, PowerSOIC-8): extended, JLC stock 11098, lifecycle normal, checked 2026-11-07`
-Second source: `C7589228 LM5013QDDARQ(TOKMAS) (Tokmas, ESOP-8-EP): extended, JLC stock 1334, lifecycle normal, checked 2026-11-07`. It is pin-compatible per its listing; read its own datasheet before substituting.
+Clone (not a second source): `C7589228 LM5013QDDARQ(TOKMAS) (Tokmas, ESOP-8-EP): extended, JLC stock 1334, lifecycle normal, checked 2026-11-07`. A third-party copy whose RON constant, current limit and CBST window aren't guaranteed to match TI's. **Not a drop-in until its own datasheet is audited.**
 Footprint: SO-8 PowerPAD "DDA" (4.89 × 3.90 mm, 1.27 mm pitch, EP to GND). The mechanical drawing
 is in the TI addendum. Phase 2 checks it against KiCad `Package_SO:TI_SO-PowerPAD-8_ThermalVias`.
 
@@ -11,8 +11,112 @@ Alternative considered: LMR38020SDDAR (C3192337, 9392 stock): synchronous, 2 A, 
 spread spectrum, syncable 300–2100 kHz (datasheets/lmr38020.pdf §7.1, §8.3.4). It is ≈ 0.4 W more
 efficient at 1.5 A. It was rejected because 2 A is tight against 1.75 A at the hardware LED limit,
 and 85 V is below the 100 V the GaN and the rest of the VBUS parts carry. Block B's VBUS TVS is an
-SMCJ58A (VBR 64.4 V min, B-output.md), whose clamp voltage at pulse current is above 85 V, so the
-LMR38020 is ruled out.
+SMCJ51A/SMBJ51A (51 V stand-off, 82.4 V clamp; agreed after block B's review). 82.4 V plus
+overshoot exceeds 85 V, so the LMR38020 is ruled out.
+
+
+## Revision 2 (2026-11-07, team lead's beat rule): fsw ≈ 200 kHz, supersedes the 690 kHz design in Revision 1
+
+**Rule (logged in C-interfaces.md):** every |a·f_buck − b·f| with a, b ≤ 2, against f = 576 kHz
+(amp PWM) and 737.28 kHz (ACF, crystal-locked), stays ≥ 40 kHz across the buck's real frequency
+spread. The ACF clock-fail fallback band doesn't count, because the amp is muted then.
+
+**Frequency.** A sweep of 165–1000 kHz (the LM5013's tON ≤ 1000 ns sets the floor) favours the low
+end. Real f_c = **≈ 200 kHz**: worst clearance **116 kHz at ±15 %** spread (136 kHz at ±10 %); the
+limiting product is |2·230 − 576|.
+- **RRON = 69.8 kΩ.** tON = 69.8/(2.5·VIN) µs: **847 ns at 32.6 V** (UVLO-off minimum, ≤ 1000 ns ROC),
+  776 ns at 36 V, 582 ns at 48 V, **499 ns at 56 V, 340 ns at the 82.4 V clamp** (≥ 50 ns). tON > 300 ns,
+  so the minimum off-time is 50 ns and duty isn't limited.
+- Real f = D/tON with D = (5.05 + 0.55)/(VIN + 0.55): 197 kHz (36 V), 198 kHz (48 V), 199 kHz (56 V),
+  199 kHz (82 V). The diode drop rises with load, so the frequency rises a few %. The ±15 % band
+  (170–230 kHz) covers that plus the unspecified tON tolerance. At very light load (DCM) the frequency
+  falls, which only moves products further from 576/737 kHz. The 47 µH inductor keeps CCM above
+  0.24 A, and the logic alone draws more than that.
+- **Inductor → SRP1265A-470M** (Bourns, same 13.5 × 12.5 mm body): 47 µH ±20 %, DCR 76 typ / 90 mΩ max,
+  Irms 6.5 A, Isat 9.5 A (> the 7 A TI recommends and the 5 A IPEAK max).
+  `C840530 SRP1265A-470M (BOURNS, SMD,13.5x12.5mm): extended, JLC stock 1561, lifecycle normal, checked 2026-11-07`
+  Alternative: MDA1365-470M (KOHER, C2847587, 2507; verify Isat). ΔIL = 5/(200 k × 47 µ) × (1 − 5/56) =
+  0.48 A (0.50 A at 82 V); Ipk at 2.0 A = 2.25 A, against IPEAK min 3.7 A. Loss 1.8² × 0.09 = 0.29 W.
+- **COUT** ≥ 0.48/(8 × 200 k × 25 mV) = 12 µF effective. 3 × 22 µF 25 V 1206 (≥ 33 µF effective) gives
+  ≈ 9 mV ripple. Unchanged parts.
+- **Type 3**: CA ≥ 10/(200 k × 24.0 k) = 2.1 nF → **CA 3.3 nF**. RA·CA ≤ (VIN − VOUT)·tON/20 mV =
+  1.20 ms (36 V), 1.27 ms (56 V), 1.31 ms (82 V) → **RA = 330 kΩ 0805** (1.09 ms). FB ripple 22.1 mV
+  (36 V), 23.3 mV (56 V), ≥ 12 mV. DC offset ≈ +47 mV, so VOUT ≈ 5.04 V (unchanged). CB 330 pF C0G
+  (≥ 250 pF).
+- **CIN**: 2 × 4.7 µF 100 V 1210 (≥ 4.4 µF effective, kept). Input ripple
+  IOUT·D(1 − D)/(f·CIN) = 2 × 0.104 × 0.896/(200 k × 4.7 µ) = 0.20 V p-p at the converter. Input RMS
+  current 2 × √(0.104 × 0.896) = 0.61 A, shared by two 1210s and the VBUS bulk.
+- **Efficiency at 1.8 A**: diode 0.89 W + switching 0.5 × 48 × 1.8 × 15 ns × 2 × 200 kHz = 0.26 W +
+  inductor 0.29 W + HS conduction 0.11 W + IQ 0.02 W = 1.57 W for 9.1 W out → **η ≈ 85 %** (back from
+  82 % at 690 kHz).
+- **VBUS ripple at f_buck (product amplitude)**: the input current is a 2 A, D ≈ 0.10 pulse train.
+  Its fundamental is (2 × 2 A/π)·sin(π × 0.104) = 0.41 A peak. The VBUS bulk (≈ 6 mF, 5–7 cans in
+  parallel, ESR ≈ 5 mΩ combined + ESL, block B) takes most of it: ≈ 0.41 A × ≈ 6 mΩ ≈ **2.5 mV peak at
+  200 kHz** on 48 V, i.e. −86 dB (5 × 10⁻⁵ relative). Open-loop PWM turns VBUS ripple into output
+  AM, so the mix products with the 576 kHz carrier sit at ≥ 116 kHz (by the rule above). That is out
+  of band, and the output LC filter attenuates them further, ≈ −30 dB more at 116 kHz for a
+  tens-of-kHz corner (block D's filter). The in-band product amplitude is zero by construction. Even
+  a hypothetical in-band product at full 1 W signal would be 2.83 Vrms × 5 × 10⁻⁵ = 0.15 mVrms before
+  the −30 dB LC filter, i.e. ≈ 5 µVrms, ≪ R-51's 150 µV noise. Second-order products are a further
+  −86 dB down.
+
+## Revision 1 after phase 1 review (2026-11-07): the frequency items here are superseded by Revision 2; the CIN and PGOOD items still apply
+
+**Switching frequency moved to ≈ 690 kHz.** 396 kHz nominal (≈ 440 kHz real, because the COT on-time
+is set from VOUT but the duty includes the diode drop) sat on block B's ACF (400 kHz ±6 % →
+376–424 kHz, 2nd harmonic 752–848 kHz) and block D's 448 kHz (896, 1344 kHz), and their beat
+products could land in the audio band.
+- RRON = **20.0 kΩ** → tON = 20/(2.5·VIN) µs = 222 ns (36 V), 167 ns (48 V), 143 ns (56 V), all
+  ≥ 50 ns. The forced 250 ns off-time applies (tON < 300 ns): max duty 143/393 = 0.36 ≥ 0.15 needed.
+- Real frequency with the diode: f = D/tON, D = (5.05 + 0.55)/(VIN + 0.55) → 690 kHz (36 V),
+  692 kHz (48 V), 693 kHz (56 V); lower in DCM at light load.
+- Distances to the nearest products, up to the 4th harmonic: 2×ACF band 752 kHz (−60 kHz);
+  3×ACF ≥ 1128 kHz vs 1384 kHz; 448 → 1344 vs 1384 (40 kHz); 512 (block E fallback) → 1536 vs 1384,
+  2048 vs 2076 (28 kHz). All above 20 kHz.
+- **Block B's ACF is moving from 400 kHz** (currently 620 kHz, to be settled with D/E): 690 vs 620 kHz
+  is 70 kHz apart, and 2×/3× products are ≥ 140 kHz apart. **Re-check RRON when block B reports
+  the final frequency.**
+- **If block D moves to 672 kHz**, 690 kHz is only 18 kHz away: retune RRON then (e.g. 22.1 kΩ →
+  ≈ 625 kHz).
+- Inductor ripple drops: ΔIL = 5/(690 k × 22 µ) × (1 − 5/56) = 0.30 A; Ipk 2.15 A.
+- COUT ≥ 0.30/(8 × 690 k × 25 mV) = 2.2 µF. The 3 × 22 µF keeps a large margin.
+- Type 3: CA ≥ 10/(690 k × 24.0 k) = 0.60 nF → **CA 3.3 nF** (kept). RA·CA ≤ (VIN − VOUT)·tON/20 mV
+  = 344 µs (36 V), 364 µs (56 V) → **RA = 100 kΩ** (330 µs). FB ripple = 20.9 mV (36 V) … 22.1 mV
+  (56 V), ≥ 12 mV ✓. DC offset ≈ 11 mV × 4.165 = +45 mV, so VOUT ≈ 5.04 V (unchanged).
+  CB ≥ 250 pF → 330 pF C0G (kept).
+- Cost: switching loss ≈ 0.5 × 48 V × 1.8 A × 15 ns × 2 × 690 kHz = 0.89 W, against 0.51 W at
+  396 kHz. **η ≈ 82 % at 1.8 A** (≈ 84 % at 1 A), +0.4 W at full load. This is accepted for the audio
+  band; it is included in the C-interfaces budget.
+
+**CIN raised to the datasheet's ≥ 4.4 µF effective** (§9.2.2.6): 2 × 4.7 µF 100 V X7R 1210
+(FS32X475K101EGG) + 100 nF 100 V 0603. At 48 V assume ≥ 50 % retained → ≥ 4.7 µF (attach the PSA
+DC-bias curve in phase 2).
+`C381466 FS32X475K101EGG (PSA, 1210): extended, JLC stock 41237, lifecycle normal, checked 2026-11-07`
+
+**PGOOD / PG_5V, review B2.** The PGOOD divider (56 kΩ / 100 kΩ from +5V_BUCK, Thevenin 36 kΩ) stays,
+**but it now drives only TPS2116 PR1** (input leakage ≤ 0.1 µA). LM5013 asks for a 10–100 kΩ pull-up
+(pin table), so the reviewer's 5.62 k/10 k option was out of range. The FPGA must not load this node:
+the ECP5's unconfigured GPIO pulls down 30–150 µA, which would drag PR1 under its 0.92–1.08 V
+reference and deadlock the start-up. The FPGA gets a **buffered, inverted copy**: a 2N7002 (gate on
+PG_5V, gate current ≈ 0) drains a 4.7 kΩ pull-up to +3V3 → `PG_5V_N` → FPGA B3 (**active low = good**).
+Before configuration B3's pull-down acts only on the 4.7 kΩ node: with PG low (FET off) it gives
+3.3 − 4.7 k × 150 µA = 2.6 V (≥ VIH 2.0 V); with PG high (FET on) it reads ≈ 0 V. 2N7002 Vth
+1.0–2.5 V at 250 µA, VGS = 3.24 V, so it is on; the drain current is 0.7 mA.
+`C8545 2N7002 (JSCJ, SOT-23): basic, JLC stock 5965543, lifecycle normal, checked 2026-11-07`
+
+**+5V minimum at block F's relay coils (≥ 4.76 V requested, coils need ≥ 4.75 V), checked 2026-11-07.**
+FB divider resistors are now **0.5 %** (100 kΩ / 31.6 kΩ).
+- Buck minimum: VREF 1.181 V (EC min) × (1 + 100·0.995/(31.6·1.005)) = 4.881 V, plus the Type 3 DC
+  offset (≥ 20.9 mV ripple / 2 × 4.13 = +43 mV) → **≥ 4.92 V**.
+- Path drops at the 0.91 A +5V design load: buck-to-mux trace (also carrying LED current, 1.75 A ×
+  ≤ 10 mΩ, phase 4 rule) ≤ 18 mV; TPS2116 RON ≤ 60 mΩ (−40…105 °C, p. 5) × 0.91 A = 55 mV; +5V
+  distribution to the relays (56 mA, ≤ 0.1 Ω) ≤ 6 mV; AO3400A ≤ 1.5 mV (block F).
+- **Worst-case coil voltage ≥ 4.84 V**, 80 mV above the 4.76 V requirement.
+- Load steps on +5V_BUCK (1 A LED step) cause short COT undershoot (tens of µs, not quantified in
+  the datasheet). It doesn't affect relay hold. Pick-up is ms-scale.
+- On USB-only power the relays are off (block F), so VUSB's 4.75 V minimum doesn't apply.
+- Maximum: 1.218 × (1 + 100·1.005/(31.6·0.995)) + 0.05 = 5.20 V, within every +5V and +5V_BUCK
+  load (TPS62A02A 5.5 V, TPS7A94 5.7 V, TPS2116 5.5 V, LEDs).
 
 ## Absolute max vs our worst case
 
@@ -60,7 +164,7 @@ IL(peak) = 2.0 + 0.26 = 2.26 A, below IPEAK min 3.7 A (EC, p.7), so current limi
 normal operation.
 Part: **SRP1265A-220M** (Bourns, datasheets/bourns-srp1265a.pdf): 22 µH ±20 %, DCR 32.5 typ /
 37 mΩ max, Irms 9 A, Isat 12 A (−20 % L). TI recommends Isat > 7 A, and IPEAK max is 5 A, so OK.
-Conduction loss 2.0² × 0.037 = 0.15 W. Operating temperature range −55…+125 °C per datasheet.
+Conduction loss 2.0² × 0.037 = 0.15 W. Operating temperature range −55…+150 °C per datasheet (reviewer-confirmed).
 `C2041465 SRP1265A-220M (BOURNS, SMD,13.5x12.5mm): extended, JLC stock 6335, lifecycle normal, checked 2026-11-07`
 Size is 13.5 × 12.5 × 6 mm. A smaller part with Isat ≥ 7 A at 22 µH is acceptable if phase 4 needs
 the area.
@@ -93,7 +197,8 @@ Candidate: `C55151 CL32B225KCJSNNE` (Samsung, 1210, 100 V X7R, 30481 stock) or C
 - Resulting FB ripple = (VIN − VOUT)·tON/(RA·CA) = 22.0 mV (36 V), 22.9 mV (48 V), 23.3 mV (56 V).
   This is ≥ 12 mV at every input, as §9.2.2.7 requires.
 - CB ≥ t_settle/(3·RFB1) = 75 µs / 300 kΩ = 250 pF → **CB = 330 pF C0G**.
-- RA sees SW (0–56 V) and dissipates (VIN − VOUT)²·D/RA ≈ 1.2 mW. Use a 0603 rated 75 V.
+- RA sees SW (0–56 V, up to ≈ 91 V during a TVS-clamped surge) and dissipates ≈ 1–2 mW. **Use 0805
+  (150 V working)**: a 0603's 75 V is below the clamp.
 
 **EN/UVLO** (eq. 5, 6): RUV1 (top) = 1.00 MΩ, RUV2 = 43.2 kΩ.
 VIN(on) = 1.5 × (1 + 1000/43.2) = **36.2 V**, VIN(off) = 1.4 × 24.15 = **33.8 V**. Over the
@@ -139,3 +244,40 @@ inductor 0.12 W + IQ 0.02 W ≈ 1.6 W for 9.1 W out, so **η ≈ 85 %**. Used in
 
 - MLCC DC-bias curves for the chosen 22 µF/25 V and 2.2 µF/100 V parts (phase 2 picks the exact
   MPN and attaches the curve).
+
+## Open: frequency plan after block B moved to 737.28 kHz (2026-11-07), decision needed
+
+Requirement (team lead / block B): every |a·f_buck − b·g| for a, b ≤ 3 is > 100 kHz, where
+g ∈ {576 kHz amp, 737.28 kHz ACF crystal-locked, 590–708 kHz ACF fallback}, across the buck's own
+tolerance.
+
+Result of a numerical sweep over f = 150–1200 kHz (scratch script; COT frequency tolerance ±10 %
+and ±15 % for line, load and part spread):
+- **No free-running frequency meets it.** The 118 kHz fallback band × 2 and × 3 covers every
+  window. Even counting only the two fixed tones, the best clearance is 81 kHz (at 150 kHz, ±10 %)
+  and ≈ 45 kHz near 985 kHz.
+- **The LM5013 also has its own floor**: the ROC limits tON ≤ 1000 ns, so at the 33.8 V UVLO-off
+  RRON ≤ 84.5 kΩ, giving f_real ≥ ≈ 165 kHz. The only clear region (f ≤ 144 kHz, where 3·f stays
+  below 576 − 100 kHz) is therefore out of reach.
+- Today's 690 kHz is 47 kHz from 737.28 kHz and inside the 590–708 kHz fallback band, so it fails.
+
+**Recommended fix: lock the 5 V buck to the system clock grid.** 576 kHz = 25 × 23.04 kHz and
+737.28 kHz = 32 × 23.04 kHz. A buck synchronised to n × 23.04 kHz from the FPGA puts every
+intermodulation product on an exact multiple of 23.04 kHz, never in the audio band, whatever a and
+b are. In the crystal-fallback case the ACF itself is off-grid, so its products with *any*
+converter are unavoidable; that is a fault mode.
+- Candidate: **LM5146-Q1** (TI, 100 V synchronous buck *controller* with SYNCIN; LM5146QRGYRQ1,
+  C1850329, 2455 in stock). It needs two external 100 V N-FETs and a new full audit. The datasheet
+  has not been read yet.
+- Rejected: LM5148 (80 V, below the 82.4 V clamp), LMR38020/38025 (85 V; 38025 has no stock),
+  LT8631 (10 in stock), LM5165 (0.15 A).
+- Proposed sync frequency: 460.8 kHz (20 × 23.04) or 368.64 kHz (16 × 23.04), both ≥ 115 kHz from
+  576 and 737.28 kHz. Needs one FPGA output (block E). Before the FPGA configures, the buck runs
+  free at its RT frequency; the amp is muted then. On USB-only power there is no VBUS.
+- Interim, if the redesign is declined: keep the LM5013 and pick the least-bad free-running point.
+  From the sweep that is ≈ 985 kHz real (RRON ≈ 14 kΩ, tON ≈ 69 ns at 82 V, near the 50 ns floor, and still only ≈ 45 kHz clearance) or
+  ≈ 150–165 kHz (blocked by tON max). **Neither is acceptable, which is why the sync redesign is
+  recommended.**
+
+VBUS TVS in this file: SMCJ51A at the bulk / SMBJ51A at the bridges, VBR 56.7–62.7 V, clamp 82.4 V
+(confirmed; see C-interfaces.md).

@@ -1,5 +1,7 @@
 # Output LC filter capacitors and Zobel (per channel: 2 × 700 nF to GND + 10 Ω / 100 nF Zobel)
 
+> **fsw update (block E review, ECP5 −7I grid now 1.695 ns, PLL ×12): baseline fsw = 576 kHz (12 × 48 kHz, 1024 steps); 768 kHz option; 448/512/672 kHz only with E's ×14 bring-up option.** CM ripple 2.08/(8 × 576 kHz × 700 nF) = **0.65 V pp**; attenuation at 2·fsw = 1.152 MHz ≈ −51 dB. f0, Q, Zobel unchanged.
+
 > **fsw update 2026-11-07 (FPGA changed to ECP5, edge grid 1.453 ns = 688.128 Mb/s ODDRX2F, E-fpga-ecp5.md):** baseline fsw is now **448 kHz** (1536 grid steps; 448 kHz = 48 kHz × 28/3, audio-locked but not an integer multiple). 480 kHz is not on the grid. Option per build: 672 kHz (14 × 48 kHz, 1024 steps). CM ripple on each output: 2.68/(8 × 448 kHz × 700 nF) = **1.07 V pp**; differential attenuation at 2·fsw = 896 kHz ≈ −47 dB. f0, Q, Zobel unchanged.
 
 Datasheets: datasheets/grm31c5c2a104.pdf (Murata GRM31C5C2A104JA01_ spec, 1206 C0G 0.1 µF DC100V); datasheets/uniroyal-2512.pdf (Uni-Royal thick-film chip resistor series, incl. 2512 1 W). Read: ratings, dimensions, test methods.

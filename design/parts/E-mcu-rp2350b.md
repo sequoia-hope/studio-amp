@@ -1,6 +1,6 @@
 # U (MCU) — Raspberry Pi RP2350B (QFN-80)
 
-> **ECP5 update (2026-11-07).** GPIO use changes (`E-pinmap.md`): GPIO22–28 now carry the ECP5 slave-SPI configuration (PROGRAMN, INITN, SPI1 MISO/SN/SCK/MOSI, DONE) instead of JTAG; PHY management moved to the FPGA; the I2C expander is dropped. 39 of 48 GPIO used, 9 spare.
+> **ECP5 update (2026-11-07).** GPIO use changes (`E-pinmap.md`): GPIO22–28 now carry the ECP5 slave-SPI configuration (PROGRAMN, INITN, SPI1 MISO/SN/SCK/MOSI, DONE) instead of JTAG; PHY management moved to the FPGA; the I2C expander is dropped. After the review fixes: 38 of 48 GPIO used, 10 spare (`E-pinmap.md` is authoritative).
 
 
 Datasheets: `datasheets/rp2350-lcsc.pdf` (RP2350 Datasheet, 1380 pp). Read: Ch.1 (pinout QFN-80 Fig 3, pin descriptions Tab 2, GPIO function tables Tab 3–5), §6 power (IOVDD/QSPI_IOVDD, regulator), §9.3 GPIO reset state, §14.9 electrical (abs max Tab 1433, ESD, thermal, IO DC Tab 1436, supplies Tab 1441, power consumption Tab 1443–1446), §6.3.8 regulator layout rules (as summarised in `chips/rp2350.md`). `datasheets/hardware-design-with-rp2350.pdf` (Release 3, 2026-08-20). Read: all (power, regulator, decoupling, flash, crystal, USB, debug, buttons, both schematics).
@@ -17,7 +17,7 @@ Footprint: QFN-80 10 × 10 mm, 0.4 mm pitch, EP 3.4 × 3.4 mm — KiCad `QFN-80-
 | VREG_AVDD, USB_OTP_VDD | 3.135–3.63 V | `+3V3` via 33 Ω/4.7 µF RC (AVDD) | OK |
 | ADC_AVDD | 1.62–3.63 V (≥ 2.97 V for full ADC performance) | `+3V3` (block G's clean reference proposal R-17; see interfaces) | OK |
 | DVDD | 1.05–1.16 V | internal regulator 1.1 V | OK |
-| Pin voltage (standard IO) | −0.5 … IOVDD + 0.5 V | ≤ 3.3 V; RECONFIG_N node idles at 1.8 V | OK |
+| Pin voltage (standard IO) | −0.5 … IOVDD + 0.5 V | ≤ 3.3 V everywhere (all ECP5 banks at 3.3 V) | OK |
 | Pin voltage (FT pins) at IOVDD 3.3 V | 5.5 V | not used above 3.3 V | OK |
 | Tj | −40…125 °C; ambient (TC) −40…85 °C | ≤ 60 °C | OK |
 | Total IOVDD source current | 100 mA | link 8 lines + LED/ENC/etc. ≪ 100 mA | OK |
@@ -26,8 +26,8 @@ Footprint: QFN-80 10 × 10 mm, 0.4 mm pitch, EP 3.4 × 3.4 mm — KiCad `QFN-80-
 
 ## I/O levels relevant to the interfaces (Tab 1436, IOVDD 3.3 V)
 
-VIH ≥ 2.0 V, VIL ≤ 0.8 V, VOH ≥ 2.62 V, VOL ≤ 0.5 V, pull-up 32–86 kΩ, pull-down 36–113 kΩ. → 1.8 V signals (FPGA bank 3, TDO) can **not** be read directly: translated (`E-level-jtag.md`).
-Reset state (§9.3): output Hi-Z, input buffer disabled, **pulled low**, isolation latched. → PHY_NRST, FPGA_JTAG_OE_N, enables default to the safe state with external resistors as listed in the pin map.
+VIH ≥ 2.0 V, VIL ≤ 0.8 V, VOH ≥ 2.62 V, VOL ≤ 0.5 V, pull-up 32–86 kΩ, pull-down 36–113 kΩ. → every signal to/from the ECP5 is 3.3 V LVCMOS; no translation is needed.
+Reset state (§9.3): output Hi-Z, input buffer disabled, **pulled low**, isolation latched. → `VDRV_EN` and `ILIM_SEL0/1` default to their safe state (off / 0.44 A), with the external pull-downs blocks C and B fit; `FPGA_PROGRAMN` is never driven low by reset (the 4.7 kΩ pull-up wins over the 36–113 kΩ pad pull-down).
 
 ## Required external parts (Hardware design with RP2350 + `chips/rp2350.md`) → `E-mcu-passives.md`, `E-xtal-12mhz.md`, `E-flash-w25q128.md`
 
@@ -41,8 +41,8 @@ Reset state (§9.3): output Hi-Z, input buffer disabled, **pulled low**, isolati
 ## Calculations
 
 - **3V3 current (Tab 1446 measured; regulator max 200 mA)**: typical VREG_VIN 11–15 mA at 150 MHz (CoreMark, hello_*), IOVDD ~0.5 mA idle + switching; USB_OTP_VDD ≤ 6 mA during boot. Worst case: DVDD 200 mA × 1.1 V / (3.3 V × 0.8 assumed efficiency) = 83 mA at VREG_VIN. IOVDD with the link at 37.5 MHz: 8 × 15 pF × 3.3 V × 37.5 MHz × 0.5 = 7.4 mA, + LED/encoders/I2C ≈ 5 mA. **Design 100 mA worst, 45 mA typical on `+3V3`.**
-- **GPIO budget**: `E-pinmap.md` — 47 of 48 GPIO used, 1 hard spare (GPIO39) and 2 soft (GPIO31 PHY_NINT, GPIO27 FPGA_JTAG_OE_N can be strapped).
-- **ADC**: 8 inputs on GPIO40–47 (QFN-80 only, §1.2.3 note) = 4 knobs + 4 NTCs.
+- **GPIO budget**: `E-pinmap.md` — 38 of 48 GPIO used, 10 spare (GPIO29–32, 37–39, ADC5–7).
+- **ADC**: 8 inputs on GPIO40–47 (QFN-80 only, §1.2.3 note) = 4 knobs (ADC0–3) + `IBUS_SENSE` (ADC4, block B) + 3 spare. The NTCs moved to block D's ADS7038.
 
 ## Fine print / gotchas
 

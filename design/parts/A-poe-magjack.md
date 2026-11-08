@@ -73,12 +73,11 @@ pair set's FETs from ever turning on (LT4321 p.6).
 
 ## Fine print / gotchas
 
-- The internal Bob Smith cap (1000 pF / 2 kV) ties the cable's common mode to the shield. With the shield
-  on secondary GND (R-10), this cap and the magnetics' winding insulation together form the
-  cable-to-secondary barrier. The magjack's 1500 Vrms rating is stated PHY-side to line-side only; the
-  2 kV cap's rating presumably DC, so a 1500 Vrms (2121 Vpk) hipot from cable to secondary GND would
-  exceed it. **R-32 hipot on the assembled board is at risk through this cap**; see
-  `A-shield-network.md` for the options.
+- The internal Bob Smith cap (1000 pF / 2 kV) ties the cable's common mode to the shield, which sits on
+  secondary GND (R-10). It is therefore part of the cable-to-secondary barrier. The shield bleed is now
+  10 MΩ (`A-shield-network.md`, review A-M3), so in the 1500 Vrms AC hipot the internal cap and C_SH share
+  the voltage: ≤ 1.2 kVpk on the internal cap. An AC hipot is required; a DC hipot would load the internal
+  cap fully.
 - 100BASE-TX only uses MD1/MD2; the two unused windings stay open on the PHY side. Their line side
   carries power through the CT.
 
@@ -92,6 +91,14 @@ pair set's FETs from ever turning on (LT4321 p.6).
 - CT traces to the bridges ≥ 0.6 mm wide (1 A, 10 °C rise, 1 oz external; phase 3/5 confirms).
 
 ## Open questions
+
+- Barrier on the J1 footprint (review A-n4): shield tabs and LED pins 17–20 (secondary) share the jack with
+  CT pins 13–16 (primary). Phase 4 must check tab/LED-pin to CT-pin spacing against the R-32 keepout; the
+  vendor's 1500 Vrms is stated PHY↔line only (shield↔line and LED↔line unspecified).
+- OCL under DC unbalance (review A-n5): 350 µH at 14 mA and 120 µH at 23 mA bias (sheet 1). 802.3bt
+  pair-to-pair current unbalance at Class 8 puts a differential DC bias on each winding; clause 145's
+  allowance was not available, so whether 100BASE-TX still sees ≥ 350 µH at the worst unbalance is
+  unchecked. Check link quality at Class 8 on the bench.
 
 - CT current derating over temperature: not given. 4 % margin at the 0.96 A unbalanced corner. If the
   first board runs hot at Class 8, LP6090ANL (1.2 A) + plain shielded RJ45 is the fallback.

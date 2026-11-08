@@ -1,6 +1,6 @@
 # Block B primary power stage — main FET, clamp FET, clamp capacitor, current sense, input ceramics
 
-Converter numbers (D, Vc, currents, losses) come from `B-converter-design.md` (400 kHz, n = 2,
+Converter numbers (D, Vc, currents, losses) come from `B-converter-design.md` (737 kHz, crystal-synced, n = 2,
 Lm = 25 µH, Io = 1.34 A). All parts return to `VPRI_RTN`.
 
 ---
@@ -14,19 +14,21 @@ Footprint: Power 56 (PQFN-8 5 × 6, exposed drain). Same part as Q16 in TI PMP20
 | Parameter | Datasheet | Our worst case | Margin |
 |---|---|---|---|
 | VDS | 150 V | Vc 100 V plateau, ≈ 120 V with ringing (PMP20878 measured 126.7 V) | 80 % of rating |
-| VGS | ±20 V | 13.5 V drive (VDD) | OK |
+| VGS | ±20 V | 14.3 V drive (VDD; 14.8 V max) | OK |
 | ID | (35 A class) | 4.9 A peak, 2.0 A rms | OK |
 | EAS | 220 mJ single pulse | backstop only | — |
 | rDS(on) | 18 mΩ max at 10 V, 21 mΩ at 6 V | × 1.7 hot → 31 mΩ | |
-| Qg(0–10 V) | 33 typ / 46 max nC | ≈ 45 nC at 13.5 V (scaled from the 10 V figure) | |
+| Qg(0–10 V) | 33 typ / 46 max nC | ≈ 45 nC at 14.3 V (scaled from the 10 V figure) | |
 | Coss | 203 pF typ at 75 V | | |
 | Qrr | 113 typ nC | body diode conducts briefly before turn-on (ZVS attempt); it is reverse-recovered by the clamp — small at 1.2 A | |
 | RθJA | 50 °C/W (1 in² 2 oz) | | |
 
-Losses (400 kHz, 50 V): conduction 2.0² × 0.031 = 0.12 W; turn-on Eoss·f ≈ 0.45 µJ × 400 kHz =
-0.18 W (turns on at ≈ Vin: magnetizing current brings Vds from Vc to Vin, below that only leakage
-energy); turn-off ½ × Vc × Ipk × 3 ns × f = 0.28 W. Total ≈ 0.58 W → ΔTj ≈ 29 °C with a 1 in²
-2 oz pour → Tj ≈ 85 °C at 55 °C air. OK.
+Losses (737 kHz, 50 V): conduction 1.9² × 0.031 = 0.11 W; turn-on Eoss·f ≈ 0.75 µJ × 737 kHz =
+0.55 W (it turns on at ≈ Vin: magnetizing current brings Vds from Vc to Vin, and only leakage
+energy is left below that; Eoss from the ≈ 600 pF switch node, review n8); turn-off
+½ × Vc × Ipk × 3 ns × f = 0.41 W. Total ≈ 1.07 W (1.19 W at 57 V). With the datasheet's 1 in² 2 oz
+pour (50 °C/W): ΔTj ≈ 60 °C → Tj ≈ 115 °C at 55 °C air; acceptable (150 °C max), but **give it
+≈ 2 in² of 2 oz copper on two layers with thermal vias (≈ 35 °C/W → Tj ≈ 97 °C)** (phase 4/6).
 Gate: 2.2 Ω series, 10 kΩ gate–source (and 10 kΩ OUT–PGND at the controller).
 
 Alternative checked: Infineon BSC160N15NS5 (C459172, 9127 stock; 16 mΩ, Qg 19 nC, but Coss 341 pF and
@@ -42,18 +44,19 @@ Supplier: `C537989 IRFR6215TRLPBF (Infineon, DPAK(TO-252AA)): extended, JLC stoc
 Footprint: DPAK (TO-252AA).
 
 Why not PMP20878's FDMC2523P (C890927, 2852 stock, 1.5 Ω max): with a 4-turn primary Lm is 4× lower,
-so the clamp carries 2.42 A p-p of magnetizing current: Irms = ΔIm/√12 × √(1−D) = 0.50 A at 50 V
-→ 0.50² × 1.5 Ω × 1.6 = 0.6 W in FDMC2523P. IRFR6215 (0.295 Ω max): 0.12 W conduction.
+so the clamp carries 1.32 A p-p of magnetizing current at 737 kHz: Irms = ΔIm/√12 × √(1−D) = 0.27 A at
+50 V → 0.27² × 1.5 Ω × 1.6 = 0.18 W in FDMC2523P. IRFR6215 (0.295 Ω max): 0.04 W conduction.
+IRFR6215 is kept: lower total loss and its larger Coss softens the main FET's turn-off.
 
 | Parameter | Datasheet | Our worst case | Margin |
 |---|---|---|---|
 | V(BR)DSS | −150 V | −Vc = −100 V, ≈ −120 V with ringing | 80 % |
 | VGS | ±20 V | 0 to −13 V (AC-coupled AUX, minus the clamp diode drop) | OK |
 | RDS(on) | 0.295 Ω max at −10 V | 0.47 Ω hot | |
-| Qg | 66 nC max (hard-switched, Qgd 35 nC at −120 V) | ZVS operation: ≈ 25 nC per cycle (Ciss 860 pF × 13 V + Qgs) → 0.13 W gate power | estimate |
+| Qg | 66 nC max (hard-switched, Qgd 35 nC at −120 V) | ZVS operation: ≈ 28 nC per cycle (Ciss 860 pF × 14 V + Qgs) → 28 nC × 14.3 V × 737 kHz = 0.30 W gate power (mostly in the UCC2897A and gate resistor) | estimate |
 | Coss | 220 pF at −25 V | adds to the switch node (helps the soft turn-off of the main FET) | |
 | trr / Qrr | 160 ns / 1.2 µC | body diode conducts at the start of off-time; at AUX turn-off the channel carries current in the drain-to-source direction, so the diode is not recovering | OK |
-| RθJA | 50 °C/W PCB mount | ≈ 0.24 W → +12 °C | OK |
+| RθJA | 50 °C/W PCB mount | ≈ 0.1 W in the FET → +5 °C | OK |
 
 Gate drive (UCC2897A Fig. 24): AUX → 100 nF X7R 25 V → gate; BAS316 (C109218) from gate (anode)
 to source/RTN (cathode) clamps the positive swing; 10 kΩ gate–source holds it off when undriven
@@ -71,11 +74,11 @@ Low-side clamp: the cap sits between the main-FET drain and the clamp-FET drain 
 - Voltage: 100 V DC on a 250 V part (2.5×). OK.
 - DC-bias: not in the datasheet. **Assumed** 70 % remaining at 100 V on a 250 V X7R → 2 × 70 nF =
   140 nF effective. To confirm (Murata SimSurfing).
-- Sizing: clamp–Lm resonance must be slow against the off-time: π√(Lm·C) = π√(25 µH × 140 nF)
-  = 5.9 µs ≥ 3 × tOFF(max) = 3 × 1.44 µs = 4.3 µs ✓. Ripple ΔVc ≈ ΔIm·tOFF/(8C) =
-  2.42 × 1.44 µs/(8 × 140 nF) = 3.1 V ✓ (3 %). Not larger: Vc must still follow D within a few
+- Sizing (737 kHz): clamp–Lm resonance must be slow against the off-time: π√(Lm·C) =
+  π√(25 µH × 140 nF) = 5.9 µs ≥ 3 × tOFF(max) = 3 × 0.78 µs = 2.3 µs ✓. Ripple ΔVc ≈ ΔIm·tOFF/(8C) =
+  1.32 × 0.78 µs/(8 × 140 nF) = 0.9 V ✓ (< 1 %). Not larger: Vc must still follow D within a few
   cycles, so the transformer stays reset in transients.
-- RMS current 0.50 A total, 0.25 A each: fine for a 1206 X7R at 400 kHz (self-heating ≪ 10 °C,
+- RMS current 0.27 A total, 0.14 A each: fine for a 1206 X7R at 737 kHz (self-heating ≪ 10 °C,
   estimate).
 
 ---
@@ -95,17 +98,18 @@ Supplier: `C2683389 RLP25FEER068 (TA-I Tech, 2512): extended, JLC stock 12945, l
 
 ---
 
-## C (input) — VPRI high-frequency ceramics, 3 × 4.7 µF 100 V X7S 1210, Taiyo Yuden HMK325C7475KMHPE
+## C (input) — VPRI high-frequency ceramics, 3 × 4.7 µF 100 V X7S 1210, Murata GCM32DC72A475KE02L
 
-Datasheet: datasheets/taiyo-hmk325c7475.pdf. Read: all.
-Supplier: `C385986 HMK325C7475KMHPE (Taiyo Yuden, 1210): extended, JLC stock 52719, lifecycle normal, checked 2026-11-07`
+Changed from Taiyo Yuden HMK325C7475KMHPE (review m7: the fetched sheet was the HMJ catalog).
+Datasheet: datasheets/murata-gcm32dc72a475.pdf (Murata GCM catalog; 100 Vdc, X7S, 1210).
+Supplier: `C913445 GCM32DC72A475KE02L (muRata, 1210): extended, JLC stock 9059, lifecycle normal, checked 2026-11-07`
 
 These are B's local commutation caps at T1/main FET; block A owns the PD's bulk (electrolytic) on
 `VPRI`. Dielectric X7S (±22 %, −55…+125 °C).
 - Voltage: 57 V on 100 V (1.75×) ✓ (MLCC guideline ≥ 1.5–2×).
 - DC bias: not in the datasheet; **assumed** 45 % remaining at 57 V → 3 × 2.1 µF = 6.3 µF. Confirm.
 - Ripple current: Ipri·√(D(1−D)) = 2.68 × 0.5 = 1.34 A rms total, 0.45 A each ✓.
-- Ripple voltage: Ipri·D(1−D)·T/C = 2.68 × 0.25 × 2.5 µs / 6.3 µF = 0.27 V p-p ✓.
+- Ripple voltage: Ipri·D(1−D)·T/C = 2.68 × 0.25 × 1.36 µs / 6.3 µF = 0.14 V p-p ✓ (737 kHz).
 - Plus 1 × 100 nF 100 V 0603 at the transformer primary pin for the highest frequencies (generic).
 
 ---
@@ -124,7 +128,7 @@ damps cable/ceramic ringing.
 - Total on VPRI–RTN: 47 + ≈ 8 µF ceramics + block A's own = ≤ 120 µF recommended (TPS2373 Table 5,
   300 µF absolute) — block A holds the total.
 - Ripple: 148 mA rms rated at 120 Hz, 105 °C; × 1.50 at ≥ 10 kHz = 222 mA. tanδ 0.14 → ESR ≈ 4 Ω at
-  120 Hz, ≈ 0.5–1 Ω at 400 kHz (estimate) vs a few mΩ for the ceramics, so it takes ≪ 0.1 A of the
+  120 Hz, ≈ 0.5–1 Ω at 737 kHz (estimate) vs a few mΩ for the ceramics, so it takes ≪ 0.1 A of the
   1.34 A rms switching ripple ✓.
 - Life: 2000 h at 105 °C with rated ripple → ≈ 32,000 h at 65 °C (3.6 years continuous) by the
   10 °C rule, at negligible ripple. Adequate for the prototypes; for a product, a 5000 h+ part.

@@ -28,10 +28,16 @@ TCA9617B suits Qwiic: FM+ (1 MHz), B side drives 30 mA, each side up to 550 pF (
   cable power is off), SDAB/SCLB **direct** to J pins 3/4 (no series resistor, see gotchas). Pull-ups
   2.2 kΩ to `QWIIC_3V3` through a bridged solder jumper (cut to remove ours when the far boards bring
   enough).
-- EN: tied to `QWIIC_3V3` through 10 kΩ. The repeater is enabled when cable power is on and isolated
-  when it is off. It has an internal pull-up to VCCB; the 10 kΩ to 0 V overrides it.
-- Power: TPS2553 IN = +3V3, OUT = `QWIIC_3V3` → J pin 2, EN = `QWIIC_PWR_EN` (RP2350 GPIO, 100 kΩ
-  pull-down: off at boot), FAULT_N → `QWIIC_FAULT_N` (10 kΩ to +3V3), RILIM 64.9 kΩ 1 %. 1 µF on IN,
+- EN (revised, review M2): **driven directly by `QWIIC_PWR_EN`** (the same net that enables the TPS2553;
+  its 100 kΩ pull-down holds EN low, overriding the TCA9617B's weak internal pull-up to VCCB; EN is
+  5.5 V tolerant, VIH 0.7 × VCCB). Plus a **100 kΩ discharge resistor from `QWIIC_3V3` to GND**: the
+  TPS2553 has no output discharge, so without it the off rail would float, and with it the B-side
+  pull-ups sit at 0 V. With the switch off, EN is a defined low and the repeater is isolated, so a
+  floating B side can't pull the RP2350's I2C bus low. At turn-on EN rises before QWIIC_3V3 (0.7–1.5 ms
+  ramp). That is harmless: the far end is unpowered for those µs and the bus is idle (firmware rule:
+  `QWIIC_PWR_EN` changes only with the controller idle). Load of the 100 kΩ on QWIIC_3V3 is 33 µA.
+- Power: TPS2553 IN = +3V3, OUT = `QWIIC_3V3` → J pin 2, EN = `QWIIC_PWR_EN` (FPGA J16, 100 kΩ
+  pull-down: off at boot), FAULT_N → `QWIIC_FAULT_N` (10 kΩ to +3V3), RILIM **150 kΩ** 1 % (user cap 100 mA, 2026-11-07). 1 µF on IN,
   10 µF on OUT.
 - ESD: SRV05-4 at the connector: I/O lines on SDA and SCL, pin 5 (VCC rail) = `QWIIC_3V3`, pin 2 GND.
 
@@ -42,17 +48,18 @@ TCA9617B suits Qwiic: FM+ (1 MHz), B side drives 30 mA, each side up to 550 pF (
 | TCA9617B VCCA, VCCB, I/O | −0.5…7 V | 3.3 V; I/O 3.3 V (5 V tolerant) | OK |
 | TCA9617B IOL (ROC) | 30 mA | (3.3 − 0.5)/1.1 kΩ = 2.5 mA | OK |
 | TPS2553 IN/OUT/EN/FAULT | −0.3…7 V | 3.3 V | OK |
-| TPS2553 IOUT (ROC) | 1.2 A (TJ ≤ 125 °C) | ≤ 0.455 A limit | OK |
-| JST SH contact | 1.0 A (AWG 28), 50 V | 0.455 A worst | 2× |
+| TPS2553 IOUT (ROC) | 1.2 A (TJ ≤ 125 °C) | ≤ 0.207 A limit | OK |
+| JST SH contact | 1.0 A (AWG 28), 50 V | 0.207 A worst | 4.8× |
 | SRV05-4 VRWM | 5 V | 3.3 V | OK |
 
 ## Calculations
 
-**Current limit** (TPS2553 eq. 1, RILIM in kΩ): RILIM = 64.9 kΩ →
-IOS min 25230/64.9^1.016 = **364 mA**, nom 23950/64.9^0.977 = **406 mA**, max 22980/64.9^0.94
-= **455 mA**. Above the 300 mA R-18 budget, below the SH contact rating and the +3V3 rail's margin. In
-range 15–232 kΩ. Response to a short 2 µs; constant-current version (TPS2553, not -1), so it limits,
-and FAULT_N asserts after the 7.5 ms deglitch. Loss at 0.3 A: 0.3² × 0.135 Ω = 12 mW.
+**Current limit** (revised 2026-11-07: **the user capped Qwiic power at 100 mA in firmware**). TPS2553
+eq. 1, RILIM in kΩ: RILIM = **150 kΩ** (inside 15–232 kΩ) → IOS min 25230/150^1.016 = **155 mA**, nom
+23950/150^0.977 = **179 mA**, max 22980/150^0.94 = **207 mA**. That is above the 100 mA firmware cap
+(≥ 55 % margin for inrush into downstream boards' caps; soft start limits it anyway) and far below the
+SH contact rating. Loss at 100 mA: 0.1² × 0.135 = 1.4 mW. (Superseded: 64.9 kΩ, 364–455 mA, for the
+300 mA R-18 allowance.)
 
 **Pull-ups / bus capacitance** (TCA9617B §8.2.1.2.1; I2C rise time 0.8473·R·C):
 - Ours 2.2 kΩ, typically in parallel with one SparkFun board's 2.2 kΩ → 1.1 kΩ.

@@ -1,5 +1,14 @@
 # DC-at-output detection (per channel): RC-filtered dividers + LMV393 window → fault latch (R-54: all four FETs off, no relay, ≤ 100 ms)
 
+> **Revision after the phase 1 review (m4) — supersedes the network values below.** The LMV393's VICR is −0.1…2.0 V at 2.7 V and −0.1…4.2 V at 5 V, i.e. VCC − 0.7…0.8 V → **≈ 2.5 V at 3.3 V** (not 2.6 V). The old offset node reached 2.63 V at the 55 V stop. New values: **R_bot 82.0 kΩ, R_bot' 88.7 kΩ** (R_top 2.2 MΩ and R_off 1.21 MΩ unchanged, C_f 2.2 µF unchanged):
+> - Plain node: gain 82/(2200 + 82) = **1/27.83**; R_th = 79.05 kΩ; τ = **0.174 s**.
+> - Offset node: G_total = 1/2.2 M + 1/88.7 k + 1/1.21 M = 12.555 µS → R_th 79.65 kΩ (τ 0.175 s, matched); gain 0.03620 (+0.75 % vs plain); offset 3.3 × 79.65 k/1.21 M = **0.217 V = 6.0 V referred to the output**.
+> - Maximum node voltages: plain 55 V/27.83 = 1.98 V; offset ≤ 1.98 × 1.0075 + 0.217 = **2.21 V ≤ 2.5 V VICR ✓** (0.3 V margin; at the 82.4 V TVS clamp 3.18 V, outside VICR only for a transient filtered by τ).
+> - Trip time −τ·ln(1 − 6/V_DC): 48 V → **23 ms**, 24 V → 50 ms, 18 V → 71 ms, 12 V → 121 ms; hardware meets ≤ 100 ms for |DC| ≥ 15 V.
+> - AC rejection, full scale (48 V pk diff): 20 Hz → 0.079 V (36 % of threshold) ✓; 10 Hz → 0.157 V (72 %) ✓; 5 Hz trips (→ subsonic HPF ≥ 15 Hz, unchanged).
+> - Threshold accuracy: gain mismatch 0.75 % × 24 V CM → 0.18 V; VIO 7 mV × 27.8 → 0.19 V; resistors → 0.2 V: **6.0 ± 0.6 V**.
+> - Parts: 82.0 kΩ and 88.7 kΩ 1 % 0603 (Uni-Royal 0603WAF8202T5E / 0603WAF8872T5E, same family and datasheet; LCSC numbers fixed in phase 2).
+
 Datasheets: datasheets/lmv393.pdf (TI LMV331/LMV393/LMV339; read: all electrical tables, both supply columns); datasheets/uniroyal-0402wgf.pdf (0603 thick-film series, 75 V working); datasheets/cl10a225ko8.pdf (Samsung CL series MLCC).
 
 | Ref (per channel) | Part | Qty/ch | Supplier (`show`, 2026-11-07) |
@@ -10,7 +19,7 @@ Datasheets: datasheets/lmv393.pdf (TI LMV331/LMV393/LMV339; read: all electrical
 | R_bot' (offset nodes) | 110 kΩ 1 % 0603 | 2 | Uni-Royal 0603WAF1103T5E (same family; LCSC number fixed in phase 2) |
 | R_off | 1.21 MΩ 1 % 0603 | 2 | Uni-Royal 0603WAF1214T5E (same family) |
 | C_f | 2.2 µF 16 V X5R 0603, CL10A225KO8NNNC | 4 | `C23630` (basic) |
-| R_PU_DC | 10 kΩ pull-up on DC_n to +3V3 | 1 | C25744 |
+| R_PU_DC | **4.7 kΩ** pull-up on DC_n to +3V3 (was 10 kΩ: the unconfigured ECP5's ≤ 150 µA pull-down on J1/G1 would drag it to 1.8 V; at 4.7 kΩ ≥ 2.6 V. The node also feeds FAULT_RAW_n through a BAT46WJ) | 1 | 0402WGF4701TCE `C25900` (basic) |
 
 Signal tap: the post-filter outputs OUT_P / OUT_N on the **bridge side** of the tweeter HPF cap (for the woofer, at the connector). That detects a DC fault of the bridge itself.
 
@@ -31,7 +40,7 @@ Why no relay works: with all four gates off, a single shorted FET cannot sustain
 | LMV393 VCC | 2.7–5.5 V | +3V3 | ✓ |
 | LMV393 input range | abs: 0…VCC; VICR −0.1…2.0 V at 2.7 V (p.5), so ≈ −0.1…2.6 V at 3.3 V | plain node 0…48/23 = 2.09 V; offset node ≤ 2.09 × 1.008 + 0.263 = 2.37 V; TVS event 87 V → 3.8 V for ≪ τ, filtered | ✓ (normal); at a clamp event the RC filter keeps the node ≪ 3.3 V over a ms-scale transient |
 | LMV393 VID | ±5.5 V | ≤ 2.4 V | ✓ |
-| Output | open drain; VSAT 150 mV at 1.5 mA | 10 kΩ pull-up: 0.33 mA | ✓ |
+| Output | open drain; VSAT 150 mV at 1.5 mA | 4.7 kΩ pull-up: 0.70 mA | ✓ |
 | R_top 0603 voltage | 75 V working (Uni-Royal 0603) | 48 V (87 V transient) | ✓ (transient brief) |
 | C_f voltage | 16 V | ≤ 2.4 V | ✓ |
 

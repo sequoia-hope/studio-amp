@@ -15,14 +15,14 @@ data + clock strip, so R-19's PH 4-pin stands.
 | Connector, top entry | B4B-PH-K-S(LF)(SN) | `C131334 B4B-PH-K-S(LF)(SN) (JST, Through Hole,P=2mm): extended, JLC stock 141805, lifecycle normal, checked 2026-11-07` |
 | (side-entry alternative) | S4B-PH-K-S(LF)(SN) | `C157926 S4B-PH-K-S(LF)(SN) (JST, Through Hole,Right Angle,P=2mm): extended, JLC stock 31067, lifecycle normal, checked 2026-11-07` |
 | Ferrite on +5V_LED (R-90) | BLM31KN601SN1L | `C668306 BLM31KN601SN1L (muRata, 1206): extended, JLC stock 381, lifecycle normal, checked 2026-11-07` |
-| TVS on +5V_LED | SMF5.0A | `C193402 SMF5.0A (MDD(Microdiode Semiconductor), SOD-123FL): extended, JLC stock 472221, lifecycle normal, checked 2026-11-07` |
+| TVS on +5V_LED | **SMF6.0A** (changed after review) | `C123790 SMF6.0A (MDD(Microdiode Semiconductor), SOD-123FL): extended, JLC stock 83315, lifecycle normal, checked 2026-11-07` |
 | ESD on D, C | PESD5V0S1BL,315 ×2 | `C84374 PESD5V0S1BL,315 (Nexperia, DFN1006-2): extended, JLC stock 76124, lifecycle normal, checked 2026-11-07` |
 
 ## Circuit
 
 `+5V_BUCK` → TPS2553 (IN 1 µF; EN = `LED_EN` RP2350 GPIO, 100 kΩ pull-down: off at boot;
 FAULT_N → `LED_FAULT_N`, 10 kΩ to +3V3; RILIM 23.2 kΩ 1 %) → `+5V_LED` → 22 µF → BLM31KN601 →
-SMF5.0A → J pin 1. J pin 2 GND.
+SMF6.0A → J pin 1. J pin 2 GND.
 `LED_DATA`, `LED_CLK` (RP2350 PIO, 3.3 V) → SN74LV1T125 A inputs. The shifters' VCC = `+5V_LED`
 (before the ferrite), OE tied to GND, Y outputs → 47 Ω → PESD5V0S1BL → J pins 3 (D) and 4 (C).
 For WS2812 single-wire strips, pin 4 is unused (the shifter can idle low).
@@ -43,7 +43,7 @@ shifters' inputs tolerate 3.3 V with VCC = 0 (VI abs max 7 V independent of VCC)
 | SN74LV1T125 IO continuous | ±25 mA | 5 V / (47 Ω + strip) transient only | OK |
 | JST PH contact | 2 A (AWG 24), 100 V | 1.2 A | 1.7× |
 | BLM31KN601SN1L | 2.9 A rated (2.0 A derated), 0.045 Ω max | 1.2 A | OK |
-| SMF5.0A VRWM | 5.0 V | 5.12 V max (buck tolerance) | **at the edge**: VBR min 6.4 V, so leakage ≤ 400 µA only. OK |
+| SMF6.0A VRWM (datasheets/mdd-smf5.0a.pdf, SMF series table) | 6.0 V; VBR 6.67–7.37 V; VC 10.3 V at 19.4 A | 5.12 V max | OK, below VRWM. VC exceeds the TPS2553's 7 V abs max only for the pulse; the ferrite sits between them |
 
 ## Calculations
 
@@ -79,9 +79,8 @@ TPS2553 soft start (rise 0.7–1.5 ms) limits inrush into them.
   blocked by the TPS2553 reverse-voltage comparator (turns the switch off after 4 ms). The shifters
   then run from that external 5 V, which is harmless.
 - TPS2553 has active-high EN (TPS2552 is active low). Don't substitute the 2552.
-- SMF5.0A at 5.12 V (worst buck tolerance) is just above its 5.0 V VRWM: leakage up to the 400 µA
-  IR spec, ≈ 2 mW. Acceptable. A 6 V-standoff TVS (SMF6.0A) would give margin; phase 2 may swap
-  it in if stocked.
+- TVS on +5V_LED is SMF6.0A (review): 5.12 V worst-case rail < 6.0 V VRWM, so there is no standing
+  leakage. The SMF5.0A stays on VUSB (≤ 5.25 V < its 6.4 V VBR min, G-usb-c.md).
 
 ## Layout guidance
 
@@ -94,3 +93,8 @@ TPS2553 soft start (rise 0.7–1.5 ms) limits inrush into them.
   hand (R-19 order). Many SK9822/APA102 pigtails use a JST SM 4-pin with a different order, so an
   adapter cable may be needed.
 - Top entry (B4B) or side entry (S4B): decide at phase 4 placement.
+
+## Bring-up check (review note)
+SN74LV1T125 has no Ioff figure. With `+5V_LED` off and LED_DATA/LED_CLK driven high, measure any
+back-feed into `+5V_LED` at bring-up. If it is above ≈ 100 µA, have firmware hold both lines low
+whenever `LED_EN` is low.

@@ -1,5 +1,9 @@
 # U_VB — VBUS sense ADC for bus-voltage feedforward: TI ADS7042 (12-bit, 1 MSPS, SPI) + divider
 
+> **fsw update (block E review, ECP5 −7I grid now 1.695 ns, PLL ×12): baseline fsw = 576 kHz (12 × 48 kHz, 1024 steps); 768 kHz option; 448/512/672 kHz only with E's ×14 bring-up option.** VBUS sampled once per PWM period at a fixed phase: **576 kS/s** (2 × fsw = 1.152 MS/s exceeds the ADS7042's 1 MSPS).
+
+> **Review n3:** D_VCL (BAT46WJ) reverse leakage at high temperature (datasheet: 20 µA max at 10 V, 60 °C; up to ≈ 12 µA at 1.5 V reverse at 125 °C) flows through the 2.12 kΩ Thevenin → ≈ 25 mV ≈ 1.2 LSB of temperature-dependent VBUS gain error. It is covered by the feedforward gain calibration (±2 % divider tolerance already requires one).
+
 > **fsw update 2026-11-07 (FPGA changed to ECP5, edge grid 1.453 ns = 688.128 Mb/s ODDRX2F, E-fpga-ecp5.md):** baseline fsw is now **448 kHz** (1536 grid steps; 448 kHz = 48 kHz × 28/3, audio-locked but not an integer multiple). 480 kHz is not on the grid. Option per build: 672 kHz (14 × 48 kHz, 1024 steps). PWM-synchronous VBUS sampling at 2 × fsw = **896 kS/s** (ADS7042 max 1 MSPS).
 
 Datasheet: datasheets/ads7042.pdf (TI SBAS608C, Dec 2015). Read: all sections (specs, timing, offset calibration, layout). Divider and filter: datasheets/fojan-frc0402.pdf (FOJAN FRC thick-film series, 0402–2512), datasheets/walsin-0402n102.pdf (Walsin C0G), datasheets/bat46wj.pdf.

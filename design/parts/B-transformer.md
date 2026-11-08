@@ -37,11 +37,19 @@ Primary side = N1, N2, N5; secondary side = N3, N4 (from the insulation-test lin
 | N1‖N2 : N3+N4+N5 | 4 : 12 | — | N5 has primary-side insulation; not allowed on the secondary |
 
 Consequences of 4-turn primary (all computed in `B-converter-design.md`):
-- Lm = 25 µH (±20 %); magnetizing ripple 2.42 A p-p at 400 kHz (constant over line).
-- Volt-second rating on 4 T = 120 Vµs. Steady 61 Vµs (51 %); worst case DMAX 0.68 at 57 V:
-  97 Vµs (81 %). This is what forces fsw ≥ ≈ 330 kHz; 400 kHz chosen.
-- Flux swing per turn at 400 kHz equals the PMP20878 design at 200 kHz; core loss estimated
-  ≈ 1.75 W (vs ≈ 0.7 W in PMP20878) because the frequency is doubled at the same swing.
+- Lm = 25 µH (±20 %); magnetizing ripple 1.32 A p-p at 737 kHz (constant over line).
+- Volt-second rating on 4 T = 120 Vµs at 20 °C (datasheet test condition); **≈ 90 Vµs assumed at
+  100 °C** (MnZn Bsat −20…−25 %). Review M3: at 400 kHz the worst corner (57 V, DMAX 0.74,
+  fsw −10 %) was 117 Vµs, 98 % cold and over the hot rating. fsw went to 620 kHz, then (amp beat rule)
+  to **737.28 kHz, crystal-synchronised**: worst corner 57 × 0.696/737 kHz = 54 Vµs → 45 % cold,
+  ≈ 60 % hot; clock-failed fallback 72 Vµs (60 % / ≈ 80 %); steady 33 Vµs. The off-the-shelf part is
+  now safe unless Würth's hot rating is below ≈ 72 Vµs on 4 T (`B-converter-design.md`).
+- Core loss: Bpk 68 mT at 737 kHz, estimated ≈ 0.84 W (≈ 0.7 W in PMP20878 at 200 kHz on 8 T).
+- **737 kHz is 5 % above Würth's 200–700 kHz typical application range** for this part. That is
+  not a stated limit; it is asked in the email.
+- Winding pins (datasheet p.1 land pattern, review n6): N1 2(dot)–4, N2 3(dot)–5 → parallel 2+3 and
+  4+5; N3 7(dot)–10, N4 8(dot)–11 → series by linking 10–8, output on 7 and 11; N5 1(dot)–6.
+  Primary pads 1–6 and secondary pads 7–11 are ≈ 18 mm apart edge to edge.
 - Copper is lightly loaded: primary 2.0 A rms through 3.25 mΩ, secondary 0.95 A rms through 21 mΩ
   (PMP20878 ran 3 A through the same secondary). Winding loss ≈ 0.1 W.
 - Paralleled N1‖N2: identical 4-turn windings on one core (the datasheet already series-connects
@@ -103,7 +111,7 @@ shelf.**
 
 | # | Option | Efficiency (est.) | Effort / risk |
 |---|---|---|---|
-| **A (recommended)** | 750343576 rewired 1:2 at 400 kHz, bought from Würth/Digi-Key/Mouser and hand-soldered | ≈ 93 % (91–93.5 %) | proven 72 W part in a TI design; core loss unverified at this flux/frequency; stock unconfirmed (Würth samples are free in small numbers) |
+| **A (recommended)** | 750343576 rewired 1:2 at 737 kHz, bought from Würth/Digi-Key/Mouser and hand-soldered | ≈ 93 % (91–93.5 %) | proven 72 W part in a TI design; core loss unverified at this flux/frequency; stock unconfirmed (Würth samples are free in small numbers) |
 | B | Custom Würth Midcom (or Coilcraft) part on the same ER core: 8 T : 16 T + spare winding | ≈ 94 % | custom lead time (weeks), NRE possible; best long-term part, and the route to production |
 | C | Two 750343576 with primaries in parallel (8 T each) and secondaries in series (16 T total), 1:2, at 300 kHz | ≈ 93 % | twice the area and hand-soldering; each core carries half the power |
 | D | Hand-wound on an LCSC ferrite core/bobbin (EFD25/ER25) with triple-insulated secondary | ≈ 93 % | 1500 Vrms by construction is on us; repeatability across 5 boards |
@@ -126,10 +134,19 @@ Recommendation: **A for this spin, with B started in parallel** if the board is 
 > Our output is 48 V rather than 24 V.
 >
 > **1. Samples:** please send at least **7 pcs of 750343576** (5 prototype boards plus spares), and
-> confirm (a) the duration of the 2250 V DC insulation test (we need 60 s, IEEE 802.3 isolation),
-> (b) the core material and Ae / Ve, and (c) whether the part is stocked or made to order, with lead
-> time. We will connect it N1‖N2 : N3+N4 (1:2) at 400 kHz. Please tell us if paralleling N1 and N2
-> is not acceptable for this construction.
+> please confirm:
+> (a) the duration of the 2250 V DC insulation test (we need 60 s, IEEE 802.3 isolation);
+> (b) the **core material, Ae, Ve and le**, and the **saturation flux density Bsat at 100 °C** (and at
+>     25 °C) for that material;
+> (c) how the 240 Vµs "bipolar" volt-second rating is defined (peak-to-peak flux swing? at which
+>     temperature and which B?), and the volt-second limit on N1+N2 at 100 °C and 125 °C;
+> (d) core loss data for the material at 600 kHz and 50–100 mT, or the expected core loss in our use;
+> (e) whether the part is stocked or made to order, with lead time.
+> We will connect it N1‖N2 : N3+N4 (1:2) at 737 kHz (crystal-synchronised), so the 4-turn primary
+> sees up to 57 V × 0.70 / 737 kHz = 54 Vµs (72 Vµs if our clock fails and the controller free-runs
+> at 590 kHz). Please confirm (f) that operation at 737 kHz is acceptable (your typical application
+> lists 200–700 kHz), (g) that those volt-seconds are within the part's hot rating, and (h) that
+> paralleling N1 and N2 is acceptable for this construction.
 >
 > **2. Quote for a custom part:** a pin-compatible variant of 750343576 for a 48 V output, ideally
 > on the same ER19/4.8/15 core and footprint, so it drops onto the same PCB:
@@ -139,14 +156,14 @@ Recommendation: **A for this spin, with B started in parallel** if the board is 
 > | Topology | Active-clamp forward, low-side P-channel clamp, peak-current mode |
 > | Input | 36–57 V DC (PoE), max duty 0.73 |
 > | Output | 48 V, 1.5 A (72 W); synchronous rectification |
-> | Switching frequency | 400 kHz nominal (range 300–500 kHz) |
+> | Switching frequency | 737 kHz (crystal-synchronised; fallback 590–710 kHz free-running) |
 > | Windings, same pins as 750343576 | **N1 = N2 = 8 T** (paralleled by us → 8 T primary); **N3 = N4 = 8 T** (in series by us → 16 T secondary); **N5 = 2 T** primary-side bias winding (forward-mode: 10.5–14.3 V at 50 mA) |
 > | Turns ratio | Np : Ns : Naux = 8 : 16 : 2 |
 > | Primary inductance | ≥ 100 µH (8 T), ±20 % |
 > | Leakage inductance | ≤ 0.4 µH, primary with secondary shorted |
-> | Volt-seconds | ≥ 130 Vµs on the 8 T primary at 125 °C, without saturation (57 V × 0.73 / 400 kHz = 104 Vµs worst case) |
+> | Volt-seconds | ≥ 130 Vµs on the 8 T primary at 125 °C, without saturation (57 V × 0.74 / 360 kHz = 117 Vµs worst case at 400 kHz − 10 %) |
 > | Currents | primary 2.0 A rms / 5.0 A peak; secondary 1.0 A rms / 2.5 A peak; aux 50 mA |
-> | Wire | your choice (stranded / Litz on the primary preferred at 400 kHz); copper loss target ≤ 0.2 W |
+> | Wire | your choice (stranded / Litz on the primary preferred at 737 kHz); copper loss target ≤ 0.2 W |
 > | Insulation | 1500 Vrms 60 s (or 2250 V DC 60 s) from N1, N2, N5 to N3, N4 (IEEE 802.3 PoE isolation); 500 Vrms N5 to N1/N2 is not needed (same side) |
 > | Thermal | 55 °C ambient at full load, temperature rise ≤ 40 K; operating −40…+125 °C |
 > | Losses | total ≤ 1.0 W at 72 W, 50 V input |
@@ -158,7 +175,8 @@ Recommendation: **A for this spin, with B started in parallel** if the board is 
 Notes for us (not part of the email): with a 2-turn aux on an 8-turn primary, N5 gives Vin/4 =
 10.5–14.3 V, inside UCC2897A VDD (8.5–16 V) and TPS2373 VC_IN (≤ 15 V), so the custom part could
 replace the primary LM5019 (keep its footprint for the 750343576 build). With 8 T on the primary
-the flux per turn halves: estimated core loss ≈ 0.6 W instead of 1.75 W (efficiency ≈ 94 %).
+the flux per turn halves: at 400 kHz the estimated core loss is ≈ 0.6 W (efficiency ≈ 94 %), and the
+volt-second margin is twice that of the 750343576 build.
 
 ## Layout guidance (feeds phase 4/6)
 
@@ -173,4 +191,5 @@ the flux per turn halves: estimated core loss ≈ 0.6 W instead of 1.75 W (effic
 
 1. Distributor stock and lead time for 750343576 (findchips shows none). User to request samples.
 2. Hipot duration of the 2250 V DC rating (60 s?), for R-32.
-3. Core material and Ae/Ve, to replace the assumed core loss (ask Würth; or measure ΔT).
+3. Core material, Ae/Ve and Bsat(100 °C): decide whether the 750343576 is safe at 57 V hot
+   (review M3); asked in the email above. Measure ΔT and run the forced-DMAX test at bring-up.

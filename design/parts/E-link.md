@@ -1,7 +1,5 @@
 # RP2350 ↔ FPGA link — choice, signals, bandwidth and timing
 
-> **ECP5 update (2026-11-07).** The link is unchanged on the RP2350 side (GPIO8–19, 8-bit PIO, 37.5 MHz, 37.5 MB/s; the bandwidth table below still holds). FPGA side, now all 3.3 V with no overdrive inputs and no series 100 Ω needed for clamp current: `LINK_D0–D7` → ECP5 bank-8 balls M7, N7, P7, R7, R6, T6, P8, M8 (configuration D2–D7, CS1N, DOUT; ordinary I/O once configured with CFG = 001); `LINK_IRQ` → M9 (WRITEN); `LINK_CLK` → M16 (PCLKT3_0); `LINK_DIR`, `LINK_STB` → R15, T15 (bank 3). Read round trip: RP2350 pad ≤ 4 ns (assumed) + 0.3 ns flight + ECP5 tCO ≤ 6.1 ns from the clock pin (DS-02012 Tab 3.22, −7) ≈ 10.4 ns. Sampling 3 sys cycles (20 ns) after CLK↓ leaves ≈ +9.6 ns. Writes: FPGA tSU ≥ 0, tH ≥ 3.0 ns (or tSU_DEL 1.33 / tH_DEL 0 with input delay) against 13.3 ns half-period → OK. The RP2350 still keeps the link pins Hi-Z until it has seen DONE (bank-8 D-pins have no pull during configuration). The Gowin pin numbers in the table below are superseded by `E-pinmap.md`.
-
 
 Not a part; the interface decision architecture decision 3 left to block E. Sources: RP2350 datasheet (`datasheets/rp2350-lcsc.pdf`: PIO chapter, GPIO functions Tab 3, IO characteristics Tab 1436), GW1NR-9 DS117 Tab 3-19 (clock-tree delays), UG803 (pins), `E-fpga-gw1nr9.md`, `E-pinmap.md`.
 
@@ -14,21 +12,26 @@ Not a part; the interface decision architecture decision 3 left to block E. Sour
 | QSPI-style, 4 bit, 75 MHz | 37.5 MB/s | on paper | 7 | 13.3 ns period: FPGA→RP read round trip ≈ 11 ns + RP input path leaves no margin without a returned clock |
 | **8 bit parallel, 37.5 MHz (sys 150 MHz / 4)** | **37.5 MB/s** | **yes, 82 % worst, 49 % realistic** | **12** | read round trip fits in one 26.7 ns period (below) |
 
-Chosen: **8-bit parallel**, with the RP2350's PIO as master (side-set clock), DMA on both ends, FIFOs in FPGA BSRAM.
+Chosen: **8-bit parallel**, with the RP2350's PIO as master (side-set clock), DMA on both ends, FIFOs in FPGA EBR (sysMEM).
 
-## Signals (RP2350 GPIO → FPGA pin)
+## Signals (RP2350 GPIO → ECP5 ball), all 3.3 V LVCMOS
 
-| Net | RP2350 | FPGA | Dir | Purpose |
+| Net | RP2350 | ECP5 | Dir | Purpose |
 |---|---|---|---|---|
-| `LINK_D0…D7` | GPIO8–15 (pins 6–9, 11–14) | 76, 75, 74, 73, 72, 71, 70, 69 (bank 1, 3.3 V) | bidir | data; consecutive GPIOs for PIO `in`/`out` |
-| `LINK_CLK` | GPIO16 (16) | 10 (GCLKT_6, bank 3, overdrive input, 100 Ω series) | RP → FPGA | transfer clock, 37.5 MHz |
-| `LINK_DIR` | GPIO17 (17) | 79 (bank 3, OD input) | RP → FPGA | 0: RP2350 drives D; 1: FPGA drives D |
-| `LINK_STB` | GPIO18 (18) | 80 (bank 3, OD input) | RP → FPGA | transaction framing (low = header follows) |
-| `LINK_IRQ` | GPIO19 (19) | 68 (bank 1) | FPGA → RP | RX FIFO has a frame / audio block ready / fault |
+| `LINK_D0…D7` | GPIO8–15 (pins 6–9, 11–14) | M7, N7, P7, R7, R6, T6, P8, M8 (bank 8: D2–D7, CS1N, DOUT/CSON) | bidir | data; consecutive GPIOs for PIO `in`/`out` |
+| `LINK_CLK` | GPIO16 (16) | M16 (PCLKT3_0, bank 3) | RP → FPGA | transfer clock, 37.5 MHz |
+| `LINK_DIR` | GPIO17 (17) | R15 (bank 3) | RP → FPGA | 0: RP2350 drives D; 1: FPGA drives D |
+| `LINK_STB` | GPIO18 (18) | T15 (bank 3) | RP → FPGA | transaction framing (low = header follows) |
+| `LINK_IRQ` | GPIO19 (19) | M9 (WRITEN, bank 8) | FPGA → RP | RX FIFO has a frame / audio block ready / fault |
 
-Series 22 Ω at each driver on `LINK_D*` (both ends drive): rise ~1 ns, a 30 mm trace is 0.2 ns one way → just above tr/6, so source termination keeps edges clean. RP2350 drive set to 4 mA, slew slow.
+Series 22 Ω at each driver on `LINK_D*` (both ends drive): rise ~1 ns, a 30 mm trace is 0.2 ns one way → just above tr/6, so source termination keeps edges clean. RP2350 drive 4 mA, slow slew.
 
-Firmware rules: the RP2350 keeps GPIO8–18 Hi-Z (its reset state) until it has confirmed through JTAG that the FPGA is configured, because `LINK_CLK/DIR/STB` enter 1.8 V bank-3 pins in overdrive mode (`E-fpga-gw1nr9.md`). Turnaround: RP2350 releases D, toggles DIR, waits 2 clocks; the FPGA drives only while DIR = 1 and releases within 1 clock of DIR = 0.
+**Firmware rules (review MINOR-6):**
+- The RP2350 keeps GPIO8–19 Hi-Z (its reset state) until the ECP5's DONE (GPIO28) is high.
+- The RP2350 returns GPIO8–19 to Hi-Z **before every PROGRAMN pulse** (A/B reload), and waits for DONE again. During configuration DOUT/CSON (M8 = `LINK_D7`) drives high until the bitstream's Bypass instruction (TN-02039 §4.7.2), and WRITEN (M9) and CS1N (P8) are pulled up (Tab 4.5). D2–D7 have no pull.
+- Bank 8 balls M7–M9, N7, P7, P8, R6, R7, T6 are ordinary user I/O once configured, because CFG = 001 leaves the parallel/master-SPI ports unused.
+
+Turnaround: the RP2350 releases D, toggles DIR, waits 2 clocks; the FPGA drives only while DIR = 1 and releases within 1 clock of DIR = 0.
 
 ## Bandwidth requirement (worst case, sustained)
 
@@ -49,8 +52,10 @@ Ordinary traffic (2–8 channels of AES67 at 48 kHz/24 bit ≈ 0.3–1.2 MB/s, P
 
 ## Timing
 
-Period 26.67 ns (37.5 MHz). RP2350 → FPGA (writes): PIO changes D on CLK↓ (side-set), FPGA samples on CLK↑ → 13.3 ns setup minus skew (D and CLK leave the same PIO instruction; trace match ±5 mm = 33 ps) − 0.8 ns RC of the 100 Ω on CLK − FPGA input setup (≤ 1 ns assumed) → ≈ **+11 ns**. Hold ≈ 13 ns.
-FPGA → RP2350 (reads): FPGA launches on CLK↓ as received. RP2350 pad out (assume ≤ 4 ns; not in Tab 1436) + flight 0.15 + series RC 0.8 + GCLK6–7 tree 2.5 ns (DS117 Tab 3-19, C6) + clock-to-pad ≤ 4.2 ns (pin-LUT-pin bound) + flight 0.15 ≈ **11.8 ns** after the RP2350's CLK↓. The PIO samples a fixed number of sys-clock cycles after it drives CLK↓; sampling 3 cycles (20 ns) later leaves ≈ +8 ns setup and ≥ +6.7 ns hold before the next launch (26.7 + min delay). The RP2350 input synchroniser (2 sys cycles) can be bypassed per pin (`INPUT_SYNC_BYPASS`) or folded into the sample offset; either way the window is deterministic. If bring-up shows less margin, run reads at sys/6 = 25 MHz (25 MB/s; still ≥ the realistic 18.2 MB/s).
+Period 26.67 ns (37.5 MHz).
+- **RP2350 → FPGA (writes):** PIO changes D on CLK↓ (side-set) and the FPGA samples on CLK↑ (M16 is a primary-clock pin). That leaves a 13.3 ns half-period minus skew (trace match ±5 mm = 33 ps) against ECP5 tSU ≥ 0 / tH ≥ 3.0 ns (DS-02012 Tab 3.22, −7 commercial), or tSU_DEL 1.33 / tH_DEL 0 with input delay → setup **≈ +13 ns**, hold **≈ +10 ns**.
+- **FPGA → RP2350 (reads):** the FPGA launches on CLK↓ as received. RP2350 pad out (assume ≤ 4 ns; not in Tab 1436) + flight 0.15 ns + ECP5 tCO ≤ 6.1 ns from the clock pin (≈ 8 ns allowing for −7I and LVCMOS33 into 10–15 pF) + flight 0.15 ns ≈ **12.3 ns** after the RP2350's CLK↓. The PIO samples 3 sys cycles (20 ns) later: ≈ +7.7 ns setup, ≥ +6.7 ns hold before the next launch. The input synchroniser can be bypassed per pin (`INPUT_SYNC_BYPASS`) or folded into the sample offset.
+- If bring-up shows less margin, run reads at sys/6 = 25 MHz (25 MB/s, still above the realistic 18.2 MB/s).
 
 ## RP2350 resources
 

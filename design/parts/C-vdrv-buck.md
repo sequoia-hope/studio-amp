@@ -1,5 +1,31 @@
 # U (VDRV) — LM5017 7 V gate-drive supply from VBUS, with TLV6703 power-good
 
+## Revision after phase 1 review (2026-11-07): supersedes the setpoint, ripple, load and VDRV_PG items below
+
+**Type III ripple offset (review M1).** The COT comparator trips at the FB ripple valley, so the
+FB average sits at VREF + Vr/2. That is the same mechanism LM5013 §9.2.2.7 states; the first audit
+ignored it. With Rr = 100 kΩ the offset was ≈ +0.55 V (VDRV ≈ 7.6 V).
+- tON uses both the eq. 3 constant (1.0 × 10⁻¹⁰) and the datasheet test point (250 ns at 48 V,
+  100 kΩ → 1.2 × 10⁻¹⁰): tON = (1.0–1.2) × 10⁻¹⁰ × 191 kΩ / VIN.
+- **Rr = 499 kΩ**, Cr = 1 nF (Rr·Cr = 499 µs). Vr = (VIN − 7)·tON/(Rr·Cr):
+  31–37 mV at 36 V, 33–40 mV at 56 V. That is ≥ 25 mV (datasheet minimum, p. 9) everywhere and
+  nearly line-independent.
+- Offset Vr/2 = 15.5–20 mV at FB. **RFB top = 46.4 kΩ** (bottom 10.0 kΩ, ratio 5.64):
+  VDRV = (1.225 + 0.0155…0.020) × 5.64 = **7.00–7.02 V** typ; 6.85–7.16 V over the FB reference
+  spread (1.20–1.25 V). That meets block D's 7.0 V ±5 %.
+
+**Load (latest, 2026-11-07): the user put the GaN back to IGB070S10S1: 48 mA at 576 kHz, 39 mA at
+448 kHz, 57 mA at 768 kHz, 78 mA at 1 MHz (block D).** The 200 mA design is unchanged. IGC033S10S1
+fallback figures follow, and the INN100 figures below are superseded: **76 mA at the 576 kHz baseline** (block D, ×12 FPGA grid); 61 mA at 448 kHz, 68 mA at 512 kHz, 88 mA at 672 kHz, 127 mA at 1 MHz; spec ≤ 150 mA. The 200 mA design covers it: Ipk = 0.15 + ΔIL/2 (0.16) = 0.31 A at
+150 mA, against the 0.7 A minimum current limit. Power at VDRV 0.43 W (448 kHz) / 0.89 W (1 MHz), so
+**≈ 0.51 W / 1.05 W from VBUS**. Per-driver LDO loss at 1 MHz: 2 V × 32 mA = 64 mW.
+
+**VDRV_PG divider re-sized.** It now goes to RP2350 GPIO33 (not the FPGA). If a GPIO pull-down
+(≈ 50 kΩ) is ever enabled, 47 k/33 k would sag to 2.1 V. New: **4.7 kΩ from VDRV, 3.0 kΩ to GND**:
+7.0 V → 2.73 V, at the 6.40 V trip 2.49 V, 2.65 V with a 50 kΩ pull-down in parallel. In an LM5017
+FB-overvoltage event (VOUT ≈ 9.3 V) the node reaches 3.62 V (review note: previously 3.84 V). TLV6703
+sinks 7/4.7 k = 1.5 mA (≤ 5 mA VOL spec). VDRV absent → 0 V ("absent = not good", unchanged).
+
 Datasheets: datasheets/lm5017.pdf (SNVS783H, Dec 2014). Read: all sections. datasheets/tlv6703.pdf
 (ZHCSHG9A, Apr 2018, Chinese edition from LCSC; the tables are bilingual and the numbers were read
 from them). Load requirements from datasheets/lmg1210.pdf (§6.1, §6.3, §6.5, §7.3.2, §8.2.2.5) and
@@ -71,7 +97,7 @@ C14860; assume ≥ 70 % at 7 V → 14 µF, giving ≈ 7 mV). Each LMG1210 also g
 
 **Type III ripple** (AN-2292 eq. 35): Rr·Cr ≤ (VIN(min) − VOUT)·tON/50 mV = (36 − 7) × 531 ns / 50 mV
 = 308 µs. Cr = 1 nF, so Rr ≤ 308 kΩ. Choose **Rr = 100 kΩ** (≈ ⅓, "half to a fourth … for margin"),
-Cac = 100 nF. Rr sees SW; at (56 − 7)² × 0.13 / 100 k = 3 mW, use 0603 75 V.
+Cac = 100 nF. Rr (now 499 kΩ) sees SW, up to ≈ 91 V in a clamped surge: **0805, 150 V working**.
 
 **Enable (default off)**: UVLO pin = `VDRV_EN` (3.3 V logic) through 10 kΩ, with 100 kΩ to GND.
 When high: 3.3 × 100/110 = 3.0 V, minus the 20 µA hysteresis source × 9.1 kΩ = 0.18 V, so 2.8 V,

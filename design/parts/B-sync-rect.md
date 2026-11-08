@@ -15,7 +15,7 @@ Footprint: PG-TDSON-8 (SuperSO8 5 × 6), marking 500N20NS.
 
 | Parameter | Datasheet | Our worst case | Margin |
 |---|---|---|---|
-| VDS | 200 V | forward SR 116 V (42 V in) / freewheel 114 V (57 V in) steady; ringing scaled from PMP20878 → 153 V / 188 V unsnubbed | **needs snubber**; target ≤ 160 V with RC (80 %) |
+| VDS | 200 V | forward SR **137 V at 38.4 V, 143 V at the 37.6 V LINEUV-off corner**, 84 V at 57 V; freewheel 114 V at 57 V (steady); with ringing (PMP20878 +22–65 %) 167–189 V unclamped | **RCD-Z clamp on both SRs (baseline, review M4) → ≤ ≈ 165 V (83 %)** |
 | VGS | ±20 V | 10 V (NCP4306 "A" clamp) | OK |
 | RDS(on) | 42 typ / 50 max mΩ at 10 V | 80 mΩ hot | |
 | VGS(th) | 2–4 V | 10 V drive ✓ | |
@@ -30,9 +30,9 @@ higher Rds of a 200 V part costs little.
 Alternative checked: BSC320N20NS3 G (C501501, 755 stock, 32 mΩ, Qg 22 nC, Qrr 429 nC): more gate
 charge for conduction loss we don't have.
 
-Losses (400 kHz, 50 V): forward SR Irms = Io√D = 0.93 A, freewheel Io√(1−D) = 0.96 A, plus ripple
+Losses (737 kHz, 50 V): forward SR Irms = Io√D = 0.93 A, freewheel Io√(1−D) = 0.96 A, plus ripple
 → (0.93² + 0.96² + ΔIL²/12) × 0.08 = 0.15 W total conduction; body diode 2 edges × 40 ns × 0.9 V ×
-1.34 A × 400 kHz × 2 SRs = 0.08 W; gate (via VSR buck) 2 × 13 nC × 10 V × 400 kHz / 0.85 + IC
+1.34 A × 737 kHz × 2 SRs (30 ns per edge: 0.10 W); gate (via VSR buck) 2 × 13 nC × 10 V × 737 kHz / 0.85 + IC
 = 0.16 W.
 
 ---
@@ -54,49 +54,77 @@ applications without any additional components or external triggering".
 
 | Parameter | Abs max / spec | Our case | Margin |
 |---|---|---|---|
-| VCC | −0.3…37 V (op ≤ 35 V) | VSR = 12 V | OK |
-| CS | −4…200 V (dyn −10 V, 200 ns) | SR drain ≤ 160 V with snubber | **depends on snubber**; 188 V unsnubbed is too close |
+| VCC | −0.3…37 V (op ≤ 35 V) | VSR = 10 V (7 V in dropout at start-up) | OK |
+| CS | −4…200 V (dyn −10 V, 200 ns) | = SR drain; ≤ ≈ 165 V with the RCD-Z clamp (worst: SMBJ130A at 159 V VBR max + a few V dynamic) | 83 % of abs max |
 | DRV | 17 V | 10 V clamp | OK |
 | VCC UVLO | 4.0 V on / 3.5 V off | SRs stay off (DRV held low even unpowered) until VSR up; body diodes carry start-up | OK |
 | Turn-off threshold | −1…0 mV (true zero current) | diode emulation | R-33 ✓ |
 | Turn-on threshold | −120…−40 mV | body diode drop | |
 | tPD_OFF | 13 typ / 23 max ns | CCM commutation at main-FET turn-off | OK |
 | tPD_ON | 30 typ / 60 max ns | body-diode time budget used in the loss model | |
-| fmax | 1 MHz | 400 kHz | OK |
+| fmax | 1 MHz | 737.28 kHz synced (590–708 kHz if the clock fails) | OK |
 
-Calculations:
-- **MIN_TON** (blanks the turn-on ringing): datasheet: 10 kΩ → 1.0 µs, 50 kΩ → 5.0 µs, 0 Ω →
-  55 ns (≈ 100 ns/kΩ). Shortest SR conduction: forward SR D·T = 0.424 × 2.5 µs = 1.06 µs; freewheel
-  (1−D)·T = 0.317 × 2.5 = 0.79 µs at DMAX 0.683. Set **3.0 kΩ → ≈ 300 ns** (both).
-- **MIN_TOFF** (blanks the turn-off ringing): must end before the next conduction: forward SR off for
-  (1−D)T ≥ 0.79 µs, freewheel off for D·T ≥ 1.06 µs. Set **4.3 kΩ → ≈ 430 ns**.
-- **Driver loss** (eq. 7: P = VCC × VCLAMP × Cg_ZVS × fsw, i.e. VCC × Qg_ZVS × fsw), Qg_ZVS ≈ 13 nC at 10 V:
-  12 V × 13 nC × 400 kHz = 62 mW per controller, most in the IC's clamp (TSOP-6 ≈ 200 °C/W → +12 °C).
-  ICC 1.8 mA × 12 V = 22 mW. OK.
+Calculations (737.28 kHz, T = 1.356 µs; synced DMAX 0.664–0.696; also checked at clock-failed 590 kHz):
+- **MIN_TON** (blanks the turn-on ringing): datasheet: 0 Ω → 55 ns, 10 kΩ → 1.0 µs, 50 kΩ → 5.0 µs
+  (≈ 95 ns/kΩ above the 55 ns floor). Kept **short to limit reverse current in deep DCM (review m4)**:
+  **0.75 kΩ → ≈ 125 ns**. That still blanks 2–3 periods of the 20–25 MHz turn-on ring. Reverse current
+  held by MIN_TON is ≤ Vo/Lo × 125 ns = 0.09 A peak, ≈ 6 nC per cycle, only in deep DCM
+  (`B-converter-design.md`, light load). Shortest required conduction: forward SR D·T = 0.424 × 1.356
+  = 0.575 µs; freewheel (1 − 0.696) × 1.356 = 0.41 µs ✓ (MIN_TON 125 ns is ≤ 31 % of it).
+- **MIN_TOFF** (blanks the turn-off ringing): must end before the next conduction. Forward SR is off
+  for (1−D)·T ≥ 0.41 µs, freewheel for D·T ≥ 0.575 µs. Set **2.0 kΩ → ≈ 245 ns** (≈ 165 ns margin to
+  0.41 µs; was 2.43 k/285 ns at 620 kHz).
+- **Driver loss** (eq. 7: P = VCC × VCLAMP × Cg_ZVS × fsw, i.e. VCC × Qg_ZVS × fsw), Qg_ZVS ≈ 13 nC at
+  the 10 V clamp: 10 V × 13 nC × 737 kHz = 96 mW per controller, most of it in the IC's clamp
+  (TSOP-6 ≈ 200 °C/W → +19 °C). ICC 1.8 mA × 10 V = 18 mW. OK.
 - **VCC decoupling**: 1 µF X7R 25 V 0603 at VCC–GND (Kelvin to the SR source).
 
 Fine print:
 - GND pin must be Kelvin-connected to the SR source pad (datasheet pin table); CS to the drain at
   the package.
 - Light load: the dV/dt detector stops false turn-on on the DCM ringing after the inductor current
-  reaches zero (below ≈ 0.45 A output).
+  reaches zero (below ≈ 0.17–0.28 A output at 737 kHz).
+- LLD: position 6 of the part number, "D", is the internal 540 µs light-load-detect timer (p.39
+  Table 6; review n7). It is harmless: conduction happens every 1.36 µs, and in pulse-skip the first
+  pulse after a sleep goes through the body diode.
 - The NCP4306 holds DRV low with no VCC, so the SRs cannot turn on from drain dV/dt before VSR is up.
 
 ---
 
-## Snubbers (RC across each SR, drain–source)
+## Snubbers and clamps (both SRs, revised for review M4, m5, m8)
 
-Starting values, tuned at bring-up: **47 pF C0G 250 V 0805 + 22 Ω 1206 0.25 W**, footprint also for
-an RCD clamp on the freewheel SR (diode + 10 nF + 10 kΩ to GND-referenced clamp, DNP).
-- Loss per snubber ≈ C·V²·f = 47 pF × 114² × 400 kHz = 0.24 W; resistor 0.25 W rating marginal →
-  **use 2010 0.5 W** (or 2 × 1206 in series).
-- The converter-design loss table used 100 pF (pessimistic). If ringing at 47 pF is too high, the
-  alternative is less loop inductance (layout), not more C.
-- Ringing frequency estimate: Lleak(sec-referred, n² × 0.1 µH = 0.4 µH) with Coss 90 pF + winding C →
-  ≈ 20–25 MHz; R ≈ √(L/C) ≈ 50–70 Ω for critical damping: try 22–68 Ω.
+**Baseline, fitted on both SRs:**
 
-Parts (look-ups): 47 pF 250 V C0G 0805 `C340107 CC0805JRNPOYBN470` (99 in stock — enough for 5
-boards; alternative 100 pF `C576984 CC0805JRNPOYBN101`, 7823 stock).
+1. **RC snubber** drain–source: **22 pF C0G 250 V 0805 + 2 × 22 Ω 2010 (0.5 W) in series (44 Ω)**.
+   - Loss C·V²·f per SR at 737 kHz: forward 22 pF × 143² × 737 kHz = **0.33 W** (worst, 37.6 V
+     corner; 0.14 W at 50 V); freewheel 22 pF × 114² × 737 kHz = **0.21 W** at 57 V. Each resistor
+     carries half, ≤ 0.17 W, against 0.5 W rated (≈ 0.4 W at 85 °C board temperature) ✓ (review
+     m8; 1206 would have been at 85 % of its derated rating at 737 kHz).
+   - Damping: Lleak(sec) ≈ n² × 0.1 µH = 0.4 µH with Coss 90 pF + 22 pF + winding C → ≈ 20–25 MHz;
+     √(L/C) ≈ 55–60 Ω, so 44 Ω is near critical. Tune 22–68 Ω on the bench.
+2. **RCD-Z clamp** from the SR drain: **US1G** (400 V, 1 A, trr 50 ns) → node K → **10 nF 250 V X7R
+   1206** to GND ‖ **SMBJ130A** to GND (VWM 130 V, VBR 144–159 V at 1 mA, IR 1 µA, VC 209 V at 2.9 A).
+   - Node K charges to the ring peaks and is held at the TVS breakdown, so the SR drain, and the NCP4306
+     CS pin, stays ≤ VBR + a few volts ≈ **150–165 V (≤ 83 % of 200 V)** from the first power-up,
+     before any snubber tuning.
+   - It does not touch normal operation: the freewheel plateau is 114 V and the forward plateau is
+     ≤ 137 V at 38.4 V (VWM 130 V; IR ≤ 1 µA at 130 V). Only at the 37.6 V worst corner (143 V,
+     forward SR) does it sit just under VBR min, conducting ≤ 1 mA → ≤ 0.14 W, and only in the last
+     0.8 V before LINEUV stops the converter.
+   - Energy: worst-case ring energy per edge ½ × 0.4 µH × (2 A)² = 0.8 µJ (review n12, a few amps of
+     commutation overshoot); most of it goes to the RC. If all of it reached the clamp it would be
+     0.6 W per SR at 737 kHz. The SMBJ datasheet gives no steady-state power rating, so check the TVS
+     temperature at bring-up. The TVS footprint also takes a 22 k 2010 resistor (RCD bleed to GND,
+     ≈ 150²/22 k = 1 W, only if the TVS runs hot) as an alternative.
+   - Diode reverse voltage: node K (≤ 165 V) minus drain at 0 V → 165 V on a 400 V US1G ✓.
+3. The converter loss table carries 22 pF RC + 0.1 W for the clamps (`B-converter-design.md`).
+
+Parts:
+- 22 pF 250 V C0G 0805: `C90626 CC0805JRNPOYBN220 (YAGEO, 0805): extended, JLC stock 5842, lifecycle normal, checked 2026-11-07` (datasheets/yageo-cc0805-npo-250v.pdf)
+- US1G: `C383015 US1G (Jingdao Microelectronics, SMA): extended, JLC stock 358486, lifecycle normal, checked 2026-11-07` (datasheets/us1g-jingdao.pdf)
+- 10 nF 250 V X7R 1206: `C913956 1206B103K251NT (FH, 1206): extended, JLC stock 7829, lifecycle normal, checked 2026-11-07`
+- SMBJ130A: `C553984 SMBJ130A-E3/52 (VISHAY, SMB(DO-214AA)): extended, JLC stock 3085, lifecycle normal, checked 2026-11-07` (datasheets/smbj130a-vishay.pdf)
+- (The 47 pF part, C340107 with only 99 in stock, is dropped.)
 
 ## Layout guidance
 
@@ -108,5 +136,6 @@ boards; alternative 100 pF `C576984 CC0805JRNPOYBN101`, 7823 stock).
 
 ## Open questions
 
-1. Measure SR Vds peaks at 57 V and full load; must stay < 180 V for the NCP4306 CS pin with margin.
-2. 47 pF 250 V C0G stock is thin (99); confirm before ordering or use the 100 pF part.
+1. Measure SR Vds peaks at 57 V and at 38.4 V, full load; clamp node temperature and TVS dissipation.
+2. If the clamps run hot, the RC snubber needs more C (loss rises with C·V²·f) or the layout less loop
+   inductance.

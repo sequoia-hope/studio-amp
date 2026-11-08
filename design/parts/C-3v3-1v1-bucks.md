@@ -2,7 +2,7 @@
 
 Datasheet: datasheets/tps62a02a.pdf (SLUSEG9E, Jun 2024, ti.com). Read: all sections.
 MPN: TPS62A02APDDCR (2 A, **forced PWM**, power good, ×2)   Supplier: `C25687169 TPS62A02APDDCR (TI, TSOT-23-6): extended, JLC stock 2304, lifecycle normal, checked 2026-11-07`
-Footprint: SOT-23-6 "DDC". Pins (Table 5-1, SOT23-6 column): 1 EN, 2 GND, 3 SW, 4 VIN, 5 PG, 6 FB.
+Footprint: **TSOT-23-6 (thin) "DDC"**. Use a TSOT-23-6 footprint, not SOT-23-6 (review note). Pins (Table 5-1, SOT23-6 column): 1 EN, 2 GND, 3 SW, 4 VIN, 5 PG, 6 FB.
 
 History:
 - TLV62569 was replaced because it is PSM-only (its Fig. 15 shows ≈ 60 mV p-p at 0.1 A), and the
@@ -22,8 +22,9 @@ block E's E-interfaces.md:
 ## Loads
 
 - +1V1: **400 mA design** (block E).
-- +3V3: block E 350 mA (FPGA VCCIO, RP2350, PHY…) + Qwiic 300 mA (limited to 0.36–0.46 A) +
-  display 40 mA + block D 45 mA + the +2V5 LDO 50 mA → **≈ 0.79 A design**, 1 A peak.
+- +3V3: block E 350 mA (FPGA VCCIO, RP2350, PHY…) + Qwiic 100 mA (user cap; limit 155–207 mA) +
+  display 40 mA + block D 85 mA + the +2V5 LDO 50 mA + ≈ 30 mA of small loads → **≈ 0.66 A design**, 1 A
+  peak. IL,peak = 0.66 + 0.26 = 0.92 A, under the 2.7 A minimum limit.
 
 ## Absolute max vs our worst case
 
@@ -39,11 +40,10 @@ block E's E-interfaces.md:
 ## Calculations
 
 **+1V1 divider** (eq. 2, R2 ≤ 100 kΩ; VFB 0.594–0.606 V at 0–125 °C, 0.591–0.609 V over the full
-range): R2 = 100 kΩ, R1 = 83.5 kΩ (E192, 1 %) → 0.6 × 1.835 = **1.101 V**. That is the 1.10 V target block E
-asked for; the ECP5 has no core bead, so there is no offset to cover. Tolerance stack (VFB full
-range, 1 % resistors): 0.591 × (1 + 83.5·0.99/101) = 1.075 V to 0.609 × (1 + 83.5·1.01/99) =
-1.128 V, i.e. −2.3 %/+2.5 %, inside "accuracy ≤ 3 %". It leaves ≥ 30 mV to 1.045 V and ≥ 27 mV to
-1.155 V for ripple (0.5 mV) and load steps.
+range): R2 = 100 kΩ, R1 = **84.5 kΩ** (E96; 83.5 kΩ is E192 and not a JLC basic value, per the review) →
+0.6 × 1.845 = **1.107 V** (block E asked for 1.10 V; +0.6 %). Tolerance stack (VFB full range, 1 %
+resistors): 0.591 × (1 + 84.5·0.99/101) = 1.080 V to 0.609 × (1 + 84.5·1.01/99) = 1.134 V, inside
+1.045–1.155 V with ≥ 21 mV margin each side for ripple (0.5 mV) and load steps.
 **+3V3 divider**: R2 = 100 kΩ, R1 = 453 kΩ → **3.318 V**. Worst case:
 0.609 × (1 + 453·1.01/(100·0.99)) = 3.42 V high and 0.591 × (1 + 453·0.99/(100·1.01)) = 3.22 V low,
 i.e. −2.6 %/+3.7 % of 3.30 V. The high end sits under the ECP5 VCCIO max of 3.465 V with 45 mV
@@ -67,7 +67,11 @@ just exceeds block E's ±3 %): that gives 3.24–3.40 V, ±2.4 %.
 
 **Ramps and order**: internal soft start ≤ 1 ms (EN → VFB 0.56 V) gives 1V1 ≈ 1.1 V/ms and 3V3
 ≈ 3.3 V/ms, inside 0.01–10 V/ms, and monotonic (it starts into pre-bias). 3V3 EN = +5V. 3V3 PG →
-`PG_3V3` (100 kΩ to +3V3) → EN of 1V1 and EN_UV of the 2V5 LDO (C-2v5-ldo.md). PG rises at 96 % of
+`PG_3V3` (100 kΩ to +3V3) → EN of 1V1 and EN_UV of the 2V5 LDO (C-2v5-ldo.md). **`PG_3V3` does not
+go to the FPGA** (review B1): the ECP5's unconfigured 30–150 µA pull-down would hold it below the 1.2 V
+EN thresholds, so 1V1 would never start and the FPGA could never configure, a deadlock. The FPGA
+reads a buffered, inverted copy: a 2N7002 with its gate on PG_3V3 drains a 4.7 kΩ pull-up to +3V3 →
+`PG_3V3_N` → FPGA B4 (active low = good; 2.6 V worst case against 150 µA when not good). PG rises at 96 % of
 3V3, so 1V1 begins ≈ 1 ms after 3V3 starts and is in regulation ≈ 1 ms later. That is the ≈ 1 ms gap
 block E asked for. On the way down, 1V1 drops when PG_3V3 falls (93.5 %), so VCC follows VCCIO
 within ≈ 1 ms.

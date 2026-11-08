@@ -3,7 +3,7 @@
 Datasheet: `datasheets/sn74lvc2g34.pdf` (TI SN74LVC2G34). Read: features, pin functions, abs
 max, recommended conditions, electrical and switching characteristics.
 MPN: SN74LVC2G34DBVR. `C347589 SN74LVC2G34DBVR (TI, SOT-23-6): extended, JLC stock 38633, lifecycle normal, checked 2026-11-07`
-Second source: `C49365212 SN74LVC2G34DBVR-JSM (JSMSEMI, SOT-23-6L): extended, JLC stock 89480, lifecycle normal, checked 2026-11-07`
+Second source (alternate only; its Ioff is not verified, review n5): `C49365212 SN74LVC2G34DBVR-JSM (JSMSEMI, SOT-23-6L): extended, JLC stock 89480, lifecycle normal, checked 2026-11-07`
 Footprint: SOT-23-6 (DBV).
 Pins: 1 = 1A, 2 = GND, 3 = 2A, 4 = 2Y, 5 = VCC, 6 = 1Y.
 

@@ -1,5 +1,7 @@
 # D_TVS (×2, one at each channel's bridge) — VBUS clamp: Littelfuse SMBJ51A (600 W, 51 V stand-off)
 
+> **Review m3, n6:** switching overshoot is ≈ 21 V at 16 A with a 1 nH loop (I·√(L/Coss)), not ≈ 10 V. At the TVS clamp the GaN therefore sees ≈ 103 V for nanoseconds, which rests on its 120 V pulsed rating. This is accepted because a 7.3 A TVS pulse and a hard edge at the trip current are independent rare events; the phase 6 loop target is ≤ 1 nH. Between the 52 V restart and the 55 V stop, VBUS sits between VWM (51 V) and VBR(min) (56.7 V), where leakage is unspecified but sub-mA and thermally harmless.
+
 Datasheet: datasheets/smbj-littelfuse.pdf (Littelfuse SMBJ series, 600 W; read: the electrical table rows SMBJ45A–SMBJ60A, ratings, curves). The LCSC fetch was for SMBJ58A (C157526), and the series sheet covers 51A.
 MPN: SMBJ51A (unidirectional). Supplier: `C1973217 SMBJ51A (Littelfuse, DO-214AA): extended, JLC stock 7604, lifecycle normal, checked 2026-11-07`. Footprint DO-214AA (SMB).
 Superseded: SMBJ54A (C151266), proposed earlier and accepted in principle by the user. It clamps above the 63 V bulk-capacitor rating; see the VBUS overvoltage scheme below and in D-interfaces.md.
@@ -25,8 +27,8 @@ The weakest VBUS part is block B's bulk: 6 × 1000 µF / **63 V** Chemi-Con KZN 
 ### Why SMBJ51A
 | Part | VWM | VBR (min–max) at 1 mA | VC at IPP | vs bulk 63 V | vs GaN 100 V (clamp + ≈ 10 V overshoot) |
 |---|---|---|---|---|---|
-| SMBJ48A | 48.0 | 53.3–58.9 | 77.4 V at 7.8 A | ✓ | ✓ 87 V | 
-| **SMBJ51A** | **51.0** | **56.7–62.7** | **82.4 V at 7.3 A** | ✓ VBR max 62.7 ≤ 63 | ✓ 92 V |
+| SMBJ48A | 48.0 | 53.3–58.9 | 77.4 V at 7.8 A | ✓ | 98 V |
+| **SMBJ51A** | **51.0** | **56.7–62.7** | **82.4 V at 7.3 A** | ✓ VBR max 62.7 ≤ 63 | 82.4 + 21 V overshoot = **103 V**: on the GaN's 120 V pulsed rating (review m3; D-gan-fet.md) |
 | SMBJ54A | 54.0 | 60.0–66.3 | 87.1 V at 6.9 A | ✗ VBR max 66.3 | ✓ 97 V |
 | SMBJ58A / B's SMCJ58A | 58.0 | 64.4–71.2 | 93.6 V | ✗ | ✗ 104 V |
 SMBJ48A would start conducting (53.3 V min) below the 55 V gateware stop, and dissipate continuously if VBUS rests at 54–55 V. SMBJ51A's VBR(min) 56.7 V is above the stop, and its VBR(max) 62.7 V is at or below the caps' 63 V at conduction onset. VWM 51 V > 48 V × 1.015 (B's static max 48.7 V) → IR ≤ 1 µA in normal running.

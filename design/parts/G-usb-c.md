@@ -59,3 +59,12 @@ through-hole for the shell legs, so check the PTH drill sizes against the HRO dr
 
 - CC current-advertisement sensing (Default/1.5 A/3 A) would let USB-only mode run Qwiic loads. It
   costs 2 ADC inputs, which the RP2350B doesn't have spare (block E). Proposed: not fitted in variant A.
+
+## Review note (2026-11-07): unconfigured current
+The board draws ≈ 0.3 A from VUSB before USB enumeration (USB 2.0 allows 100 mA until configured).
+That is normal for a bring-up port, but some hosts may warn. Recorded against R-23; firmware can't
+change it because the logic needs that much to run. `VUSB_DET` to ECP5 E14: during the ≈ 2 ms
+between VUSB appearing and +3V3 rising, the 15 kΩ limits injection into the unpowered bank to
+≤ 0.2 mA (ECP5 DS Table 3.5: IDK_HS ≤ ±1 mA on top/bottom banks; left/right banks need the current
+limited, which 15 kΩ does). Before configuration its 30–150 µA pull-down reads the node at
+1.8–3.1 V. That is informational only and controls no power.

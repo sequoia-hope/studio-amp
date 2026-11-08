@@ -39,12 +39,12 @@ The temperature grade decides it. No pin-compatible second source in stock (JL11
 
 | Strap | Pin | Wanted | How |
 |---|---|---|---|
-| MODE[2:0] = 111 (all capable, auto-neg) | RXD0 (8), RXD1 (7), CRS_DV (11) | 111 | internal pull-ups; the FPGA pins they connect to also idle with weak pull-ups during configuration → consistent. No external resistor. |
+| MODE[2:0] = 111 (all capable, auto-neg) | RXD0 (8), RXD1 (7), CRS_DV (11) | 111 | internal pull-ups (~50 µA typ) are **not enough**: the ECP5 inputs on A11/A12/B11 default to a 30–150 µA pull-*down* (TN-02039 §5.2). The datasheet's "loaded strap → external resistor" rule (§3.7) applies, so fit **4.7 kΩ pull-ups to +3V3** on RXD0, RXD1 and CRS_DV (≥ 2.6 V against a 150 µA pull-down vs VIHT ≤ 1.90 V), and set **PULLMODE=UP** on those balls in the LPF (review MAJOR-2). |
 | PHYAD0 = 0 | RXER (10) | 0 | internal pull-down; **RXER left unconnected** (optional in RMII; frame errors are caught by FCS) → test point only |
 | REGOFF = 0 (internal 1.2 V regulator on) | LED1 (3) | 0 | internal pull-down; LED1 then active-high: LED + 270 Ω **to GND** (Fig 3-10) |
 | nINTSEL = 1 (REF_CLK In mode, nINT available) | LED2 (2) | 1 | LED2 then active-low: LED + 270 Ω **to VDD2A** (Fig 3-11); this also pulls the strap high. Pull-ups for LED pins go to VDD2A, not VDDIO (§3.8.1 note) |
 
-Strap timing (Tab 5-8): nRST held low ≥ 25 ms after supplies reach 80 % (tpurstd), assertion ≥ 100 µs, straps valid 200 ns before release. nRST is driven by the RP2350 (`PHY_NRST`, GPIO30) with a 10 kΩ pull-down so it is low from power-up until firmware releases it; RP2350 GPIOs reset to "pulled low" (RP2350 §9.3) as well.
+Strap timing (Tab 5-8): nRST held low ≥ 25 ms after supplies reach 80 % (tpurstd), assertion ≥ 100 µs, straps valid 200 ns before release. nRST is driven by the FPGA (`PHY_NRST`, ball B12) with a 10 kΩ pull-down. Unconfigured ECP5 pins also pull down, so nRST is low from power-up until the gateware releases it, after configuration and ≥ 25 ms after the rails. The final strap latch therefore sees the 4.7 kΩ pull-ups with PULLMODE=UP.
 After reset the RMII runs at 2.5 MHz for 16 µs, then 25 MHz (§3.8.5 note) — the MAC must tolerate that.
 
 ## Required external parts (datasheet application diagrams §3.9, §7.1) → `E-phy-passives.md`
@@ -54,7 +54,7 @@ After reset the RMII runs at 2.5 MHz for 16 µs, then 25 MHz (§3.8.5 note) — 
 - VDD1A, VDD2A, VDDIO: CBYPASS each (100 nF) + bulk; VDDIO "CF" bulk.
 - TXP/TXN/RXP/RXN: 4 × 49.9 Ω to the 3.3 V analog supply through a ferrite bead, with CBYPASS (Fig 3-18 / 7-5); magnetics centre taps (PHY side) to the same filtered 3.3 V. The 75 Ω Bob Smith network and 1000 pF 3 kV on the line side belong to block A's RJ45/magnetics (LPJK6078AHNL).
 - nRST pull-down 10 kΩ (ours, above). nINT pull-up to VDDIO ("place an external resistor pull-up to VDDIO", Tab 2-5): 10 kΩ.
-- MDIO pull-up: SMI is open-drain output (VOD8) → 1.5 kΩ to 3.3 V (802.3 clause 22 practice; the datasheet only says VOD8). MDC ≤ 2.5 MHz (period ≥ 400 ns, Tab 5-12) from the RP2350.
+- MDIO pull-up: SMI is open-drain output (VOD8) → 1.5 kΩ to 3.3 V (802.3 clause 22 practice; the datasheet only says VOD8). MDC ≤ 2.5 MHz (period ≥ 400 ns, Tab 5-12) from the FPGA (ball A13); MDIO on A14.
 
 ## Calculations
 
@@ -74,10 +74,11 @@ After reset the RMII runs at 2.5 MHz for 16 µs, then 25 MHz (§3.8.5 note) — 
 
 ## Layout guidance (datasheet + domains/high-speed.md)
 
-- PHY close to block A's RJ45 (MDI pairs short, 100 Ω differential, symmetric, no vias, over solid GND) and ≤ 25 mm from the FPGA's right edge (RMII group, 50 Ω single-ended, matched ±10 mm).
+- PHY close to block A's RJ45 (MDI pairs short, 100 Ω differential, symmetric, no vias, over solid GND) and ≤ 25 mm from the ECP5's **top edge** (RMII group on top bank 1, balls A9–A12, B10, B11, C8; 50 Ω single-ended, matched ±10 mm).
 - 49.9 Ω resistors and their CBYPASS at the PHY pins; ferrite + bulk between `+3V3` and the analog island.
 - EP to GND with a via array; RBIAS resistor at pin 24 with its own short GND return.
 
 ## Open questions
 
-- MDIO pull-up value: the datasheet states open-drain only; 1.5 kΩ is the IEEE 802.3 clause 22 figure (not in this datasheet) — confirm against the RP2350's 2.5 MHz MDC with ~20 pF: τ = 30 ns ≪ 200 ns half-period.
+- MDIO pull-up value: the datasheet states open-drain only; 1.5 kΩ is the IEEE 802.3 clause 22 figure (not in this datasheet) — confirm against the FPGA's 2.5 MHz MDC with ~20 pF: τ = 30 ns ≪ 200 ns half-period.
+- Magjack pin map: **closed**. J1 LPJK6078AHNL per `A-poe-magjack.md`: TX± pins 11/10 (CT 12), RX± pins 4/5 (CT 6), LEDs 17–20; connections in `E-phy-passives.md`.

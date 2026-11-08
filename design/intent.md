@@ -78,7 +78,8 @@ secondary (rectified pulse loss or VBUS droop), whichever trips first. Nothing c
 primary except the converter's feedback (optocoupler or isolated error amp, phase 1).
 
 R-33. Isolated DC-DC: active-clamp forward, ≥ 92 % efficiency at full load **(proposed target)**,
-off-the-shelf wound transformer, fsw chosen in phase 1. VBUS regulation 48 V ± 2 % static; dynamic
+Würth 750343576 transformer (R-95); switching crystal-locked at 737.28 kHz (±40 ppm) so its beats with
+the amp carrier stay ≥ 161 kHz; 92 % is verified at bring-up and 91 % accepted (user, 2026-11-07). VBUS regulation 48 V ± 2 % static; dynamic
 sag up to 10 % during bursts. Synchronous rectifiers must not run in reverse: diode emulation or SR
 inhibit, so energy returned to VBUS is not pushed back to the primary.
 
@@ -105,6 +106,11 @@ in the typical case. The GaN stage idles at ≈ 5.2 W of VBUS power with both ch
 Average speaker output, worst case: ≈ 28 W at Class 6, ≈ 42 W at Class 8. Phase 8 rechecks this with
 real efficiencies.
 
+Phase 1 update after review (2026-11-08): GaN back to IGB070S10S1 at 576 kHz, idling at ≈ 3.8 W of
+VBUS power, ≈ 90 % amp efficiency at 46 W into 4 Ω. Qwiic capped at 100 mA in firmware. The rails
+and loads come to ≈ 1.35 W over the table in the worst case and ≈ 0.85 W under in the typical case
+(C-interfaces.md). The rail table below is superseded by architecture.md's reconciliation section.
+
 | Rail | Voltage | Load (avg / peak) | Notes |
 |---|---|---|---|
 | VBUS (amp) | 48 V | per R-33a / 3.3 A pk from the bulk | bulk capacitance for a combined 144 W, 10 ms burst at ≤ 10 % sag: ≈ 1.1 J deficit (with ~50 W from the converter) → **≈ 5 mF, rising to ≈ 7 mF if the converter current-limits**; 63 V, 105 °C electrolytics, ripple current set in phase 1. That is about 5–7 cans of 16 × 25 mm, which phase 4 must place. Bus-voltage feedforward via a fast ADC |
@@ -126,7 +132,7 @@ energy stored in the output filters. VBUS bulk absorbs it, the SRs cannot pass i
 SMx51A TVS clamps (51 V stand-off, 82.4 V clamp; one at the converter, one at each bridge) handle
 fast spikes only, not sustained regen. Gateware stops the bridges above 55 V (restart below 52 V,
 < 5 µs), and the converter has its own output OVP at ≈ 53 V that works without the optocoupler.
-The 63 V bulk caps are protected by their own capacitance: ≤ 10 mJ of regen lifts 6 mF by ~0.03 V,
+The 63 V bulk caps are protected by their own capacitance: ≤ 12.4 mJ of regen lifts 6 mF by ~0.04 V,
 while reaching the TVS from 55 V takes 0.57 J (B/D interfaces, 2026-11-07).
 
 ## Environment
@@ -145,9 +151,10 @@ resistors and light TVS only **(proposed)**. Humidity: don't care beyond normal 
 
 ## Performance targets
 
-R-50. Output power: ≥ 100 W peak into 8 Ω per channel (144 W theoretical at 48 V BTL; 288 W
-into 4 Ω). Firmware limits each channel to **≤ 144 W / 12 A peak** whatever the load, and the
-hardware overcurrent trip (R-54) sits at ≈ 15 A. Long-term average is limited by R-33a (≈ 33 W to
+R-50. Output power: ≥ 100 W peak into 8 Ω per channel. The 8–92 % duty clamp the bootstrap supply
+needs (modulation depth 0.84) gives ≈ 101 W into 8 Ω and ≈ 10 A peak into 4 Ω. Firmware limits each
+channel to **≤ 144 W / 12 A peak** whatever the load, and the hardware overcurrent trip (R-54) sits
+at ≈ 15 A. Long-term average is limited by R-33a (≈ 33 W to
 the two channels at Class 6, ≈ 46 W at Class 8).
 
 R-51. Speaker-output audio, 8 Ω, 20 Hz–20 kHz. Variant A is **open-loop digital PWM with
@@ -161,21 +168,25 @@ read by the FPGA), so a closed-loop variant can reach studio-monitor numbers (TH
 R-52. Headphone/line out **(proposed)**: THD+N ≤ 0.01 % at 1 Vrms; noise ≤ 10 µV A-weighted. Proved
 by simulation of the 1-bit stream plus reconstruction filter in phase 8.
 
-R-53. PWM: switching frequency 400 kHz–1 MHz, tunable per build; three-level BD modulation;
-noise shaping that pushes quantization noise above 20 kHz; edge resolution set in phase 1 from the
-noise-shaper analysis (ECP5 -7 ODDRX2 gives a 1.453 ns grid, accepted 2026-11-07 in place of the earlier ≤ 1 ns target; the noise shaper must make up the difference, shown in the phase 8 simulation). Output LC filter sized in
-phase 1 jointly with the noise-shaper order.
+R-53. PWM: switching frequency 576 kHz (12 × 48 kHz; 768 kHz as an option), three-level BD
+modulation; noise shaping (5th order) that pushes quantization noise above 20 kHz. Edge grid
+1.695 ns (ECP5 ×12 gearing at 84 % of its commercial limit; ×14 / 1.453 ns is a bring-up option
+only), which phase 1 estimates at ≈ 0.3 µV A-weighted of in-band quantization noise, to be
+confirmed in the phase 8 simulation. Duty clamped to 8–92 %. Per-board dead-time calibration
+through the post-filter sense ADCs. The amp mutes if the converter clock is outside
+737.28 kHz ± 0.5 %.
 
-R-54. Protection: cycle-by-cycle overcurrent shutdown at ≈ 15 A with ≤ 200 ns from threshold to
-all gates off **(proposed)**; DC-at-output detection that shuts the bridge down (all four FETs
+R-54. Protection: a short at an output terminal turns all four FETs of that channel off within
+≤ 100 ns; a gradually rising overcurrent trips at 15 A ± 1 A with ≤ 250 ns from threshold to all
+gates off; peak device current ≤ 17 A (bench-check the INA241 blanking case, ≈ 21 A); DC-at-output detection that shuts the bridge down (all four FETs
 off, no relay) in ≤ 100 ms; over-temperature
 on the GaN and the inductors; tweeter protective high-pass in hardware, a series film capacitor,
 so the tweeter is protected even if the bridge fails shorted.
 
 R-55. Network and sync: 10/100 Ethernet over RMII (PHY to FPGA MAC); PTP IEEE 1588 with hardware
 timestamps in the FPGA; speaker-to-speaker offset ≤ 10 µs in a room, ≤ 1 ms across rooms. Audio
-clock disciplined to PTP: VCXO trim or fractional resampler in the FPGA, chosen in phase 1 (a VCXO
-is a BOM part; the resampler costs FPGA resources). A GPIO test point toggles on the PTP second for scope verification.
+clock: 24.576 MHz VCXO trimmed by the FPGA to PTP, with a shared land for a 0.7 ps fixed XO if the
+VCXO's jitter (unspecified by its maker) fails the DAC noise test at bring-up. A GPIO test point toggles on the PTP second for scope verification.
 
 R-56. Firmware updates: A/B images with rollback, over the network, for both the RP2350 and the
 FPGA bitstream. 16 MB of QSPI flash holding two RP2350 images and two FPGA bitstreams **(proposed;

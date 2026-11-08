@@ -23,7 +23,7 @@ This is the reference design's flash (guide §3.1: "W25Q128JVS… the largest me
 ## Calculations
 
 **QSPI timing.** RP2350 at 150 MHz, QMI CLKDIV 2 → SCK 75 MHz (period 13.33 ns, high/low 6.67 ns ≥ 45 % PC = 6.0 ns, §9.6 tCLH/tCLL). Fast Read Quad I/O (EBh) allowed to **FR = 133 MHz** at 3.0–3.6 V (§9.6). Read data: tCLQV ≤ 6 ns after SCK↓, hold tCLQX ≥ 1.5 ns. Round trip at the RP2350: SCK output delay + trace (≤ 15 mm, 0.1 ns each way) + 6 ns ≈ 7–8 ns, sampled by QMI on the next SCK↑ with RXDELAY tuned (one sys-clock step = 6.67 ns) → comfortable. Write data: tDVCH ≥ 1 ns, tCHDX ≥ 2 ns — QMI launches on SCK↓, half a period (6.67 ns) setup. 03h (boot probe at ~1 MHz) ≤ fR 50 MHz. OK.
-**Bandwidth for streaming bitstreams to the FPGA**: QSPI XIP at 75 MHz × 4 bit = 37.5 MB/s ≫ JTAG at 15 Mbit/s (1.9 MB/s). The flash is not the bottleneck.
+**Bandwidth for streaming bitstreams to the FPGA**: QSPI XIP at 75 MHz × 4 bit = 37.5 MB/s ≫ ECP5 slave SPI at 37.5 Mbit/s (4.7 MB/s). The flash is not the bottleneck.
 
 **Power-up (§9.3):** VCC(min) to /CS low ≥ tVSL 20 µs; write inhibited below VWI 1.0–2.0 V; tPUW 5 ms before writes. The RP2350 boots well after 20 µs; firmware delays flash writes ≥ 5 ms after reset (trivial).
 
@@ -40,13 +40,13 @@ This is the reference design's flash (guide §3.1: "W25Q128JVS… the largest me
 | 0x000000 | 8 KB | RP2350 partition table + boot metadata (RP2350 bootrom partition/A-B support) |
 | RP2350 image A | 6 MB | firmware slot A |
 | RP2350 image B | 6 MB | firmware slot B |
-| FPGA bitstream A | 512 KB | ≤ 435 KB max uncompressed (UG290 Tab 3-1), + header/CRC/version |
-| FPGA bitstream B | 512 KB | same |
-| Config / calibration / room-correction filters | 2 MB | wear-levelled store |
-| Log / spare | ~1.5 MB | |
+| FPGA bitstream A | 1 MB | ECP5 LFE5-25 ≤ 5.42 Mb = 677.5 KB uncompressed (TN-02039 Tab 4.1), + header/CRC/version |
+| FPGA bitstream B | 1 MB | same |
+| Config / calibration / room-correction filters | 1.5 MB | wear-levelled store |
+| Log / spare | ~0.49 MB | |
 | Total | 16 MB | |
 
-The FPGA's own configuration flash holds the **golden** bitstream (AUTOBOOT), so a third FPGA image exists without using QSPI space (`E-fpga-gw1nr9.md`). 6 MB per RP2350 slot is far above any plausible firmware (RP2350 SRAM is 520 KB; code runs XIP). **R-56 holds** with > 3 MB spare.
+The ECP5 has no flash of its own; recovery is A/B rollback (the RP2350 keeps the last known-good bitstream) and, if both are bad, a USB/SWD reflash of this flash. 6 MB per RP2350 slot is far above any plausible firmware (RP2350 SRAM is 520 KB; code runs XIP). **R-56 holds**: 14.0 MB of images, ≈ 2 MB for data.
 
 ## Fine print
 

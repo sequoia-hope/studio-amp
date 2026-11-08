@@ -9,14 +9,15 @@ Footprint: LFPAK33 (SOT1210), pins 1–3 source, 4 gate, mounting base = drain (
 SOT1210 land pattern; KiCad `Nexperia_LFPAK33` / `LFPAK33` footprint, check against the SOT1210 drawing
 in phase 2.
 
-The part is marketed for "high power PoE applications" (p.1) and ADI uses this exact MPN in the LT4321
-70 W reference (LT4321 p.12).
+The part is marketed for "high power PoE applications" (p.1). Correction (review A-m2): in the LT4321
+70 W reference (LT4321 p.12) the eight **bridge** FETs are PSMN075-100MSE; the single PSMN040-100MSE there
+is the LT4275's hot-swap FET. There is no ADI precedent for PSMN040 as a bridge FET.
 
 ## Absolute max vs our worst case
 
 | Parameter | Abs max | Our worst case | Margin |
 |---|---|---|---|
-| VDS | 100 V (Tj 25…175 °C); BVDSS ≥ 90 V at –55 °C (p.5) | 57 V; 93.6 V TVS clamp | OK at ≥ 0 °C; cabinet minimum is 0 °C (R-40) |
+| VDS | 100 V (Tj 25…175 °C); BVDSS ≥ 90 V at –55 °C (p.5) ⇒ ≈ 96.9 V at 0 °C (linear) | 57 V; SMCJ58A clamp ≤ 91.2 V at 0 °C / 93.6 V at 25 °C at its full 16 A, ≈ 80 V at 6.5 A | ≈ 6 V at 0 °C at the TVS's full rating (A-n3); cabinet minimum 0 °C (R-40) |
 | VGS | ±20 V | TG–IN ≤ 11 V, BG ≤ 13 V (LT4321 p.3) | OK |
 | ID | 30 A (Tj 25 °C), 21 A (Tmb 100 °C) | 0.96 A per pair set, peak 1.75 A x 75 ms PSE template (TPS2373 p.29) | ≫ |
 | IDM | 121 A, 10 µs | PSE template 50 A for 10 µs per 2-pair (TPS2373 p.29) | OK |
@@ -31,7 +32,7 @@ The part is marketed for "high power PoE applications" (p.1) and ADI uses this e
 2. **VGS(th) requirement** (LT4321 p.8: "gate threshold must be a minimum of 2 V"): PSMN040 VGS(th) =
    2.3 V min at 25 °C, 1 V min at 175 °C (p.5). Interpolating linearly, the minimum crosses 2.0 V at
    ≈ 60 °C Tj. The FETs dissipate < 50 mW so Tj ≈ board temperature, ≤ 55–65 °C in the cabinet.
-   Marginal but ADI's own reference uses this part (LT4321 p.12). Recorded as a known margin; the
+   Marginal, and **not** covered by an ADI precedent (see header). Recorded as a known margin; the
    LT4321 actively holds off FETs (TG pulled to IN, BG to OUTN, p.3), so the 2 V rule protects against
    leakage-induced turn-on, not normal operation.
 3. **Backfeed** (TPS2373 §8.2.2.1 p.33: ≤ 2.8 V across 100 kΩ on an unpowered pair set): unpowered

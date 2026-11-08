@@ -26,7 +26,7 @@ Footprints: SOIC-16W 7.5 mm body (DW), KiCad `SOIC-16W_7.5x10.3mm_P1.27mm`; SOT-
 
 Primary side (ground = `VPRI_RTN`, the TPS2373 RTN):
 
-- `VB_PRI` (= TPS2373 VC_IN; block B's 13.5 V LM5019 bias buck on VPRI) → 330 nF → 78L05 → `VISO_P5V` (5 V) → 100 nF → ISO7740 VCC1 (pin 1),
+- `VB_PRI` (= TPS2373 VC_IN; block B's 14.3 V (13.9–14.8 V) LM5019 bias buck on VPRI) → 330 nF → 78L05 → `VISO_P5V` (5 V) → 100 nF → ISO7740 VCC1 (pin 1),
   GND1 (pins 2, 8) to RTN.
 - TPS2373 TPH → INA (pin 3), TPL → INB (pin 4), BT → INC (pin 5), each with 10 kΩ to `VISO_P5V`.
 - PG buffer: TPS2373 PG → 1 kΩ (block B) → UCC2897A SS/SD. The 2N7002 gate sits on the **SS/SD side** of that 1 kΩ; drain → IND
@@ -68,8 +68,8 @@ reading: the secondary only runs when the converter runs anyway.
 | ISO7740 INx | VCC1 + 0.5 V (≤ 6 V) | pulled up to VCC1 | OK |
 | ISO7740 OUTx current | ±15 mA abs; IOH/IOL 2 mA at 3.3 V rec | FPGA CMOS input | OK |
 | ISO7740 isolation | 5000 Vrms 60 s; VIORM 2121 Vpk | 1500 Vrms test; working ≈ 0 V | OK |
-| 78L05 VIN | 30 V | VB_PRI 13.5 V | OK |
-| 78L05 PD (SOT-89) | 350 mW at 25 °C | 157 mW at 13.5 V | see calc 3 |
+| 78L05 VIN | 30 V | VB_PRI ≤ 14.8 V | OK |
+| 78L05 PD (SOT-89) | 350 mW at 25 °C | 177 mW at 14.8 V | see calc 3 |
 | 2N7002 VDS | 60 V | 5 V | OK |
 | 2N7002 VGS | ±20 V | SS/SD ≤ ~5 V | OK |
 | TPS2373 TPx/PG sink | 3 mA rec | 5 V / 10 kΩ = 0.5 mA | OK |
@@ -88,9 +88,9 @@ reading: the secondary only runs when the converter runs anyway.
 3. **Primary supply current and LDO dissipation** (worst case, all inputs low):
    ISO7740 ICC1 ≤ 7.8 mA (5 V table, ISO7740 "VI = 0 V", p.13) + 78L05 IQ ≤ 5.5 mA (p.3) + 4 pull-ups x
    0.5 mA = **15.3 mA** from VB_PRI (9.8 mA through the regulator, 5.5 mA quiescent).
-   P_LDO = (VIN – VOUT)·IOUT + VIN·IQ: at VB_PRI = 13.5 V, 8.5 x 9.8 + 13.5 x 5.5 = **157 mW**.
-   SOT-89 350 mW rating at 25 °C (p.3) ⇒ implied θ ≈ 357 °C/W (125 K / 350 mW); TJ = 55 + 0.157 x 357 =
-   **111 °C** < 150 °C abs. Accepted with tab copper (pin 2 = GND = RTN); typical IQ is 2 mA, which gives
+   P_LDO = (VIN – VOUT)·IOUT + VIN·IQ: at VB_PRI = 14.8 V (worst), 9.8 x 9.8 + 14.8 x 5.5 = **177 mW**.
+   SOT-89 350 mW rating at 25 °C (p.3) ⇒ implied θ ≈ 357 °C/W (125 K / 350 mW); TJ = 55 + 0.177 x 357 =
+   **118 °C** < 150 °C abs. Accepted with tab copper (pin 2 = GND = RTN); typical IQ is 2 mA, which gives
    TJ ≈ 90 °C.
    78L05 regulation needs VIN ≥ 7 V (p.3, 4.75–5.25 V for 7 V ≤ VIN ≤ 20 V); at the UCC2897A's 7.6 V
    minimum running bias it still regulates. Below that the converter is off anyway.

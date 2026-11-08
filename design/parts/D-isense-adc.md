@@ -1,5 +1,7 @@
 # U_IS — current and temperature telemetry ADC: TI ADS7038-Q1 (8-ch, 12-bit, 1 MSPS, SPI)
 
+> **fsw update (block E review, ECP5 −7I grid now 1.695 ns, PLL ×12): baseline fsw = 576 kHz (12 × 48 kHz, 1024 steps); 768 kHz option; 448/512/672 kHz only with E's ×14 bring-up option.** Current channels: 4 legs at 1 MSPS total → each leg once every ≈ 2 PWM periods (≈ 250 kS/s per leg) with rotating phase; dead-time compensation uses the current sign, which changes at audio rate, so this is sufficient.
+
 > **fsw update 2026-11-07 (FPGA changed to ECP5, edge grid 1.453 ns = 688.128 Mb/s ODDRX2F, E-fpga-ecp5.md):** baseline fsw is now **448 kHz** (1536 grid steps; 448 kHz = 48 kHz × 28/3, audio-locked but not an integer multiple). 480 kHz is not on the grid. Option per build: 672 kHz (14 × 48 kHz, 1024 steps). Current channels at 2 samples per PWM period: 4 × 896 kS/s exceeds 1 MSPS, so use 1 sample per period per leg (4 × 448 kS/s = 896 kS/s total), alternating phase.
 
 Datasheet: datasheets/ads7038q1.pdf (TI SBAS981A, Nov 2020). Read: all sections (specs, timing, modes, GPIO, CRC, layout).

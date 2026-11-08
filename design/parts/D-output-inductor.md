@@ -1,5 +1,12 @@
 # L (×4) — output filter inductor: Coilcraft SER2915H-103KL (10 µH ±10 %, ferrite)
 
+> **fsw update (block E review, ECP5 −7I grid now 1.695 ns, PLL ×12): baseline fsw = 576 kHz (12 × 48 kHz, 1024 steps); 768 kHz option; 448/512/672 kHz only with E's ×14 bring-up option.** Ripple at 576 kHz: 48 × 0.25/(10 µH × 576 kHz) = **2.08 A pp**; legitimate peak 12 + 1.04 = 13.0 A. Core-loss placeholder 0.4 W/part kept (calculator at 576 kHz, 2.08 A pp).
+
+> **Revision after the phase 1 review (m6, m8, M2):**
+> - **Core loss placeholder raised to 0.4 W per inductor (1.6 W per board)** for the budget (it was 0.2 W). A gapped ferrite at 448 kHz with 2.68 A pp may plausibly dissipate several hundred mW. **Before the power budget is frozen, the Coilcraft calculator (www.coilcraft.com/coreloss) must be run** for SER2915H-103 and XAL1510-103 at 448 kHz, 2.68 A pp, 0 / 3.5 / 6 A DC. It is interactive, so it cannot be scripted here; this is an action for the lead or user. Record the result in this file.
+> - Peak currents now (D-current-sense.md): ramp-regime OCP ≤ 16.7 A; hard short ≤ 13.7 A (fast dV/dt path); residual (sub-1 V CM step triggering the INA241 hold) ≤ ≈ 21 A. At 25 °C, 16.7 A is below the −10 % point (18 A) and 21 A is at the −20 % point (21.5 A). Hot behaviour is unpublished in the PDF (open question 3): confirm L(16.7 A, 85 °C) ≥ 8 µH and L(21 A, 85 °C) ≥ 7 µH (≥ 70 %) from Coilcraft's derating page.
+> - **Stock: SER2915H-103KL 63 in stock for 22 needed (2.9×), single supplier line → order or reserve early**, as for the FETs. XAL1510-103MED (191) is the fallback.
+
 > **fsw update 2026-11-07 (FPGA changed to ECP5, edge grid 1.453 ns = 688.128 Mb/s ODDRX2F, E-fpga-ecp5.md):** baseline fsw is now **448 kHz** (1536 grid steps; 448 kHz = 48 kHz × 28/3, audio-locked but not an integer multiple). 480 kHz is not on the grid. Option per build: 672 kHz (14 × 48 kHz, 1024 steps). Ripple at 448 kHz: 48 × 0.25/(10 µH × 448 kHz) = **2.68 A pp**; legitimate peak 12 + 1.34 = 13.3 A (trip 14.9 A unchanged).
 
 Datasheet: datasheets/ser2915h.pdf (Coilcraft Doc 644-1/644-2, revised 09/04/26). Read: all (spec table, notes 1–7, dimensions and land pattern p.2).

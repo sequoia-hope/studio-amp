@@ -1,5 +1,24 @@
 # U (+15), U (−15) — TPS7A4901 / TPS7A3001 low-noise post-regulators
 
+## Revision after phase 1 review (2026-11-07): thermals redone (supersedes "Dissipation" below)
+
+The DGN (HVSSOP PowerPAD) θJA for TPS7A49 is **63.4 °C/W** (p. 6; 47.7 is the DRB column, used in
+error). TPS7A30 DGN is 55.1 °C/W. Pre-rails after the M1 fix: +18.30–18.49 V typ (18.9 V worst),
+−17.7…−17.9 V. +5V_A (15 mA) is fed from +15V, so the +15 V LDO carries 120 + 15 = **135 mA design,
+215 mA fault** (block F's figures are separate rows; review).
+
+| LDO | Case | P | ΔT | TJ at 55 °C air |
+|---|---|---|---|---|
+| TPS7A4901 +15 V | design 135 mA, VIN 18.49 V | (18.49 − 14.94) × 0.135 = 0.48 W | +30 °C | 85 °C |
+| TPS7A4901 +15 V | fault 215 mA, VIN 18.9 V (worst) | 3.96 × 0.215 = 0.85 W | +54 °C | 109 °C |
+| TPS7A3001 −15 V | design 110 mA, VIN 17.9 V | 2.81 × 0.11 = 0.31 W | +17 °C | 72 °C |
+| TPS7A3001 −15 V | fault 190 mA | 2.81 × 0.19 = 0.53 W | +29 °C | 84 °C |
+
+All are under 125 °C (ROC). 215 mA exceeds the TPS7A4901's 150 mA ROC, so its internal current limit
+may act in that fault (accepted by block F). The DGN package stays. Phase 4: PowerPAD to ≥ 2 cm² of
+GND copper with ≥ 6 vias, because the fault-case 109 °C assumes JEDEC-board θJA. +5V_A LDO:
+(14.94 − 5.04) × 0.015 = 0.15 W → +9.4 °C.
+
 Datasheets: datasheets/tps7a49.pdf (SBVS121E, May 2015), datasheets/tps7a30.pdf (SBVS125B, Dec 2013).
 Read: all sections of both.
 MPN: TPS7A4901DGNR   Supplier: `C16430 TPS7A4901DGNR (TI, HVSSOP-8): extended, JLC stock 5633, lifecycle normal, checked 2026-11-07`
@@ -86,3 +105,8 @@ type: `C16430 TPS7A4901DGNR (TI, HVSSOP-8): extended, JLC stock 5633, lifecycle 
 - Why not from +5V: that rail carries the LED/logic return currents and switches between the buck
   and USB. Deriving it from +15V keeps the whole analog supply on the analog converter, and it is off
   on USB power like the rest of block F.
+
+**Clarification from block F (2026-11-07):** block F's +15 V figures (120 mA design, 200 mA fault)
+already include the ≈ 12 mA +5V_A LDO input, so the real +15 V load is 120/200 mA. The 135/215 mA
+rows above count +5V_A twice. They stay as margin: the real fault case is (18.9 − 14.94) × 0.2 =
+0.79 W → +50 °C → ≈ 105 °C TJ.

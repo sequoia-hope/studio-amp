@@ -47,11 +47,11 @@ will completely turn off". A 5.05 V buck and a 5.0 V USB port are the same volta
   (2.5 V min) and TPS7A20 don't notice.
 - Soft start (§7.3.2, eq. 1) applies only from VOUT < 1 V: the 1.3 ms typical ramp into ≈ 100 µF
   gives I = 100 µF × 5 V / 1.7 ms = 0.29 A inrush. That is within USB's budget when starting from USB.
-- USB-only load (revised for ECP5): 3V3 at block E's 350 mA + display 40 + block D 45 + 2V5 50 mA =
-  0.49 A → 1.8 W, plus 1V1 0.54 W and 3V3_A 0.08 W → 0.48 A at 5 V. That is at the 500 mA USB 2.0
+- USB-only load (revised for ECP5): 3V3 at block E's 350 mA + display 40 + block D 85 + 2V5 50 mA =
+  0.53 A → 1.94 W, plus 1V1 0.54 W and 3V3_A 0.08 W → 0.51 A at 5 V. That is at the 500 mA USB 2.0
   limit with block E at its design load. In USB-only mode firmware holds the PHY in reset (−90 mA on
   3V3) and keeps LEDs and Qwiic off (block E). Block E's typical share is ≈ 0.9 W, so the USB draw is
-  ≈ 0.3 A typical and ≈ 0.42 A at design load, inside 500 mA. 3V3_Q, ±15 V, relays and LEDs are off on USB. With Qwiic loaded to
+  ≈ 0.3 A typical and ≈ 0.45 A at design load (block D at 85 mA), inside 500 mA but with only 10 % margin. 3V3_Q, ±15 V, relays and LEDs are off on USB. With Qwiic loaded to
   300 mA, add 0.22 A → 0.61 A, over a 500 mA USB 2.0 port, so **on USB power firmware keeps Qwiic
   power off** (`QWIIC_PWR_EN`) unless VUSB_DET/CC shows a stronger source. Block E's typical
   185 mA gives ≈ 0.25 A from USB.

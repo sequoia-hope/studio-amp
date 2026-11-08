@@ -34,10 +34,10 @@ exceed 30 mV/µs during power-up", over 0–3 V) and within 0.01–10 V/ms (Tabl
   high-PSRR figures. Dissipation 0.82 × 50 mA = 41 mW.
 - **Noise**: 0.46 µVrms (10 Hz–100 kHz), far below the 6 mV peak target. NR filter fc =
   1/(2π × 16.7 k × 1 µF) = 9.5 Hz.
-- **Ramp**: start-up runs on the NR/SS fast-charge current, 2.1 mA (VIN ≥ 2.5 V) →
-  t ≈ 2.5 V × 1.0 µF / 2.1 mA = **1.2 ms**, i.e. ≈ 2 V/ms = 2 mV/µs, within ≤ 30 mV/µs and
-  0.01–10 V/ms. CNR = 1 µF (the minimum) was chosen for this; 4.7 µF would take 5.6 ms and widen the
-  gap after 3V3.
+- **Ramp** (corrected after review, TPS7A94 p. 37): IFAST_SS = 2.1 mA charges CNR/SS only to ≈ 93 %
+  of VOUT, then INR/SS = 150 µA finishes: 2.33 V × 1 µF / 2.1 mA = 1.1 ms + 0.18 V × 1 µF / 150 µA =
+  1.2 ms → **≈ 2.3 ms**. The steepest part is ≈ 2 mV/µs, within ≤ 30 mV/µs and 0.01–10 V/ms. 2V5
+  reaches regulation ≈ 1.3 ms after 1V1, still "together with or after 3V3".
 - **Enable**: EN_UV = `PG_3V3` (open drain, 100 kΩ to +3V3; 3.3 V ≥ 1.25 V trip). 2V5 therefore
   starts together with 1V1, after 3V3, as block E's order requires.
 - **FB_PG** (must not float, §8.1.5): RTOP 715 kΩ, RBOTTOM 68.1 kΩ → parallel 62 kΩ (60 % ICL

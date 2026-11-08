@@ -22,7 +22,7 @@
 - **MCLK** (another branch of the same oscillator) to PCM1808 SCKI, synchronous with the FPGA's
   I2S clocks.
 - Noise shaper: 6.144 Mb/s (128 × 48 kHz), ≥ 5th order, single bit, dithered; in-band
-  quantisation noise ≤ −135 dB re m = 1; modulation index capped at **m ≤ 0.487** (= 4.0 Vrms
+  quantisation noise ≤ −140 dB re m = 1 (tightened after review m2); modulation index capped at **m ≤ 0.487** (= 4.0 Vrms
   line out); taps 1–3 delayed by 1, 2, 3 bits; data launched on the falling MCLK edge; FPGA clock
   insertion plus tco ≤ 12 ns.
 - FPGA pins (16): DAC_L0..3, DAC_R0..3 (out); ADC_BCK, ADC_LRCK (out); ADC_DOUT (in); PDM_CLK
@@ -194,7 +194,7 @@ Block F's reply:
 | MADC_BCK / MADC_LRCK | P13 / R14 | — | PCM1808 pins 8/7, slave mode |
 | MADC_DOUT | L16 | 330 Ω | PCM1808 pin 9. Drop block F's own 33 Ω at DOUT, since block E's 330 Ω replaces it (RC ≈ 330 Ω × 10 pF = 3.3 ns ≪ 163 ns) |
 | PDM_CLK / PDM_DAT | L14 / N13 | — / 330 Ω | T3902 pins 4 / 1. No pull resistor on DATA, still true |
-| HP_EN / LO_EN | M14 / N14 | 1 kΩ | then block F's 10 kΩ to each 2N7002 gate, with 100 kΩ pull-downs kept as the backstop. The DC detector can still override |
+| HP_EN / LO_EN | M14 / N14 | — (none; corrected by block E) | block F's 10 kΩ to each AO3400A gate, with 100 kΩ pull-downs kept as the backstop. The DC detector and the POE_LOSS_N backstop can override |
 | HP_FAULT_N | P11 | 1 kΩ | /DC_TRIP, with a 10 kΩ pull-up to +3V3 |
 | HP_DET | K13 | 1 kΩ | Neutrik TN normal, 100 kΩ pull-up |
 
@@ -203,7 +203,7 @@ Block F's reply:
   HP_DET) land on balls whose differential partners stay unconnected. Block F adds nothing else
   to them.
 - **R-34 mute on PoE loss:** with the relay enables back on FPGA pins, gateware can drop
-  HP_EN/LO_EN within µs of the FPGA's PD power-good or PoE-loss input. That resolves the
+  HP_EN/LO_EN within µs of PD_PG_N rising or POE_LOSS_N falling (see the update below). That resolves the
   firmware-latency concern. **Requirement to block E:** gateware drops both enables within ≤ 1 ms
   of PoE loss, independent of the RP2350.
 - The hardware diode-OR of the PoE-loss signal into /DC_TRIP is now optional (a backstop against
@@ -212,6 +212,53 @@ Block F's reply:
   the DAC lines low until PG_3V3Q.
 - Follow-up (audit-E, 2026-11-07): **PG_3V3Q goes to FPGA ball B5.** Gateware holds the DAC lines
   low until PG_3V3Q is high; before configuration the ECP5 pull-downs keep them low. POE_LOSS_N
-  and PD_PG are FPGA inputs, and the gateware drops HP_EN/LO_EN within µs of PoE loss. The
+  and PD_PG_N are FPGA inputs, and the gateware drops HP_EN/LO_EN within µs of PoE loss. The
   hardware diode-OR into /DC_TRIP stays an optional backstop (decided in phase 2, when the
   POE_LOSS_N net owner is known). Block F's interface items with block E are closed.
+
+
+## Review response (design/gates/review-phase1-F.md, 2026-11-07)
+
+| Finding | Action | Where |
+|---|---|---|
+| **B1** relay driver | **Fixed.** The 2N7002 is replaced by an AO3400A (C20917, basic). RDS(on) ≤ 48 mΩ at VGS 2.5 V. VGS = 3.0 V through 10k against 100k (block E has no series R). Coil voltage = +5V − 1.5 mV, so ≥ 4.75 V when +5V ≥ 4.76 V (asked of block C). The detector OR uses a BAT54C: tripped gate ≤ 0.37 V, below Vth(min) of 0.65 V (≈ 0.58 V at 55 °C). Note 3 (4.5 V coil) applies to BJT drives only. | F-mute-relay.md |
+| **M1** HP short, op-amp in current limit | **Fixed.** The spreader is fed by 4 mA BC857/BC847 current sources, with R_D 1.0 kΩ from the op-amp to the spreader and anti-parallel 1N4148WS across each output B-E. In a short the op-amp sources ≤ 11.3 mA from the rail (23 mW); SA5532 Tj is 104 °C with one channel shorted and 106 °C with both (ICC max, 55 °C). The limit is ≈ 43 mA; BCP56/53 Tj is 133 °C at 1 cm². The case is added to the phase 8 list. | F-hp-output-stage.md, F-opamp-sa5532.md, F-overview.md |
+| **M2** X7R in the mic path | **Fixed.** C_IN and both ADC couplings are now 1 µF 63 V PET film (WIMA MKS2, C92673; bias resistor 470 kΩ). The N_B reservoir is a 47 µF aluminium electrolytic (KNSCHA RST, C4747957). The dielectric for each position is tabulated. | F-mic-adc-pcm1808.md |
+| m1 op-amp drive | Fixed by M1: ≤ 0.4 mA now. | F-hp-output-stage.md |
+| m2 noise margin | Fixed. Uses en(max) 6 nV at 55 °C: line 6.1 µV, HP 8.0 µV A-weighted (1.9 dB margin). The quantisation requirement is tightened to −140 dB re m = 1 (0.82 µV); block E informed. | F-overview.md |
+| m3 PCM1808 source/abs max | Split into 2.2 kΩ + clamp + 1.0 kΩ/1 nF (datasheet range at the pin). **Partly disputed:** no BAT54S arrangement holds the pin to ≤ VCC + 0.3 V at mA currents (VF ≥ 0.3 V). The ≤ 70 mV excess in the misuse case only, with pin current ≪ 1 mA, is accepted and logged. | F-mic-adc-pcm1808.md |
+| m4 DC detector sense point | Fixed. Sensing is on the amplifier side of the relays (OUT_HP, line op-amp pin). Gateware latches HP_FAULT_N. The Q_DP VEBO avalanche is limited to ≤ 0.75 mA, noted. | F-mute-relay.md |
+| m5 Zobel vs limiter | Fixed. The Zobel is now 10 Ω + 4.7 nF: 28.8 mA total at 20 kHz full scale, against a hot limit of ≥ 33 mA. | F-hp-output-stage.md |
+| m6 coil step / 4.5 V coil | Closed with B1 (FET switch step, coil ≥ 4.75 V). | F-mute-relay.md |
+| n1 R-40 jack | The waiver is logged in decisions.md (user). The F files are updated. | F-jacks.md, F-overview.md |
+| n2 architecture text | Lead's file; not edited. | — |
+| n3 24.576 MHz jitter | The C5203547 datasheet is fetched (`F-yxc-ot2el-24m576.pdf`, YSO110TR series): 0.7 ps max over 12 kHz–20 MHz, with the series-to-MPN caveat. The VCXO is marked UNVERIFIED; its bring-up test is ≤ 6.5 µV idle. | F-overview.md |
+| n4 factor 2 | Formula corrected: 8.1 µV/ps single-tap, 2.0 µV/ps 4-tap. | F-overview.md |
+| n5 Ioff | Agreed. The gateware rule is in place, and the TI 74LVC74A second source is checked in phase 2. The JSMSEMI LVC2G34 clone stays an alternate only, until its Ioff is verified. | F-clk-buffer.md |
+| n6 plug-in power 5 V/4.4 kΩ | Recorded as a deviation. | F-overview.md |
+| n7 preamp input bias | Added: ≤ 0.47 V at IN+, ≤ 1.9 V at the output, blocked by the film cap. | F-mic-adc-pcm1808.md |
+
+
+## Update after the block A/B/E reviews (2026-11-07)
+
+- **Signal polarity (lead, from review A-M1):**
+  - PD_PG_N is active low: low = PD out of inrush and the converter soft-starting. It reads
+    high when the primary is dead.
+  - POE_LOSS_N is block B's secondary pulse-loss comparator: open-drain, active low. On block E's
+    side it has a 10 kΩ pull-up and a 1 kΩ series resistor into ball A6.
+- **Mute rule (replaces every earlier "PD power-good falling" wording):** gateware drops HP_EN
+  and LO_EN within ≤ 1 ms of **PD_PG_N rising or POE_LOSS_N falling**. The hardware backstop is
+  a BAT54C from POE_LOSS_N to both relay gates, now fitted (`F-mute-relay.md`).
+- HP_EN/LO_EN have no series resistor on block E's side, so the gate drive is 3.3 V × 100/110 =
+  3.0 V.
+- **Block C update:** the ±15 V pre-rails are corrected (+18.3–18.5 V, −17.7 to −17.9 V); the
+  ±15 V outputs are unchanged.
+  - Block C now counts +5V_A separately: 135 mA design and 215 mA fault on the +15 V LDO.
+  - **Note to block C:** block F's 120 mA design and 200 mA fault figures for +15 V already
+    include the ≈ 12 mA +5V_A LDO input (`F-overview.md` rail table). 135/215 mA is therefore a
+    conservative double count, and the real figures are 120/200 mA.
+  - In the double headphone-short fault the +15 V LDO may current-limit and the pre-rails sag.
+    That disturbs the line output and ADC on the same rails only during the fault. Accepted.
+- Block C confirmation: **+5V at the relay coils is ≥ 4.84 V and ≤ 5.20 V** worst case. The
+  5 V buck feedback uses 0.5 % resistors; the margin is after the trace, TPS2116 mux and
+  distribution drops. B1's coil-voltage condition (≥ 4.76 V) is closed.

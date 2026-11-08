@@ -1,5 +1,22 @@
 # U (AN) — LM5017 Fly-Buck: VBUS → +18.4 V / −17.8 V pre-regulated analog rails
 
+## Revision after phase 1 review (2026-11-07): supersedes the VOUT1, Rr and frequency items below
+
+**Type III ripple offset (review M1).** With Rr = 100 kΩ the FB ripple was 197–270 mV, an offset of
++1.5 to +2.0 V on VOUT1 (≈ 20 V, line-dependent).
+- **Rr = 499 kΩ** (0805, 150 V working: it sees SW up to the 82.4 V TVS clamp), Cr = 1 nF, Cac 0.1 µF. tON = (1.0–1.2) × 10⁻¹⁰ × 402 kΩ / VIN.
+- Vr = (VIN − 18.4)·tON/499 µs = 39–47 mV at 36 V, 54–65 mV at 56 V, 36–43 mV at the 33.4 V UVLO.
+  That is ≥ 25 mV (datasheet). The capacitive ripple at FB is < 1 mV (13 mV ÷ 15), so the injected
+  ripple dominates, which is AN-2292's stability criterion.
+- Offset Vr/2 = 20–33 mV at FB. **RFB top = 137 kΩ** (bottom 10.0 kΩ, ratio 14.7):
+  VOUT1 = (1.225 + 0.020…0.033) × 14.7 = **18.30–18.49 V** typ (≈ 0.2 V of line dependence);
+  17.9–18.9 V over the reference spread. Secondary ≈ −(VOUT1 − 0.6) = **−17.7 to −17.9 V**.
+- Frequency (eq. 1, K = 9 × 10⁻¹¹): 18.4/(9e-11 × 402 k) ≈ **508 kHz** (review note).
+- Block F's design loads with +5V_A drawn from +15V: primary 120 + 15 = 135 mA, secondary 110 mA.
+  isw(pk) = 0.137 + 0.112 + 0.26 = **0.51 A**. In the fault (215 + 190 mA) it is 0.67 A, against the
+  0.7 A minimum limit: no margin left. The LM5017 current limit and foldback, plus the LDOs' own
+  limits, carry the fault and the pre-rails sag; accepted by block F.
+
 Revision 2026-11-07: resized for block F's real loads (F-interfaces.md): +15 V 62 mA avg / 120 mA design / 200 mA fault; −15 V 50 / 110 / 190 mA. VOUT1 raised to 18.4 V, so the secondary is ≈ −17.8 V wherever −17.4 V appears below.
 
 Datasheets: datasheets/lm5017.pdf (SNVS783H). Read: all. datasheets/ti-snva674-flybuck.pdf (TI

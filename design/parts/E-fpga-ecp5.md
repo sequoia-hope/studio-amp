@@ -61,29 +61,43 @@ TN-02039 Tab 4.6: **CFGMDN[2:0] = 001 → SSPI**. Pins (CSV / Tab 6.3, all bank 
 | JTAG TCK / TDI / TDO / TMS | T10 / R11 / M10 / T11 | to the R-22 header only (3.3 V, VCCIO8): TCK 4.7 kΩ pull-down, TDI/TMS/TDO 4.7 kΩ pull-ups (TN-02038 Tab 6.1). JTAG works regardless of CFG. |
 
 SSPI timing (DS Tab 3.42): fCCLK ≤ **60 MHz**, high/low ≥ 6 ns, setup/hold 1 ns, CCLK↓→MISO ≤ 10 ns, SN high ≥ 25 ns, SN setup/hold 3 ns. Data in on CCLK↑, out on CCLK↓ (§6.2) = SPI mode 0. We run 37.5 MHz (RP2350 clk_peri 150 MHz / 4).
-Load flow (the same as Linux `drivers/fpga/lattice-sysconfig.c`, which drives ECP5 sysCONFIG over SPI at up to 60 MHz, `ecp5_spi_max_speed_hz = 60000000`): pulse PROGRAMN or send REFRESH 0x79 → wait INITN high → ISC_ENABLE 0xC6 → ISC_ERASE 0x0E → LSC_INIT_ADDR 0x46 → LSC_BITSTREAM_BURST 0x7A + bitstream → ISC_DISABLE 0x26 → poll LSC_READ_STATUS 0x3C for DONE (bit 8) / FAIL (bit 13) and DONE pin high.
+Load flow (the same as Linux `drivers/fpga/lattice-sysconfig.c`, which drives ECP5 sysCONFIG over SPI at up to 60 MHz, `ecp5_spi_max_speed_hz = 60000000`): **tri-state the link pins (GPIO8–19)** → pulse PROGRAMN (≥ 110 ns) → wait INITN high → ISC_ENABLE 0xC6 → ISC_ERASE 0x0E → LSC_INIT_ADDR 0x46 → LSC_BITSTREAM_BURST 0x7A + bitstream → ISC_DISABLE 0x26 → poll LSC_READ_STATUS 0x3C for DONE (bit 8) / FAIL (bit 13) and DONE pin high.
 Load time: 5.42 Mb / 37.5 MHz = **0.145 s** worst case (uncompressed, max EBR init).
+**SSPI read speed (review MINOR-3):** writes close easily (13.3 ns half-period vs 1 ns setup). A read round trip is ≈ RP2350 SCK pad 3–4 ns (assumed) + 33 Ω/1 kΩ RC 0.4 ns + tSTCO ≤ 10 ns + flight 0.3 ns + RP2350 input ≈ 2 ns ≈ 16 ns, which is longer than a 13.3 ns half-period. **Firmware rule:** read commands (LSC_READ_STATUS 0x3C, IDCODE, busy polls) at ≤ 18.75 MHz (clk_peri / 8); LSC_BITSTREAM_BURST (write-only) at 37.5 MHz.
+**PROGRAMN drive (NOTE-7):** the RP2350 "open-drain" on GPIO22 is emulated: the output value is held at 0 and only the output enable toggles. The same applies to INITN/DONE reads.
 **Bitstream size (TN-02039 Tab 4.1): LFE5-25, max EBR, uncompressed = 5.42 Mb = 677.5 KB** (4.45 Mb with no EBR init). Two 1 MB slots + two 6 MB RP2350 images = 14 MB of 16 MB → **R-56 holds**, with 2 MB left for config/calibration (`E-flash-w25q128.md`). `ecppack --compress` (Trellis option) shrinks it further.
-To keep SSPI usable in user mode (re-load without PROGRAMN, read status), the design sets `SYSCONFIG SLAVE_SPI_PORT=ENABLE` in the LPF; nextpnr-ecp5 accepts `SYSCONFIG` keys (`ecp5/lpf.cc`: SLAVE_SPI_PORT, MASTER_SPI_PORT, CONFIG_IOVOLTAGE, …). Set `CONFIG_IOVOLTAGE=3.3`.
+Persistence: a slave-SPI port kept alive by persistence "is capable of reading commands only … is not a configuration port" (TN-02039 §6.2.1). **Every re-load therefore starts with a PROGRAMN pulse** (GPIO22), never with REFRESH from user mode. The design sets `SYSCONFIG SLAVE_SPI_PORT=ENABLE` only so the RP2350 can read status/ID in user mode in the LPF; nextpnr-ecp5 accepts `SYSCONFIG` keys (`ecp5/lpf.cc`: SLAVE_SPI_PORT, MASTER_SPI_PORT, CONFIG_IOVOLTAGE, …). Set `CONFIG_IOVOLTAGE=3.3`.
 No golden image, no JTAG loader, no translators: the Gowin workarounds are gone. Recovery: the RP2350 always holds a known-good bitstream (A/B with rollback); if both are bad, the RP2350 still boots, and USB or the debug probe can rewrite the flash.
 
 ## Clocking, PWM gearing and edge resolution
 
 - PLL (DS Tab 3.23): fIN 8–400 MHz, **fVCO 400–800 MHz**, fOUT 3.125–400 MHz, fPFD 10–400 MHz, lock ≤ 15 ms; **output period jitter ≤ 100 ps p-p, cycle-to-cycle ≤ 200 ps p-p (fOUT ≥ 100 MHz)**, phase jitter ≤ 200 ps p-p (fPFD ≥ 100 MHz) or 0.011 UI (< 100 MHz); clean reference, no I/O toggling (note 1). This is tighter than the Gowin's < 300 ps.
-- Generic DDRX2 output (ODDRX2F, 4:1) on the **left and right sides only** (DS §2.11.2 Fig 2.20; "Left and Right sides Only" in the GDDRX2_TX rows): **−7: 700 Mb/s, ECLK ≤ 350 MHz** (−8: 800; −6: 624). Edge-clock tree ≤ 350 MHz, edge-clock skew within a bank ≤ 180 ps (Tab 3.22). Top/bottom have ODDRX1F only (500 Mb/s).
-- Audio/PWM PLL: VCXO 24.576 MHz into **LLC_GPLL0T_IN (ball P6, bank 6)** → CLKOP = 24.576 × 14 = **344.064 MHz** (VCO = 688.128 MHz, CLKOP divider 2; PFD 24.576 MHz) → ECLKSYNCB → ODDRX2F on the 8 PWM pins in bank 6; CLKDIVF /2 → SCLK 172.032 MHz for the PWM logic.
-- **Edge resolution: 1 / 688.128 Mb/s = 1.453 ns** (98 % of the −7 limit). Conservative ×12 → 589.8 Mb/s → **1.695 ns**. That is **coarser than the Gowin's 1.017 ns** (OSER10 at 983 Mb/s) and **misses R-53's "≤ 1 ns" physical target**. The effective in-band resolution is set by the noise shaper. Block D's analysis must use 1.453 ns as the quantiser step: at fixed noise-shaper order that is ≈ 3.1 dB more quantisation noise than 1.017 ns (20 log 1.453/1.017). Alternatives:
-  - a −8 part (800 Mb/s, 1.25 ns) is not stocked in quantity;
-  - DELAYF (128 × ~25 ps, dynamic, TN-02035 §8) can deskew pins and could dither edges between cycles, but it can't place each edge independently.
-- PWM frequencies locked to the audio rate on this grid: 688.128 Mb/s / 1024 = **672 kHz** (14 × 48 kHz), /1344 = 512 kHz, /1536 = 448 kHz, all in R-53's 400 kHz–1 MHz.
+- Generic DDRX2 output (ODDRX2F, 4:1) on the **left and right sides only** ("available on each pin on the left and right", TN-02035 §8.7; DS §2.11.2 Fig 2.20). Top banks have ODDRX1F only; **bank 8 (bottom) has no DDR registers at all** on non-SerDes parts (TN-02035 §8.7). The only datasheet limits are **commercial**: DS-02012 Tab 3.22 is "over recommended commercial operating conditions", and its note says "Industrial numbers are typically slower and can be extracted from the Diamond software". At −7 commercial: GDDRX2_TX 700 Mb/s, ECLK (fMAX_EDGE) 350 MHz; edge-clock skew within a bank ≤ 180 ps. No industrial figure is in hand for the −7**I** part.
+- **Baseline (review MAJOR-1): PLL ×12.** VCXO 24.576 MHz into **LLC_GPLL0T_IN (P6, bank 6)** → CLKOP = 24.576 × 12 = **294.912 MHz** (VCO 589.824 MHz with CLKOP divider 2; PFD 24.576 MHz) → ECLKSYNCB → ODDRX2F on the 4 PWM pins → **589.824 Mb/s, edge grid 1.695 ns**, 84 % of the commercial ECLK and GDDRX2 limits. CLKDIVF /2 → SCLK 147.456 MHz for the PWM logic.
+- **Bring-up option: ×14** (CLKOP 344.064 MHz, 688.128 Mb/s, 1.453 ns, 98 % of the commercial limit). Use it only after characterising it on the boards over temperature, or after the −7I numbers have been extracted from Lattice Diamond (free licence) and recorded here.
+- Both settings miss R-53's "≤ 1 ns" physical target; the Gowin reached 1.017 ns. The effective in-band resolution is the noise shaper's job. At fixed shaper order and fsw, 1.695 ns adds 20 log(1.695/1.017) = 4.4 dB of raw quantisation noise against 1.017 ns (1.3 dB against 1.453 ns). Other routes:
+  - a −8 part (800 Mb/s commercial) has 5 in stock;
+  - DELAYF (128 × ~25 ps, TN-02035 §8) deskews pins but can't place each edge independently.
+- **Allowed PWM frequencies on the ×12 grid** (fsw = 589.824 Mb/s / N, R-53 window 400 kHz–1 MHz):
+
+  | N (steps/period) | fsw | fsw / 48 kHz |
+  |---|---|---|
+  | 1024 | **576 kHz** | 12 (integer) |
+  | 768 | **768 kHz** | 16 (integer) |
+  | 1316 | 448.2 kHz | 9.337 (= 3072/329, not integer) |
+  | 1229 | 479.9 kHz | not integer |
+
+  **448 kHz is not reachable audio-locked on ×12.** 589.824 MHz / 448 kHz = 1316.57 isn't an integer. With other multipliers, an exact 448 kHz needs a PLL input divider of 7, which puts the PFD at 3.5 MHz, below its 10 MHz minimum. The integer-ratio choices inside R-53 are **576 kHz** (lowest) and 768 kHz. 448.2 kHz (N = 1316) is possible only if the modulator accepts a non-integer fsw/fs ratio (a 3072/329 polyphase interpolator in gateware: feasible, more BSRAM and logic; not recommended). 384 kHz (N = 1536, 8 × 48 kHz) is outside R-53's 400 kHz floor.
+  On the ×14 option: 448 kHz (N = 1536), 512 kHz (1344), 672 kHz (1024) remain.
 - Jitter → noise: the formula and BD common-mode argument in `E-clk-audio-vcxo.md` still hold. The datasheet's 100 ps p-p period jitter is ≈ 15 ps rms if Gaussian over the 10,000-sample measurement — an estimate, not a datasheet figure. The common part cancels in BD.
-- RMII: 50 MHz into **PCLKT1_0 (C8, top bank 1)**; the right-hand PLL (LRC, P11) stays free.
-- Fabric at 172 MHz: fMAX_PRI (primary clock tree) is 303 MHz at −7 (Tab 3.22); the PWM comparator/serialiser path must be pipelined. The noise shaper itself runs at the PWM rate (≤ 1 MHz) with the 28 multipliers.
+- RMII: 50 MHz into **PCLKT1_0 (C8, top bank 1)**. The right-hand PLL is unused; its input pad P11 serves as a plain input (`HP_FAULT_N`).
+- Fabric at 147.5 MHz (×12; 172 MHz on ×14): fMAX_PRI (primary clock tree) is 303 MHz at −7 commercial (Tab 3.22); the PWM comparator/serialiser path must be pipelined. The noise shaper itself runs at the PWM rate (≤ 1 MHz) with the 28 multipliers.
 
 ## I/O and timing numbers used elsewhere (DS Tab 3.22, −7)
 
 Generic SDR with a dedicated primary clock input, no PLL: **tCO ≤ 6.1 ns, tSU ≥ 0 ns, tH ≥ 3.0 ns; with input delay tSU_DEL ≥ 1.33 ns, tH_DEL ≥ 0 ns**; fMAX_IO 350 MHz.
-- RMII RX: PHY tohold 3.0 ns vs FPGA tH 3.0 ns → use the input delay (DELAYG): setup slack 20 + 0.2 − 14.4 − 1.33 = +4.5 ns, hold +3.4 ns. TX: 20.2 − (0.2 + 6.1 + 0.2) − 4.0 = **+9.7 ns** setup; hold relies on min tCO (not specified) > 1.3 ns: check the nextpnr timing report (`E-clk-rmii-50mhz.md`).
+**Caveats (review MAJOR-1, NOTE-2):** these are commercial-grade numbers (Tab 3.22 header) for LVCMOS25, 12 mA, fast slew, 0 pF load (note p.69). For our −7I part at LVCMOS33 into 10–15 pF, allow tCO ≈ 6.1 + 2 = 8 ns. Every budget that uses it keeps ≥ 4 ns of slack after that allowance: RMII TX setup +9.7 → +7.7 ns; link read sample margin +9.6 → +7.6 ns; DAC launch ≤ 8 ns against block F's 12 ns. RMII RX uses tSU_DEL/tH_DEL, where an industrial derating eats into +4.5/+3.2 ns.
+- RMII RX: PHY tohold 3.0 ns vs FPGA tH 3.0 ns → without delay the hold slack is 3.4 − (0.2 clock flight + 3.0) = +0.2 ns, so use the input delay (DELAYG): setup slack 20 + 0.2 − 14.4 − 1.33 = +4.5 ns, hold 3.4 − 0.2 = +3.2 ns. TX: 20.2 − (0.2 + 6.1 + 0.2) − 4.0 = **+9.7 ns** setup; hold relies on min tCO (not specified) > 1.3 ns: check the nextpnr timing report (`E-clk-rmii-50mhz.md`).
 - DAC launch (block F asks ≤ 12 ns): ≤ 6.1 ns from the clock pin; less from a PLL output.
 - Link reads (`E-link.md`): FPGA tCO ≤ 6.1 ns.
 

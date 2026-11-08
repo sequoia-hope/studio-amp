@@ -23,11 +23,11 @@ All voltages to VSS unless noted (p.5).
 
 | Parameter | Abs max | Our worst case | Margin |
 |---|---|---|---|
-| VDD, DEN | 100 V | 57 V steady; TVS clamp 93.6 V at 6.5 A (SMBJ58A, `A-tvs.md`) | 6.4 V on surge — OK, TVS placed beside U |
+| VDD, DEN | 100 V | 57 V steady; TVS clamp ≤ 93.6 V at 16 A, ≈ 80 V at 6.5 A (SMCJ58A, `A-tvs.md`) | 6.4 V at the TVS's full rating; ≈ 17 V at SMB-class currents — OK |
 | RTN | 100 V (SOA limited to 80 V at 2.5 A, note 4) | 57 V; during inrush RTN falls from VDD at 335 mA | OK |
 | RTN current, recommended | 1.85 A (TPS2373-4, p.6) | 71.3 W / 41.2 V = **1.73 A** (Class 8, min Type-4 PI voltage, Table 6 p.22) | 6.5 % — block B must hold input current below 1.85 A (see interfaces) |
 | Current limit | 1.9 A min / 2.2 typ (p.7) | 1.73 A | above load |
-| VC_IN to RTN | 25 V abs, 15 V recommended max | `VB_PRI` 13.5 V from block B's LM5019 bias buck (`B-interfaces.md`) | 1.5 V to rec. max: OK |
+| VC_IN to RTN | 25 V abs, 15 V recommended max | `VB_PRI` 14.3 V nom, 13.9–14.8 V worst, from block B's LM5019 bias buck (`B-interfaces.md`) | ≥ 0.2 V to the 15 V rec. max: OK |
 | VC_OUT | internally limited, 13.5–15 V startup | **not used** (block B, 2026-11-07): 1 µF to RTN only; after the VC switch closes it simply follows VC_IN | OK |
 | PG, TPH, TPL, BT to RTN | 100 V abs, 57 V rec; sink 3 mA rec | pulled up to 5 V (VISO1) through 10 k ⇒ 0.5 mA | OK |
 | APD, UVLO_SEL to RTN | 6.5 V | APD tied to RTN; UVLO_SEL open | OK |
@@ -43,7 +43,7 @@ All voltages to VSS unless noted (p.5).
 | RCLSA | 63.4 Ω 1 % | CLSA–VSS | Table 1 p.18, Class 8 |
 | RCLSB | 90.9 Ω 1 % | CLSB–VSS | Table 1 p.18, Class 8 |
 | RREF | 49.9 kΩ 1 % (48.9–50.9 kΩ allowed) | REF–VSS | p.4, p.6 |
-| D1 TVS | SMAJ58A "or equivalent" — we use SMBJ58A | VDD–VSS (after bridges) | §8.2.2.2 p.33, **must** |
+| D1 TVS | SMAJ58A "or equivalent" — we use SMCJ58A (1500 W, review A-m3) | VDD–VSS (after bridges) | §8.2.2.2 p.33, **must** |
 | CVC_OUT | 1 µF (VC_OUT unused, p.4 "bypass with a 1 µF to RTN") | VC_OUT–RTN | p.4, §7.3.7 p.20 |
 | CVC_IN | 0.1 µF local bypass (VC_IN is driven by VB_PRI) | VC_IN–RTN | p.4 |
 | APD | tie to RTN | — | p.4 "If not used, connect APD to RTN" |
@@ -71,7 +71,7 @@ Values, packages and power checks for these passives: `A-pd-passives.md`.
 3. **UVLO and the operating window handed to block B** (p.8): rising 36.3–40.0 V, falling 30.5–33.6 V,
    hysteresis 6.1 V typ. With PI minima (Table 6 p.22) of 41.2 V (Type 4) / 42.5 V (Type 3) and
    ≤ 0.06 V bridge drop + 0.35 V hot-swap drop at 1.73 A, VPRI at full load is **≥ 40.8 V**. Block B
-   must run (at reduced power) down to the PD falling UVLO, 30.5 V, and survive 93.6 V transients.
+   must run (at reduced power) down to the PD falling UVLO, 30.5 V, and survive the TVS clamp (≤ 93.6 V at 16 A, 25 °C).
 
 4. **Inrush and CBULK** (p.7: inrush 275–395 mA; tINR_DEL 78–87 ms; §7.4.6 p.27):
    - The PSE inrush limit is ≥ 400 mA for every class (p.27), so 395 mA max is compatible.
@@ -94,7 +94,7 @@ Values, packages and power checks for these passives: `A-pd-passives.md`.
 6. **Bias arrangement (changed 2026-11-07 after block B's audit)**: the UCC2897A needs ≈ 32 mA of bias
    (73 nC at 400 kHz, `B-interfaces.md`), above VC_OUT's 20 mA recommended sourcing (p.6) and the
    21.5 mA minimum startup source (p.8). So VC_OUT is **not used**: block B powers UCC2897A VDD from its
-   own 13.5 V LM5019 buck on VPRI (`VB_PRI`), and **VC_IN is tied to VB_PRI**, as §7.3.7 p.20 requires
+   own 14.3 V LM5019 buck on VPRI (`VB_PRI`), and **VC_IN is tied to VB_PRI**, as §7.3.7 p.20 requires
    ("If VC_OUT is not used, VC_IN must be connected to the low voltage bias supply of the PWM
    controller"). Consequences: (a) VC_IN is already above 8.5 V when inrush ends, so the VC switch
    closes at once and the startup source turns off 24 ms later; (b) TPH/TPL/BT then become valid
@@ -146,9 +146,11 @@ Values, packages and power checks for these passives: `A-pd-passives.md`.
 - §7.3.11 p.21: 0.025 in (0.64 mm) clearance between VSS copper and VDD/high-voltage nets.
 - §7.3.4 p.18: pulling DEN to VSS during operation kills the hot-swap. We do not use it; RDEN is a
   single resistor (no tap).
-- §7.4.4 p.24: bridge incremental resistance adds to the detection signature; FET body diodes are in
-  circuit during detection (LT4321 is off below 15 V). The 24.9 kΩ value is TI's recommendation; verify
-  the signature on the first board with a PoE tester.
+- §7.4.4 p.24: the bridge's incremental resistance is **in series** with RDEN ∥ (internal loading), so the
+  FET body diodes (in circuit during detection; LT4321 is off) make the PI signature read **high**; the
+  TPS2373's effective resistance partly compensates. The LT4321 gate-sense 2.2 MΩ (`A-bridge-lt4321.md`
+  calc 3d) pulls it ≈ 1 % low. If the first board reads high, trim RDEN one E96 step **down** (24.3 kΩ).
+  Verify with a PoE tester (review A-m1).
 - §8.2.2.1 p.33: Schottky bridges need care for backfeed (2.8 V max into 100 kΩ) and ESD robustness;
   not used here (FET bridges), but the FETs' body diodes and IDSS carry the same backfeed requirement —
   see `A-bridge-fets.md`.

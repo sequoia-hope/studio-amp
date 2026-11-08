@@ -52,6 +52,12 @@ Pinout and electricals are otherwise identical. The cost is an extended-part fee
   DSP. A 47 Ω build-out was considered: it gives IOS-limited clipping at 120 mA demand and
   0.25 W per half. Rejected for the thermal margin.
 
+- **Headphone short (U_HP1, review M1):** the op-amp drives the spreader through R_D = 1.0 kΩ,
+  and the bias string is current-source fed. In a sustained short the op-amp swings to its rail
+  and sources ≤ 11.3 mA through R_D: 23 mW per half. Tj = 104 °C with one channel shorted and
+  106 °C with both, at ICC max and 55 °C (`F-hp-output-stage.md`). The op-amp is never in
+  current limit.
+
 ## Electrical characteristics used (±15 V, 25 °C)
 
 | Parameter | Typ | Max | Used for |
@@ -77,7 +83,7 @@ Unity-gain stable ("compensated internally for unity-gain operation"), so the MF
   derated to ≈ 4 µF at 15 V; acceptable as local bulk), within 3 mm.
 - Line driver: 100 Ω build-out (R_BO), 1206, 1 %, 0.25 W (0.16 W worst case, above). Feedback
   stays at the op-amp pin. Phase 2 picks the LCSC part.
-- HP driver: input stopper 100 Ω; Rf = 1.0 kΩ and Rg = 3.3 kΩ (0.1 %, gain 1.303); Cf = 1 nF C0G
+- HP driver: R_D 1.0 kΩ 1206 0.25 W from the output to the spreader midpoint; input stopper 100 Ω; Rf = 1.0 kΩ and Rg = 3.3 kΩ (0.1 %, gain 1.303); Cf = 1 nF C0G
   across Rf (pole at 159 kHz, which gives the HP path a 4th pole).
 - Mic preamp: Rf = 3.0 kΩ, Rg = 1.0 kΩ (gain 4.0 = +12 dB), Cf = 1 nF (53 kHz pole).
 
