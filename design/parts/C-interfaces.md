@@ -12,7 +12,7 @@ VBUS 48 V (43–56 V working; 100 V parts throughout)
  ├─ U  LM5013 (100 V, 3.5 A non-sync COT)  → +5V_BUCK 5.05 V, ≤ 2.0 A design
  │     ├─ TPS2553 (1.1 A limit)           → +5V_LED  → JST PH LED connector   (off on USB)
  │     └─ TPS2116 power mux, VIN1 priority → +5V  (logic 5 V)
- │            VIN2 ← VUSB (USB-C)            ├─ TPS62A02AP (FPWM) → +3V3 (0.79 A design, 1 A peak, ±2.4 %)
+ │            VIN2 ← VUSB (USB-C)            ├─ TPS62A02AP (FPWM) → +3V3 (0.66 A design, 1 A peak, ±2.4 %)
  │                                           │     ├─ (PG_3V3 →) TPS7A9401 → +2V5 (ECP5 VCCAUX, 50 mA)
  │                                           │     └─ PG_3V3 → EN of 1V1 buck and 2V5 LDO
  │                                           ├─ TPS62A02AP (FPWM) → +1V1 = 1.101 V (ECP5 VCC, 400 mA, < 1 mV ripple)
@@ -47,7 +47,7 @@ the same rating as the GaN FETs, so they survive anything the VBUS TVS lets thro
 | VDRV inductor 47 µH | SRN6045TA-470M (Bourns) | C5151734 | 4173 | ext |
 | VDRV power-good | TLV6703DDCT | C2877614 | 538 | ext |
 | ±15 V Fly-Buck | LM5017MRX/NOPB (second instance) | C34355 | 12815 | ext |
-| Fly-Buck coupled inductor 47 µH 1:1 | PSSCAQ7048M-470M (PROD Tech); 2nd SRF0703-470M (Bourns) | C56266203 / C3273458 | 996 / 204 | ext |
+| Fly-Buck coupled inductor 68 µH 1:1 (3rd review: L tolerance) | PSSCAQ7048M-680M (PROD Tech; single source) | C56266204 | 932 | ext |
 | Fly-Buck secondary diode | B1100-13-F (Diodes) | C110106 | 29855 | ext |
 | +15 V and +5V_A LDOs | TPS7A4901DGNR ×2 | C16430 | 5633 | ext |
 | −15 V LDO | TPS7A3001DGNR | C33835 | 5267 | ext |
@@ -118,13 +118,13 @@ gate drive; block F's +5V_A as a separate load):
 | Net | To | Spec |
 |---|---|---|
 | `+5V_BUCK` (new) | LED switch, mux VIN1 | 5.05 V ±1.5 %, ≤ 2.0 A |
-| `+5V` | 3V3 and 1V1 bucks, 3V3_Q and 3V3_A LDOs, relays, block D | 5.05 V (buck) or VUSB (4.75–5.25 V), 0.86 A design, mux limit 2.5 A |
-| `+3V3` | RP2350, ECP5 VCCIO (all banks, max 3.465 V), PHY, Qwiic switch, display, block D, +2V5 LDO | 3.318 V ±2.4 % (0.5 % divider), 0.79 A design, ≤ 1 A peak |
+| `+5V` | 3V3 and 1V1 bucks, 3V3_Q and 3V3_A LDOs, relays, block D | 5.05 V (buck) or VUSB (4.75–5.25 V), 0.76 A design, mux limit 2.5 A |
+| `+3V3` | RP2350, ECP5 VCCIO (all banks, max 3.465 V), PHY, Qwiic switch, display, block D, +2V5 LDO | 3.318 V ±2.4 % (0.5 % divider), 0.66 A design (Qwiic capped at 100 mA), ≤ 1 A peak |
 | `+1V1` | ECP5 VCC (no bead) | 1.101 V, 1.075–1.128 V worst case (spec 1.045–1.155 V incl. noise), 0.5 mV p-p ripple, 400 mA design |
 | `+2V5` (new) | ECP5 VCCAUX (block E adds a 120 Ω bead + 10 µF) | 2.505 V ±1 %, 50 mA, 0.46 µVrms, ≈ 2 mV/µs ramp, up on USB power |
 | `+3V3_A` (new) | block D INA241 ×4, OCP thresholds, ADS7042/ADS7038 AVDD | 3.30 V ±1.5 %, ≤ 15 mA, 7 µVrms, always on with +5V |
 | `+3V3_Q` | block F reclock FFs | 3.30 V ±1.1 %, 35 mA design, 0.46 µVrms; PG_3V3Q → block E; **present only while +15V ≥ 7 V** (block F request); FFs need Ioff inputs |
-| `VDRV` | LMG1210 VIN ×4 (block D) | **7.00–7.02 V typ, 6.85–7.16 V** (Type III offset compensated, review M1), ≤ 200 mA design; block D spec 7.0 V ±5 %, ≤ 150 mA |
+| `VDRV` | LMG1210 VIN ×4 (block D) | **7.01–7.12 V typ, 6.87–7.27 V** (2nd review, Rr 360 kΩ) (Type III offset compensated, review M1), ≤ 200 mA design; block D spec 7.0 V ±5 %, ≤ 150 mA |
 | `+15V` / `-15V` | block F | 14.94 V / −15.09 V; +15 V 120 mA design / 200 mA fault including +5V_A (block F; 135/215 mA kept as margin in the thermals), −15 V 110 / 190 mA; pre-rails +18.3–18.5 / −17.7…−17.9 V |
 | `+5V_A` (new) | block F ADC analog, mic bias | 5.04 V, ≤ 15 mA, 15 µVrms, from +15V |
 | `PG_5V` | TPS2116 PR1 **only** | 3.24 V when the buck is in regulation, 0 V otherwise. Not loaded by the FPGA (review B2) |
@@ -132,7 +132,7 @@ gate drive; block F's +5V_A as a separate load):
 | `PG_3V3` | 1V1 EN, 2V5 EN_UV **only** | open drain, 100 kΩ to +3V3. Not loaded by the FPGA (review B1) |
 | `PG_3V3_N` (new) | FPGA B4 | 2N7002 buffer of PG_3V3, 4.7 kΩ to +3V3; **low = good** |
 | `VDRV_EN` | from RP2350 (or FPGA) | active high, 3.3 V, 100 k pull-down: gate drive off by default |
-| `VDRV_PG` | RP2350 GPIO33 | 4.7 k/3.0 k from VDRV via the TLV6703: 2.73 V good (2.49 V at the trip), 0 V absent; ≤ 3.62 V in an LM5017 OV event |
+| `VDRV_PG` | RP2350 GPIO33 | 4.7 k/2.7 k from VDRV via the TLV6703: 2.55 V good (2.34 V at the trip), 0 V absent; ≤ 3.39 V in an LM5017 OV event |
 | `AN_OFF` | from RP2350 (optional) | active high forces ±15 V off; 100 k pull-down (on by default) |
 
 ## Proposed changes to architecture
@@ -229,7 +229,7 @@ net is live.
 | PG_5V_N | ECP5 B3 | nothing | valid, as above | as above | OK |
 | PG_3V3Q | ECP5 B5 (1 kΩ) | nothing (DAC hold) | reads low → DAC held low (safe) | same rail | OK; PULLMODE NONE after configuration |
 | LED_EN | ECP5 H15 | TPS2553 (LED) | pulled low → off (safe) | +3V3 off ⇒ no FPGA drive; 100 kΩ holds EN low while +5V_BUCK is up | OK |
-| QWIIC_PWR_EN | ECP5 J16 | TPS2553 (Qwiic) and TCA9617B EN | low → off, isolated (safe) | as above | OK (M2 fixed) |
+| QWIIC_PWR_EN | ECP5 J16 | TPS2553 (Qwiic) and TCA9617B EN | **10 kΩ pull-down** (2nd review MAJOR-1): ≤ 0.25 V against the TCA9617B EN's internal pull-up (−25 µA) with J16 Hi-Z or the FPGA unpowered → off, isolated | as above | OK |
 | DISP_BL_PWM | ECP5 G15 | backlight FET | low → off | as above | OK |
 | LED_FAULT_N / QWIIC_FAULT_N | ECP5 K16 / C14 | nothing (status) | read 1.8–3.0 V: informational only | same rail | OK |
 | VUSB_DET | ECP5 E14 | nothing (status) | 1.8–3.1 V: informational | ≤ 0.2 mA via 15 kΩ before +3V3 rises (≤ ±1 mA hot-socket) | OK |
@@ -274,7 +274,7 @@ NOTEs:
 
 **Additional (after the review, team lead / block A A-M1):** the PD status from block A is `PD_PG_N`,
 **active low (low = PD power good, high = primary dead)**, not an active-high `PD_PG`. PoE loss is
-also flagged by block B's `POE_LOSS_N` (open drain, active low pulse-loss detector). The sequencing
+also flagged by block B's `POE_LOSS_N` (block B's VBUS-droop comparator, VBUS < 40 V; open drain, active low). The sequencing
 conditions in C-sequencing.md and decision 4 above are rewritten with these polarities. Block D's
 +3V3 load rose to 85 mA: +3V3 is 0.86 A design and the worst-case budget net is ≈ +3.05 W.
 
@@ -318,3 +318,42 @@ redesign; the LM5013 stays.
 band by construction; a hypothetical in-band one would be ≈ 5 µVrms after the output filter, ≪ R-51's
 150 µV (C-5v-buck.md, Revision 2). η back to ≈ 85 %. Budget against R-33a at Class 8 (Qwiic 100 mA,
 IGB070): **worst ≈ +1.35 W, typical ≈ −0.85 W**.
+
+### Correction to the beat rule's premise (2nd review m-2, 2026-11-07): recorded as an accepted residual
+
+The lead's rule said products above 2nd order are smaller still. **That is wrong for these
+converters.** The LM5013's input current is a ≈ 2 A pulse train at D ≈ 0.10, whose harmonics fall
+only as sin(nπD)/n: 2nd 0.93×, 3rd 0.85×, 4th 0.74× the fundamental (≈ 0.40 A pk). Over the buck's
+170–230 kHz spread, **3·f_buck crosses 576 kHz at f_buck ≈ 192 kHz** and 4·f_buck crosses 737.28 kHz at
+184 kHz, so |3 f_buck − 576| can land anywhere in 0–114 kHz, including the audio band.
+- Amplitude: ≈ 0.34 A pk on the bulk's ≈ 10 mΩ (ESL-dominated at 576 kHz) ≈ 3 mV on VBUS. In BD
+  modulation the differential fsw component is DSB-SC (∝ modulation), so the spur appears as
+  sidebands at f_audio ± δ at ≈ **−83 dBc (≈ 0.007 %) at full scale, zero at idle.**
+- The Fly-Buck (LM5017, ≈ 0.5 A pk input pulses, real 347–620 kHz after Revision 3; fundamental and
+  2nd harmonic sweep 576 kHz) gives ≈ **−94 dBc**. The VDRV buck (≈ 305 kHz, 230–410 kHz; only
+  ≈ 48 mA) is smaller still.
+- These are **within R-51** (THD+N ≤ 0.1 % at 1 W, ≤ 0.3 % at 50 W) and even the closed-loop 0.02 %
+  goal. No part change. A free-running frequency that keeps all n ≤ 4 products clear doesn't exist for
+  the LM5013 (its tON ≤ 1000 ns floor blocks the only clean band below ≈ 144 kHz). **Synchronising the
+  converters to the 23.04 kHz grid (C-5v-buck.md, "Open: frequency plan") remains the rigorous fix**,
+  logged as an option for a later variant.
+- Clock-plan bands for block E: 5 V buck 170–230 kHz; VDRV 230–410 kHz; Fly-Buck 347–620 kHz.
+
+### Second review (rereview-phase1-CGD.md) items, 2026-11-07
+- MAJOR-1: `QWIIC_PWR_EN` pull-down 100 kΩ → **10 kΩ** (G-qwiic.md; sweep row updated).
+- m-1: VDRV Rr → 360 kΩ, VDRV 7.01–7.12 V typ / 6.87–7.27 V; Fly-Buck RON → 330 kΩ, Rr → 390 kΩ (switch
+  current margin at the slow TON corner); real frequency bands stated (C-vdrv-buck.md,
+  C-pm15-flybuck.md Revision 3).
+- m-2: premise corrected and the residual recorded above.
+- m-4: LM5013 tON ≈ 886 ns at the 32.6 V UVLO-off corner (≤ 1000 ns ROC), recorded in C-5v-buck.md.
+- n-5: VDRV_PG divider 4.7 k/**2.7 k** (fault 3.39 V; the review's 4.7 k/3.3 k gives 3.84 V by
+  calculation).
+- n-7: SMF6.0A leakage wording corrected. n-8: firmware note (≥ 3 s off before re-enabling Qwiic) in
+  G-qwiic.md.
+- Stale text fixed: +5V 0.76 A, +3V3 0.66 A; C-sequencing VDRV; C-3v3a-ldo LM5013 frequency.
+
+### Third review (rereview2-phase1.md), 2026-11-07
+- Fly-Buck isw(pk) with L −20 %: 0.71 A > 0.7 A → coupled inductor 68 µH PSSCAQ7048M-680M → 0.56 A (C-pm15-flybuck.md Rev. 4).
+- Hold-up from block B's 40 V PoE-loss trip at 60 W / 6 mF: VBUS(20 ms) = 34.6 V. LM5013 UVLO-off lowered to
+  ≤ 29.6 V (RUV2 52.3 kΩ, RRON 64.9 kΩ → ≈ 213 kHz, tON ≤ 984 ns), Fly-Buck to ≤ 29.4 V (RUV1 5.36 kΩ).
+  Everything holds ≥ 36 ms (C-sequencing.md). Clock-plan band for the 5 V buck becomes ≈ 181–245 kHz.

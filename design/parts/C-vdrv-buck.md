@@ -1,5 +1,33 @@
 # U (VDRV) — LM5017 7 V gate-drive supply from VBUS, with TLV6703 power-good
 
+## Revision 3 (2nd review, 2026-11-07): supersedes Rr, the frequency and the VDRV_PG divider in Revision 2 below
+
+**On-time tolerance (m-1).** LM5017 TON tests (p. 5): 188/250/336 ns at 48 V, 100 kΩ (−25 %/+34 %),
+270/350/460 ns at 32 V. So tON(VDRV) = 191 kΩ scaled from those: typ ≈ 1.2 × 10⁻¹⁰ × RON/VIN, −25 %
+… +34 %.
+- With Rr = 499 kΩ the FB ripple at TON min fell to 24–27 mV, at the 25 mV floor (p. 9).
+  **Rr → 360 kΩ** (0805, 150 V working), Cr 1 nF:
+  - Vr at TON min: 36 V → (36 − 7) × 459 ns / 360 µs = **37 mV**; 48 V → 40 mV.
+  - At TON max, 56 V: 49 × 550 ns / 360 µs = 75 mV.
+  - So Vr = 37–75 mV, ≥ 25 mV with margin for Cr +10 % (≥ 33 mV).
+- Offset Vr/2 = 18–38 mV. With RFB top 46.4 kΩ (ratio 5.64): **VDRV = 7.01–7.12 V typ**, **6.87–7.27 V**
+  over the FB reference spread (1.20–1.25 V). That is inside block D's 7.0 V ±5 % (6.65–7.35 V) and
+  above the 6.40 V TLV6703 trip.
+- **Real switching frequency** (with the datasheet's measured constant): ≈ **305 kHz typ,
+  ≈ 230–410 kHz** over the TON spread (not the 410 kHz eq. 1 gave). ΔIL at 230 kHz, 56 V: 49 × 7/(47 µ ×
+  230 k × 56) = 0.57 A → Ipk = 0.15 + 0.28 = 0.43 A, < 0.7 A ILIM min. COUT ripple at 230 kHz:
+  0.57/(8 × 230 k × 14 µ) = 22 mV, acceptable for an LDO input.
+- Beat products: see C-interfaces.md "5 V buck beat-frequency rule" (accepted residual, smaller than
+  the Fly-Buck's −94 dBc because VDRV is ≈ 48 mA).
+
+**VDRV_PG divider (n-5): 4.7 kΩ / 2.7 kΩ** (ratio 0.365).
+- Good: 7.0 V → **2.55 V**; at the 6.40 V trip → 2.34 V (2.26 V with a 50 kΩ GPIO pull-down
+  enabled), ≥ VIH 2.0 V.
+- LM5017 FB-overvoltage fault (VOUT ≈ 9.3 V) → **3.39 V**, under IOVDD + 0.3 V = 3.6 V.
+- The 4.7 k/3.3 k suggested in the review gives 9.3 × 3.3/8.0 = 3.84 V, which does not clear it, so
+  2.7 kΩ is used.
+- TLV6703 sink current 7.0/4.7 k = 1.5 mA.
+
 ## Revision after phase 1 review (2026-11-07): supersedes the setpoint, ripple, load and VDRV_PG items below
 
 **Type III ripple offset (review M1).** The COT comparator trips at the FB ripple valley, so the

@@ -113,7 +113,10 @@ VBE(BC857B at 4 mA) ≈ 0.65 V. I = (1.38 − 0.65)/180 Ω = **4.0 mA**.
     25 °C (≈ 39 mA at 55 °C).
   - P = (15 − 0.65) × 43 mA = **0.62 W**. With 1 cm² collector copper (125 K/W):
     Tj = 55 + 78 = **133 °C**. With 6 cm² (93 K/W): 113 °C.
-  - **Layout requirement: ≥ 2 cm² of copper per tab.**
+  - **HARD LAYOUT RULE (re-review NOTE-3): ≥ 2 cm² of collector copper per BCP56/BCP53 tab.**
+    Over the BC847B VBE spread the limit is 39–47 mA, which gives up to 138 °C at 1 cm²
+    (12 K margin). That is too thin, so 1 cm² is not acceptable. At 2 cm² (≈ 115 K/W) the worst
+    case is ≈ 132 °C, and at 6 cm² 120 °C. Phase 6 checks the copper area.
 - **The SA5532 in the same short:**
   - The loop drives the op-amp to its rail (+13 V). Q_N's base node is clamped by Q_LN at
     ≈ 1.3 V, so the upper spreader diode is reverse-biased (the midpoint sits at ≈ 1.7 V). The
@@ -169,8 +172,9 @@ mostly a resistive 10 Ω load above 3.4 MHz, which keeps the emitter followers s
 
 ## Layout guidance
 
-- Put Q_N and Q_P next to each other with their tabs on separate pours (+15 V and −15 V are the
-  collectors), each ≥ 2 cm².
+- **Hard rule:** Q_N and Q_P sit next to each other with their tabs on separate pours (+15 V and
+  −15 V are the collectors), each **≥ 2 cm²** (outer pour plus via-stitched inner/bottom copper
+  counts).
 - Put the BAV99 string between them and touching both, to give some thermal coupling to the
   diodes.
 - Put the limiter transistors at the R_E resistors.

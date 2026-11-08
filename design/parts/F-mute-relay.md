@@ -67,15 +67,22 @@ open whenever the coil is off (power loss, FPGA unconfigured, DC fault).
 3 ms max (the datasheet value; a plain diode lengthens it by roughly 1–3 ms).
 - R-34: on PoE loss the FPGA drops HP_EN/LO_EN at once: within ≤ 1 ms of **PD_PG_N rising**
   (active low, from block A through the isolator; it reads high when the primary is dead) **or
-  POE_LOSS_N falling** (block B's secondary pulse-loss comparator, open-drain, active low). The
+  POE_LOSS_N falling** (block B's VBUS-droop comparator, which asserts below ≈ 39.5 V;
+  open-drain, active low). The
   contacts are open within ≈ 6 ms.
 - **Hardware backstop (fitted):** a second BAT54C, D_PL (common cathode, pin 3, to POE_LOSS_N;
   anodes pins 1 and 2 to the Q_K1 and Q_K2 gates). When POE_LOSS_N is pulled low (≤ 0.1 V), the
   gates go to ≤ 0.1 + 0.27 = 0.37 V, below Vth(min). The relays drop even with the FPGA hung.
+  - Limit (fourth-pass review): this backstop works only while VBUS is above ≈ 7.5 V, where
+    block B's comparator rail is up. Below that, +5V (the buck from VBUS) and the relay coils
+    have no supply anyway, so the relays are already released. On USB-only power the relays are
+    off by design.
   - It is a separate diode pair, not an OR into /DC_TRIP: that would add a second diode drop
     (gate ≈ 0.6 V, marginal at 55 °C) and merge HP_FAULT_N with POE_LOSS_N.
-  - Load on block B's open drain: 2 × 0.33 mA gate feed. When POE_LOSS_N is high (10 kΩ
-    pull-up to +3V3, block E), the diodes are reverse-biased (3.3 V vs a 3.0 V gate).
+  - Load on block B's open drain: 2 × 0.33 mA gate feed plus block E's **4.7 kΩ** pull-up
+    (0.70 mA), so 1.37 mA in total. The gate ≤ 0.37 V claim needs block B's pull-down at
+    VDS ≤ 0.1 V at 1.37 mA (RDS ≤ 73 Ω); that is block B's re-review MINOR-2. When POE_LOSS_N is
+    high (4.7 kΩ pull-up to +3V3), the diodes are reverse-biased (3.3 V vs a 3.0 V gate).
   The rails are held for ≥ 20 ms, so the outputs are disconnected while the ±15 V rails are still
   good. No power-down thump.
 - If faster release is needed, a 6.2 V zener in series with the diode gives ≈ 1 ms. Not required.
@@ -107,15 +114,16 @@ open whenever the coil is off (power loss, FPGA unconfigured, DC fault).
 - Both collectors pull node /DC_TRIP low. **A BAT54C** (common cathode, pin 3, to /DC_TRIP;
   anodes pin 1 → Q_K1 gate, pin 2 → Q_K2 gate) pulls both gates down. Each gate is fed through
   10 kΩ, so the detector overpowers the FPGA.
-  - Tripped: /DC_TRIP ≤ 0.1 V (BC847B saturated at ≈ 0.6 mA: 2 × 0.27 mA of gate feed plus the
-    0.33 mA pull-up). BAT54C VF ≤ 240 mV at 0.1 mA and ≤ 320 mV at 1 mA, so ≈ 0.27 V at 0.27 mA.
+  - Tripped: /DC_TRIP ≤ 0.1 V (BC847B saturated at ≈ 1.4 mA: 2 × 0.33 mA of gate feed plus the
+    0.70 mA from the 4.7 kΩ pull-up; VCE(sat) ≤ 0.1 V at that current). BAT54C VF ≤ 240 mV at 0.1 mA and ≤ 320 mV at 1 mA, so ≈ 0.27 V at 0.27 mA.
     **Gate ≤ 0.37 V**, below the AO3400A's Vth(min) of 0.65 V (≈ 0.58 V at 55 °C with the
     usual −2.5 mV/K). The FET is off: sub-threshold µA, against the relay's drop-out at ≤ 10 %
     of rated voltage.
-  - Not tripped: /DC_TRIP sits at 3.3 V (10 kΩ pull-up), above the 3.0 V gate, so the diode is
+  - Not tripped: /DC_TRIP sits at 3.3 V (**4.7 kΩ pull-up**, re-review MINOR-3: it holds against
+    the ECP5's ≤ 150 µA pull-down, 3.3 − 0.7 = 2.6 V worst case), above the 3.0 V gate, so the diode is
     reverse-biased (leakage ≤ 2 µA). No effect.
-  - So a trip turns both relay FETs off. /DC_TRIP also goes to the FPGA as HP_FAULT_N, with a
-  10 kΩ pull-up to +3V3.
+  - So a trip turns both relay FETs off. /DC_TRIP also goes to the FPGA as HP_FAULT_N (ball P11),
+  with a **4.7 kΩ** pull-up to +3V3.
 - Threshold: one channel's DC must reach 0.6 V × 4 = 2.4 V (the 47 k ×4 divider; only that
   channel drives the node) for a single-channel fault.
 - Reaction to a ±13 V fault on one output: N_DC → 13/4 × (1 − e^(−t/τ)), with τ =

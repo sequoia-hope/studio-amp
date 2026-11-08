@@ -1,5 +1,19 @@
 # U (5V) — LM5013 5 V buck from VBUS, with inductor, diode and capacitors
 
+## Revision 3 (3rd review, 2026-11-07): UVLO lowered for the PoE-loss hold-up; RRON trimmed
+
+- **EN/UVLO: RUV2 43.2 kΩ → 52.3 kΩ** (RUV1 1.00 MΩ): on = 1.5 × (1 + 1000/52.3) = **30.2 V** (28.8–32.2 V),
+  off = 1.4 × 20.12 = **28.2 V** (27.2–29.6 V). That is below the 34.6 V VBUS reaches 20 ms after block B's
+  40 V PoE-loss comparator trips at 60 W on 6 mF (C-sequencing.md). Start-up is unchanged in practice
+  (VBUS ≥ 43 V in service).
+- **RRON 69.8 kΩ → 64.9 kΩ**, so tON stays inside the 1000 ns ROC down to the lowest UVLO-off:
+  tON = 64.9/(2.5·VIN) µs + 30 ns = **984 ns at 27.2 V**, 347 ns at 82 V. Real frequency ≈ **212–214 kHz**
+  over 30–82 V. Beat rule (a, b ≤ 2 vs 576 / 737.28 kHz, ±15 % spread): worst clearance **84 kHz**,
+  ≥ 40 kHz. The 3rd-harmonic residual is as recorded in C-interfaces.md (now crossing 576 kHz at the
+  low end of the band).
+- ΔIL at 214 kHz = 0.45 A, still in CCM above 0.23 A. Type 3 RA·CA limit at 36 V = 31 × 0.75 µs/20 mV =
+  1.16 ms ≥ 1.09 ms (RA 330 kΩ, CA 3.3 nF), ripple ≈ 21 mV. Unchanged parts otherwise.
+
 Datasheet: datasheets/lm5013.pdf (SNVSCB3, Oct 2022). Read: all sections (features, pins, abs max,
 ROC, EC, feature description 8.3.1–8.3.11, modes, application 9.2 incl. Type 3 ripple, layout).
 MPN: LM5013DDAR   Supplier: `C5383001 LM5013DDAR (TI, PowerSOIC-8): extended, JLC stock 11098, lifecycle normal, checked 2026-11-07`
@@ -17,14 +31,16 @@ overshoot exceeds 85 V, so the LMR38020 is ruled out.
 
 ## Revision 2 (2026-11-07, team lead's beat rule): fsw ≈ 200 kHz, supersedes the 690 kHz design in Revision 1
 
-**Rule (logged in C-interfaces.md):** every |a·f_buck − b·f| with a, b ≤ 2, against f = 576 kHz
+**Rule (logged in C-interfaces.md; see there for the 2nd-review correction on harmonics):** every |a·f_buck − b·f| with a, b ≤ 2, against f = 576 kHz
 (amp PWM) and 737.28 kHz (ACF, crystal-locked), stays ≥ 40 kHz across the buck's real frequency
 spread. The ACF clock-fail fallback band doesn't count, because the amp is muted then.
 
 **Frequency.** A sweep of 165–1000 kHz (the LM5013's tON ≤ 1000 ns sets the floor) favours the low
 end. Real f_c = **≈ 200 kHz**: worst clearance **116 kHz at ±15 %** spread (136 kHz at ±10 %); the
 limiting product is |2·230 − 576|.
-- **RRON = 69.8 kΩ.** tON = 69.8/(2.5·VIN) µs: **847 ns at 32.6 V** (UVLO-off minimum, ≤ 1000 ns ROC),
+- **RRON = 69.8 kΩ.** tON = 69.8/(2.5·VIN) µs + ≈ 30 ns (LM5013 p. 7 tON3–tON6 measured points; 2nd review
+  m-4): **≈ 886 ns at 32.6 V** (the UVLO-off corner; ≤ 1000 ns ROC, 11 % margin; the corner exists only
+  during the UVLO-off ramp), 801 ns at the 36.2 V turn-on,
   776 ns at 36 V, 582 ns at 48 V, **499 ns at 56 V, 340 ns at the 82.4 V clamp** (≥ 50 ns). tON > 300 ns,
   so the minimum off-time is 50 ns and duty isn't limited.
 - Real f = D/tON with D = (5.05 + 0.55)/(VIN + 0.55): 197 kHz (36 V), 198 kHz (48 V), 199 kHz (56 V),

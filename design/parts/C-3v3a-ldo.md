@@ -31,7 +31,7 @@ are live on USB power. A dedicated 7 µVrms LDO meets block D's ≤ 1 mV with 10
 
 - Accuracy ±1.5 % (features) → 3.25–3.35 V, inside ±3 %.
 - Noise 7 µVrms (10 Hz–100 kHz) against ≤ 1 mV rms. PSRR 95 dB at 1 kHz attenuates the +5V ripple
-  (LM5013 396 kHz, PSRR about 45 dB there per Fig. 5-61) to µV level.
+  (LM5013 ≈ 200 kHz, PSRR about 50–60 dB there per Fig. 5-61) to µV level.
 - Dissipation: (5.05 − 3.3) × 15 mA = 26 mW, +5 °C.
 - CIN 1 µF, COUT 4.7 µF X7R 0603/0805. Block D fits local decoupling at each INA241/ADC, within the
   200 µF limit.

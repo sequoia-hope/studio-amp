@@ -43,7 +43,7 @@ FPGA (MCLK domain)                      +3V3_Q                                  
   (`F-hp-output-stage.md`).
 - **Mute:** two HFD4/5 DPDT signal relays (HP L/R and line L/R) on their normally-open contacts,
   so the output is disconnected whenever the coil is unpowered. They are driven from the FPGA
-  through 2N7002 FETs. A hardware DC detector on all four outputs opens both relays
+  through AO3400A FETs (review B1). A hardware DC detector on all four outputs opens both relays
   (`F-mute-relay.md`).
 - **Inputs:** a 3.5 mm ext-mic jack, then the electret plug-in power bias, an SA5532 preamp
   (+12 dB) and a PCM1808 I2S ADC. Its R channel is an optional loopback of line-out L
@@ -156,7 +156,7 @@ using optimized NTF zeros, plus dither.
 |---|---|---|---|---|
 | +15 V | 62 mA | 120 mA | 200 mA (both HP shorted) | 3 × SA5532 (8 typ / 16 max mA each), OPA2277 1.6 mA, HP bias current sources 2 × 4.9 mA (4 mA string + 0.9 mA reference), HP Iq 2 × 5 mA (10 max), +5V_A LDO input 12 mA (if derived from +15 V), signal: HP 2 × 7.8 mA average, line 2 × 3 mA average |
 | −15 V | 50 mA | 110 mA | 190 mA | the same, without the +5V_A LDO |
-| +3V3_Q | 20 mA | 30 mA | — | 4 × 74LVC74. CPD 19.1 pF × 3.3 V × 24.576 MHz × 8 FF = 12.4 mA, plus tap loads 8 × 0.9 mA. Single-tap build: ≈ 7 mA |
+| +3V3_Q | 24 mA | 35 mA (agreed with block C) | — | 4 × 74LVC74, plus the SN74LVC2G34 clock buffer (≈ 4 mA). CPD 19.1 pF × 3.3 V × 24.576 MHz × 8 FF = 12.4 mA, plus tap loads 8 × 0.9 mA. Single-tap build: ≈ 7 mA |
 | +5V_A (new) | 12 mA | 15 mA | — | PCM1808 VCC 8.6 / 11 mA + electret bias 0.5 mA |
 | +3V3 | 8 mA | 10 mA | — | PCM1808 VDD 5.9 / 8 mA, T3902 0.43 mA |
 | +5V | 56 mA | 62 mA | — | two HFD4/5 coils at 28 mA (178 Ω ±10 %) |
@@ -175,9 +175,9 @@ Noise and impedance requirements: +3V3_Q ≤ 5 µVrms (20 Hz–20 kHz), Zout ≤
 | PDM_CLK | out | 1 | 3.072 MHz (MCLK/8), T3902 standard mode |
 | PDM_DAT | in | 1 | no pull resistor (T3902 datasheet) |
 | HP_EN, LO_EN | out | 2 | relay enable, active high, external 100 kΩ pulldown |
-| HP_FAULT_N | in | 1 | DC detector, open collector; optional, can go to the RP2350 instead |
-| HP_DET | in | (1) | Neutrik normal contact; RP2350 GPIO preferred |
-| **Total** | | **16** (9 with the single-tap DAC; HP_DET extra) | |
+| HP_FAULT_N | in | 1 | DC detector /DC_TRIP, open collector, 4.7 kΩ pull-up; ball P11 |
+| HP_DET | in | 1 | Neutrik normal contact, 47 kΩ pull-up; ball K13 |
+| **Total** | | **17** (11 with the single-tap DAC) | ECP5 balls: see `F-interfaces.md` |
 
 Also from block E: MCLK_Q (to the FF clocks) and MCLK to the PCM1808 SCKI. Neither is an FPGA pin.
 

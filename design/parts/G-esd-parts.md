@@ -20,7 +20,7 @@ footprint-compatible per their listings. Read each maker's sheet before substitu
 
 - Standoff ≥ the highest normal signal: all signals are 3.3 V or 5 V. 5 V VRWM parts. The +5V_LED
   rail uses **SMF6.0A** (VRWM 6.0 V, VBR 6.67–7.37 V, VC 10.3 V at 19.4 A; C123790, MDD, 83315 stock)
-  after the review, so it sits below stand-off (G-led-out.md).
+  after the review, so it sits below stand-off (IR ≤ 400 µA at VRWM, less at 5.12 V, not zero) (G-led-out.md).
 - Capacitance against the signal: I2C (bus-capacitance-limited) and SPI to the display (≤ 15 MHz,
   many lines) get the 3 pF SRV05-4. Slow lines (knobs, encoders, UART, SWD, LED data with 47 Ω) get
   the 35 pF PESD5V0S1BL. USB gets the USBLC6 (3.5 pF max, HS-rated).

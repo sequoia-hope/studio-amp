@@ -41,8 +41,8 @@ Consequences of 4-turn primary (all computed in `B-converter-design.md`):
 - Volt-second rating on 4 T = 120 Vµs at 20 °C (datasheet test condition); **≈ 90 Vµs assumed at
   100 °C** (MnZn Bsat −20…−25 %). Review M3: at 400 kHz the worst corner (57 V, DMAX 0.74,
   fsw −10 %) was 117 Vµs, 98 % cold and over the hot rating. fsw went to 620 kHz, then (amp beat rule)
-  to **737.28 kHz, crystal-synchronised**: worst corner 57 × 0.696/737 kHz = 54 Vµs → 45 % cold,
-  ≈ 60 % hot; clock-failed fallback 72 Vµs (60 % / ≈ 80 %); steady 33 Vµs. The off-the-shelf part is
+  to **737.28 kHz, crystal-synchronised**: worst corner 57 × 0.73/737 kHz = 56 Vµs → 47 % cold,
+  ≈ 63 % hot; clock-failed fallback 72 Vµs (60 % / ≈ 80 %); steady 33 Vµs. The off-the-shelf part is
   now safe unless Würth's hot rating is below ≈ 72 Vµs on 4 T (`B-converter-design.md`).
 - Core loss: Bpk 68 mT at 737 kHz, estimated ≈ 0.84 W (≈ 0.7 W in PMP20878 at 200 kHz on 8 T).
 - **737 kHz is 5 % above Würth's 200–700 kHz typical application range** for this part. That is
@@ -143,7 +143,7 @@ Recommendation: **A for this spin, with B started in parallel** if the board is 
 > (d) core loss data for the material at 600 kHz and 50–100 mT, or the expected core loss in our use;
 > (e) whether the part is stocked or made to order, with lead time.
 > We will connect it N1‖N2 : N3+N4 (1:2) at 737 kHz (crystal-synchronised), so the 4-turn primary
-> sees up to 57 V × 0.70 / 737 kHz = 54 Vµs (72 Vµs if our clock fails and the controller free-runs
+> sees up to 57 V × 0.73 / 737 kHz = 56 Vµs (72 Vµs if our clock fails and the controller free-runs
 > at 590 kHz). Please confirm (f) that operation at 737 kHz is acceptable (your typical application
 > lists 200–700 kHz), (g) that those volt-seconds are within the part's hot rating, and (h) that
 > paralleling N1 and N2 is acceptable for this construction.

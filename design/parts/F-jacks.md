@@ -29,7 +29,8 @@ the best contacts (2 µm Ag on CuSn6, > 10,000 cycles) and normalling contacts. 
 
 Normals: TN and RN open when a plug is inserted (normalling contacts; confirm the sense on the
 part with a meter at bring-up, since the drawing doesn't state it). SN goes to GND. TN goes to
-HP_DET through 10 kΩ with a 100 kΩ pull-up to 3V3, read as plug present/absent. The PESD spare
+HP_DET (FPGA ball K13, 1 kΩ series on block E's side) with a 47 kΩ pull-up to +3V3 (re-review
+NOTE-2: ≥ 2.8 V against the ECP5's 10 µA input leakage), read as plug present/absent. The PESD spare
 sits on it.
 
 Sleeve: to GND (the analog ground, near where the HP stage returns). The ferrule is plastic

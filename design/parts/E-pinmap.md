@@ -22,11 +22,11 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | A3 | PT6A | 0 | `PD_TPH_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
 | A4 | PT6B | 0 | `PD_TPL_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
 | A5 | PT18A | 0 | `PD_BT_N` | in | A | 1 kΩ series | don't care (FPGA input) | ISO7740 push-pull outputs on +3V3, default high when primary unpowered |
-| A6 | PT18B | 0 | `POE_LOSS_N` | in | B | block B input-voltage (PoE-loss) detector, open-drain active low, latches ~10 ms; 4.7 kΩ pull-up to +3V3 on the net (E), 1 kΩ series; net also to block F /DC_TRIP (F fits the OR diode) | high (not tripped) — the net also feeds block F's /DC_TRIP OR diode | **pull-up changed to 4.7 kΩ** (≥ 2.6 V vs 150 µA; 10 kΩ gave 1.8 V); LPF PULLMODE=NONE |
+| A6 | PT18B | 0 | `POE_LOSS_N` | in | B | block B VBUS-droop comparator (low at VBUS < 39.5 V (38.5–40.5), release > 41.1 V (40.0–42.2), 0.31 ms filter; asserted during start-up), 2N7002 open drain (VOL ≤ 10 mV at 1.37 mA), active low, ignored until VBUS_VALID; 4.7 kΩ pull-up to +3V3 on the net (E), 1 kΩ series; net also drives block F’s separate BAT54C (D_PL) to the two relay gates (not an OR into /DC_TRIP) | low during start-up ramp (expected); ignored by the gateware until VBUS_VALID; the net also drives block F's BAT54C (D_PL) to the relay gates | **pull-up changed to 4.7 kΩ** (≥ 2.6 V vs 150 µA; 10 kΩ gave 1.8 V); LPF PULLMODE=NONE |
 | B3 | PT4B | 0 | `PG_5V_N` | in | C | buffered active-low copy (block C 2N7002 + 4.7 kΩ pull-up): low = 5 V good | high (= not good) until 5 V good; FPGA-only reader | block C buffer: 2N7002 + 4.7 kΩ pull-up; LPF PULLMODE=NONE |
 | B4 | PT11B | 0 | `PG_3V3_N` | in | C | buffered active-low copy (block C 2N7002 + 4.7 kΩ pull-up): low = 3V3 good | high (= not good) until 3V3 good; FPGA-only reader | block C buffer: 2N7002 + 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA); real PG_3V3 (1V1 EN) no longer reaches the FPGA; LPF PULLMODE=NONE |
 | B5 | PT15B | 0 | `PG_3V3Q` | in | C/F | TPS7A94 PG, open-drain, block C 100 kΩ pull-up; 1 kΩ series; gateware holds DAC_* low until high | high when 3V3_Q good (FPGA-only reader) | block C 100 kΩ pull-up dragged low before config → reads "not good", which is the safe state (DAC lines held low); after config **LPF PULLMODE=NONE**. If any other block reads it in hardware, its pull-up must be ≤ 4.7 kΩ |
-| B6 | PT22B | 0 | `ACF_PULSE` | in | B | 3.3 V push-pull (TLV3202 on +3V3, same rail as the FPGA, so no injection), 620 kHz ±10 %; 4.7 kΩ series; gateware measures f_acf | don't care before config | push-pull TLV3202 on +3V3 (same rail): no injection; LPF PULLMODE=NONE |
+| B6 | PT22B | 0 | `ACF_PULSE` | in | B | 3.3 V copy of the NCP4306 SR gate (74LVC2G08 on +3V3, same rail, no injection): one edge per conduction pulse, none in skip; 737.28 kHz crystal-locked; 4.7 kΩ series; gateware AB-M3 run-average clock-fault rule | don't care before config | push-pull 74LVC2G08 on +3V3 (same rail): no injection; LPF PULLMODE=NONE |
 | A10 | PT42B | 1 | `RMII_TXD0` | out | E |  | don't care (TXEN low) | ECP5 weak pull-down (TN-02039 §5.2) |
 | A11 | PT53A | 1 | `RMII_RXD0` | in | E | DELAYG; PHY MODE0 strap: 4.7 kΩ pull-up to 3V3, LPF PULLMODE=UP | **high (LAN8720A MODE = 111 strap)** | 4.7 kΩ pull-ups (≥ 2.6 V) + LPF PULLMODE=UP; PHY held in reset until after config |
 | A12 | PT53B | 1 | `RMII_RXD1` | in | E | DELAYG; MODE1 strap: 4.7 kΩ pull-up, PULLMODE=UP | **high (LAN8720A MODE = 111 strap)** | 4.7 kΩ pull-ups (≥ 2.6 V) + LPF PULLMODE=UP; PHY held in reset until after config |
@@ -51,9 +51,9 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | G15 | PR14B | 2 | `DISP_BL_PWM` | out | G | backlight FET switch gate (2N7002, 100 kΩ pull-down at G); 4 mA drive, PWM ≤ 2 kHz, default low | low (backlight off) | ECP5 weak pull-down (TN-02039 §5.2) + block G 100 kΩ pull-down |
 | G16 | PR20A/GR_PCLK2_1 | 2 | `PTP_PPS` | out | G | PTP-second test point | don't care | ECP5 weak pull-down (TN-02039 §5.2) |
 | H15 | PR20B | 2 | `LED_EN` | out | C/G | 100 kΩ pull-down at EN | low (switch off) | ECP5 weak pull-down (TN-02039 §5.2) + block C 100 kΩ pull-down |
-| J16 | PR23A/PCLKT2_1 | 2 | `QWIIC_PWR_EN` | out | C/G | TPS2553 EN and TCA9617B EN; 100 kΩ pull-down | low (switch off) | ECP5 weak pull-down (TN-02039 §5.2) + block C 100 kΩ pull-down |
+| J16 | PR23A/PCLKT2_1 | 2 | `QWIIC_PWR_EN` | out | C/G | TPS2553 EN and TCA9617B EN; 10 kΩ pull-down (block C; beats the TCA9617B EN internal −25 µA pull-up); sources 0.33 mA when high | low (Qwiic power and I2C buffer off) | ECP5 weak pull-down (TN-02039 §5.2) + block C 10 kΩ pull-down (TCA9617B EN has a −25 µA internal pull-up: 100 kΩ held it at ≈ 1.47 V; 10 kΩ gives ≤ 0.25 V) |
 | K16 | PR23C/PCLKT2_0 | 2 | `LED_FAULT_N` | in | C/G | open-drain, 10 kΩ pull-up; 1 kΩ series, partner K15 NC | don't care (FPGA-only readers) | block C 10 kΩ pull-ups → 1.8 V before config; **LPF PULLMODE=NONE** after config |
-| K13 | PR29A/GR_PCLK3_0 | 3 | `HP_DET` | in | F | always driven: 1 kΩ series, partner K12 NC | don't care (FPGA-only readers) | block F pull-ups: LPF PULLMODE=NONE after config; if F reads them in hardware, pull-ups ≤ 4.7 kΩ |
+| K13 | PR29A/GR_PCLK3_0 | 3 | `HP_DET` | in | F | always driven: 1 kΩ series, partner K12 NC | don't care (FPGA-only reader) | block F 47 kΩ pull-up: ≥ 2.8 V after config with PULLMODE=NONE (IIH ≤ 10 µA) |
 | L14 | PR32C | 3 | `PDM_CLK` | out | F | 3.072 MHz | low (clocks halted; PCM1808/mic on +3V3, same rail) | ECP5 weak pull-down (TN-02039 §5.2) |
 | L16 | PR26A/PCLKT3_1 | 3 | `MADC_DOUT` | in | F | always driven: 330 Ω series, partner L15 NC | don't care (FPGA input) | driven/tri-stated by F parts; pull-down harmless |
 | M14 | PR32D | 3 | `HP_EN` | out | F | pull-down at block F | low (relays open, outputs muted) | ECP5 weak pull-down (TN-02039 §5.2) + block F 100 kΩ gate pull-downs |
@@ -61,7 +61,7 @@ Rules (see `E-fpga-ecp5.md`): always-driven inputs on left/right banks have thei
 | N13 | PR38A | 3 | `PDM_DAT` | in | F | always driven: 330 Ω series, partner P14 NC | don't care (FPGA input) | driven/tri-stated by F parts; pull-down harmless |
 | N14 | PR35D | 3 | `LO_EN` | out | F | pull-down at block F | low (relays open, outputs muted) | ECP5 weak pull-down (TN-02039 §5.2) + block F 100 kΩ gate pull-downs |
 | N16 | PR32A | 3 | `DAC_L0` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
-| P11 | PR47C/LRC_GPLL0T_IN | 3 | `HP_FAULT_N` | in | F | always driven: 1 kΩ series, partner P12 NC | don't care (FPGA-only readers) | block F pull-ups: LPF PULLMODE=NONE after config; if F reads them in hardware, pull-ups ≤ 4.7 kΩ |
+| P11 | PR47C/LRC_GPLL0T_IN | 3 | `HP_FAULT_N` | in | F | always driven: 1 kΩ series, partner P12 NC | high when no fault: **read in hardware** by block F (/DC_TRIP BAT54C OR) | block F 4.7 kΩ pull-up (≥ 2.6 V vs 150 µA); LPF PULLMODE=NONE |
 | P13 | PR41A | 3 | `MADC_BCK` | out | F | PCM1808 BCK 3.072 MHz | low (clocks halted; PCM1808/mic on +3V3, same rail) | ECP5 weak pull-down (TN-02039 §5.2) |
 | P15 | PR32B | 3 | `DAC_L1` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
 | P16 | PR35A | 3 | `DAC_L2` | out | F |  | **low** (74LVC74 on 3V3_Q has no Ioff) | ECP5 weak pull-down (TN-02039 §5.2); gateware holds low until PG_3V3Q |
@@ -135,16 +135,16 @@ Every FPGA ball above now has two extra columns: the level its external circuit 
 Findings:
 1. **PG_3V3, PG_5V** (block C): deadlock, since PG_3V3 also enables 1V1. **Fixed by block C**: B3/B4 now carry buffered active-low copies `PG_5V_N`/`PG_3V3_N` (2N7002 + 4.7 kΩ), and the real PG nets no longer reach the FPGA. Gateware inverts them.
 2. **RMII_RXD0/RXD1/CRS_DV** (LAN8720A straps): fixed with 4.7 kΩ pull-ups + PULLMODE=UP (review MAJOR-2).
-3. **POE_LOSS_N**: my own 10 kΩ pull-up gave 1.8 V, and the net also feeds block F's /DC_TRIP diode. It fails safe (mutes), but it is wrong: **changed to 4.7 kΩ** (2.6 V).
+3. **POE_LOSS_N**: my own 10 kΩ pull-up gave 1.8 V, and the net also drives block F's BAT54C (D_PL) to the relay gates. It fails safe (mutes), but it is wrong: **changed to 4.7 kΩ** (2.6 V).
 4. **DC_W_n, DC_T_n**: block D's hardware reads them through a diode into the fault node. **Fixed by block D**: pull-up now 4.7 kΩ (≥ 2.6 V).
 5. **PG_3V3Q** (block C 100 kΩ): reads "not good" before configuration, which is the safe direction (DAC lines low). Fine as long as only the FPGA reads it; otherwise ≤ 4.7 kΩ.
-6. **FPGA-only readers with weak pull-ups or dividers** (LED_FAULT_N, QWIIC_FAULT_N, PHY_NINT, HP_FAULT_N, HP_DET, VUSB_DET, ACF_PULSE): no pre-configuration consequence, but the gateware must set **PULLMODE=NONE** on them in the LPF, or the post-configuration pull-down leaves them at 1–1.8 V.
+6. **FPGA-only readers with weak pull-ups or dividers** (LED_FAULT_N, QWIIC_FAULT_N, PHY_NINT, HP_DET, VUSB_DET, ACF_PULSE). `HP_FAULT_N` (= /DC_TRIP) is **read in hardware** by block F's BAT54C OR, and block F has fitted a 4.7 kΩ pull-up (re-review MINOR-3, closed). no pre-configuration consequence, but the gateware must set **PULLMODE=NONE** on them in the LPF, or the post-configuration pull-down leaves them at 1–1.8 V.
 7. Enables, resets, chip-selects and PWM lines: the pull-down puts each in its safe state (bridge off, relays open, PHY in reset, LED/Qwiic power off, backlight off). ADC chip-selects have 4.7 kΩ pull-ups so the ADCs stay deselected. No action.
 8. **VCXO_TUNE**: the pull-down discharges the 2-pole RC to 0 V → VCXO at its pull limit until the servo runs. Harmless.
 
 **Unpowered ECP5 / clamp back-powering:** every external part on an FPGA ball runs from `+3V3`, the same rail as all VCCIO banks. The exceptions:
 - **DAC flip-flops on +3V3_Q** (the reverse case): the FPGA drives low or pulls down until PG_3V3Q.
-- **ACF_PULSE**: closed. Block B drives it from a TLV3202 on +3V3, the same rail as the FPGA, so nothing is injected.
+- **ACF_PULSE**: closed. Block B drives it from a 74LVC2G08 gate on +3V3, the same rail as the FPGA, so nothing is injected.
 - **IBUS_SENSE** into RP2350 ADC4 (not an FPGA pin): block B's INA281 runs from VSR (10 V, from VBUS), which can be up before +3V3. Its final source impedance is ≈ 67 kΩ, so the worst injection into an unpowered RP2350 pad is 3 V / 67 kΩ ≈ 45 µA. **Accepted**, closed.
 
 The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handled: partner-NC rule, review MINOR-7.
@@ -179,11 +179,11 @@ The left/right-bank A/B-pair window (VCCIO up, VCC below POR) was already handle
 | 1 | 32 | 11 | 0 | 21 | A15 B14 B8 B9 C10 C11 C12 C13 C9 D10 D11 D12 D13 D8 D9 E13 E10 E11 E12 E8 E9 |
 | 2 | 32 | 15 | 3 | 14 | B15 J15 G14 H14 J14 K14 F13 G13 H13 J13 F12 G12 H12 J12 |
 | 3 | 32 | 20 | 4 | 8 | M15 L13 M13 N11 N12 L12 M11 M12 |
-| 6 | 32 | 27 | 3 | 2 | T3 M6 |
+| 6 | 32 | 27 | 4 | 1 | M6 (T3 held NC: pairs with PWM_T_B) |
 | 7 | 32 | 3 | 2 | 27 | B1 C1 D1 E1 F1 B2 C2 E2 F2 G2 K2 C3 D3 E3 F3 G3 H3 J3 K3 F4 G4 H4 J4 F5 G5 H5 J5 |
 | 8 | 13 | 13 | 0 | 0 |  |
 
-**87 spare I/O.** B15 (PR2B, dual function "S0_IN") is listed as spare but best left unused. **T3 must stay unconnected** (it pairs with `PWM_T_B` R4; review MINOR-7). All slow status and enables that went to a TCA9535 expander in the Gowin version are now on FPGA pins; the expander is dropped (`E-ioexp-tca9535.md` superseded).
+**86 spare I/O** (T3 excluded). B15 (PR2B, dual function "S0_IN") is listed as spare but best left unused. **T3 must stay unconnected** (it pairs with `PWM_T_B` R4; review MINOR-7). All slow status and enables that went to a TCA9535 expander in the Gowin version are now on FPGA pins; the expander is dropped (`E-ioexp-tca9535.md` superseded).
 
 ## RP2350B — QFN-80, all 80 pins + EP
 
@@ -306,10 +306,10 @@ RP2350 pads reset to Hi-Z with a 36–113 kΩ pull-down (§9.3):
 | Block C PG_5V_N, PG_3V3_N (buffered, active low), PG_3V3Q | 3 | FPGA B3, B4, B5 |
 | Block B ILIM_SEL0, ILIM_SEL1 (E → B) | 2 | RP2350 GPIO34, GPIO35 (block B's 100 kΩ pull-downs → reset state 00 = 0.44 A) |
 | Block B IBUS_SENSE (B → E, 0–3.0 V = 0–1.5 A, ≈ 67 kΩ source, RC-filtered 3.4 kHz) | 1 analog | RP2350 ADC4 (GPIO44), 100 nF at the pin |
-| Block B ACF_PULSE (3.3 V push-pull, 620 kHz ± 10 %) | 1 | FPGA B6 (top bank 0), 4.7 kΩ series; gateware measures f_acf |
+| Block B ACF_PULSE (3.3 V buffered SR-gate copy, 737.28 kHz crystal-locked, one edge per conduction pulse, none in skip) | 1 | FPGA B6 (top bank 0), 4.7 kΩ series (agreed with B); gateware measures f_acf |
 | Block C VDRV_EN, VDRV_PG | 2 | RP2350 GPIO36, GPIO33 |
 | Block A PD_PG_N, PD_TPH_N, PD_TPL_N, PD_BT_N | 4 | FPGA A2–A5 |
-| Block B POE_LOSS_N (input-voltage PoE-loss detector, open-drain, active low, latches ~10 ms) | 1 | FPGA A6; 10 kΩ pull-up on the net (E); net continues to block F's /DC_TRIP OR diode |
+| Block B POE_LOSS_N (VBUS-droop comparator < 39.5 V, open-drain, active low) | 1 | FPGA A6; 4.7 kΩ pull-up on the net (E), 1 kΩ series; the net also drives block F's separate BAT54C (D_PL) to the two relay gates, not an OR into /DC_TRIP |
 | PHY RMII + SMI + reset/int | 7 + 4 | FPGA C8, A9–A12, B10, B11; A13, A14, B12, B13 |
 | VCXO clock + tune | 2 | FPGA P6, N4 |
 | RP2350 ↔ FPGA link | 12 | RP2350 GPIO8–19 ↔ FPGA M7, N7, P7, R7, R6, T6, P8, M8 (D0–D7), M9 (IRQ), M16 (CLK), R15 (DIR), T15 (STB) |

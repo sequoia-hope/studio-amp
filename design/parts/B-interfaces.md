@@ -9,12 +9,12 @@ Block B = `iso_dcdc`. Design: `B-converter-design.md`; parts: `B-*.md`.
 | `VPRI` / `VPRI_RTN` (= TPS2373 VDD side after the bridges / TPS2373 RTN) | 42–57 V operating; B's LINEUV turns it on at 40.4 V, off at 38.4 V, so the input current at the Class 8 CC limit stays ≤ 1.85 A (TPS2373 RTN recommended max; fold-back > 1.9 A for 1.65 ms) | block A item 2 |
 | PD bulk (CBULK) on `VPRI`–`VPRI_RTN` | block A holds the total (≤ 120 µF recommended, 300 µF abs, TPS2373 Table 5). B fits **47 µF 100 V electrolytic (Honor RVT2A470M1010)** for the LT4321's ≥ 10 µF and damping, + 3 × 4.7 µF 100 V ceramics (≈ 6 µF effective) at T1, + ≤ 2 µF in its bias buck. B's input current at Class 8: ≈ 1.7 A dc at 41 V, 1.34 A rms ripple at 620 kHz carried by B's ceramics; the bulk sees only the low-frequency part | block A should count B's ≈ 8 µF of ceramics in its inrush calculation |
 | TPS2373 **PG** → UCC2897A **SS/SD** (via 1 kΩ, B side) | open-drain, active-high, RTN-referenced; low until inrush is complete (+81.5 ms), then high-Z | holds the converter off during inrush |
-| TPS2373 **VC_IN** ← B's `VB_PRI` (**14.3 V**, 13.9–14.8 V worst case; review M1) | B's primary LM5019 output; VC_IN > 8.5 V; < 15 V recommended. `VB_PRI` also feeds block A's isolator primary (≤ 15.3 mA), included in B's buck budget (64 mA total). Idle draw from VPRI during inrush ≈ 11 mA (TPS2373 p.7 bound: < 0.65 × 275 mA ≈ 179 mA; block A margin 30 mA) | TPS2373 §7.3.7: "If VC_OUT is not used, VC_IN must be connected to the low voltage bias supply of the PWM controller" |
+| TPS2373 **VC_IN** ← B's `VB_PRI` (**14.3 V**, 13.9–14.8 V worst case; review M1) | B's primary LM5019 output; VC_IN > 8.5 V; < 15 V recommended. `VB_PRI` also feeds block A's isolator primary (≤ 15.3 mA), included in B's buck budget (64 mA total). Idle draw from VPRI during inrush ≈ 11 mA (TPS2373 p.7 bound: < 0.65 × 275 mA ≈ 179 mA; m-AB10) | TPS2373 §7.3.7: "If VC_OUT is not used, VC_IN must be connected to the low voltage bias supply of the PWM controller" |
 | TPS2373 **VC_OUT** | **not used by B**: 1 µF to RTN only (block A) | its continuous current (20 mA recommended) is below the UCC2897A's 57 mA bias draw at 737 kHz |
 | TPS2373 **UVLO_SEL** | open (VC_OUT UV 6.9 V) | irrelevant with VC_OUT unused; open is the documented default for UVLO-off > 7.25 V PWMs |
 | PD current limit | TPS2373-4 2.2 A typ: above B's maximum input (≈ 1.7 A at 41 V, Class 8) | B's CC loop sets the real limit |
 | PD bridge / input TVS | block A; B's parts on `VPRI` are rated ≥ 100 V (ceramics), 100 V (LM5019), 120 V (UCC2897A VIN, **100 kΩ to VPRI**, agreed with block A, review n3/n10) | |
-| Type/class signals | `PD_TPL`, `PD_TPH`, `PD_BT` via the digital isolator to block E | firmware selects B's current limit from them (below) |
+| Type/class signals | `PD_TPL_N`, `PD_TPH_N`, `PD_BT_N` (active low, block A's names) and `PD_PG_N` (LOW = good; rising = loss) via the digital isolator to block E. **`PD_PG_N` rises 45–140 ms after LINEUV** (soft-stop until SS falls to the 2N7002 threshold, plus 0–60 ms), not within µs, so it is a slow backstop; the prompt PoE-loss signal at load is `POE_LOSS_N` (VBUS droop). PD fold-back at normal VPRI is prompt (PG pulls SS/SD low through 1 kΩ) | firmware selects B's current limit from them (below) |
 
 ## To blocks C and D (secondary)
 
@@ -30,10 +30,10 @@ Block B = `iso_dcdc`. Design: `B-converter-design.md`; parts: `B-*.md`.
 
 | New net | Direction | Spec |
 |---|---|---|
-| `ILIM_SEL0`, `ILIM_SEL1` | E → B (**RP2350 GPIO34/35**) | 3.3 V GPIO, drive 2N7002 gates; 100 k pull-downs in B so reset state = 00 = 0.44 A. Encoding 00 = 0.44 A, 01 = 0.94 A, 10 = 0.80 A, 11 = 1.30 A. Firmware raises it after reading `PD_TPL/TPH/BT` (or LLDP). |
-| `IBUS_SENSE` | B → E (**RP2350 ADC4 / GPIO44**, 10 nF at the pin) | 0–3.0 V for 0–1.5 A converter output current (INA281 × 6.0 V/A, RC 100 Ω/470 nF, divided 200 k/100 k; source ≈ 67 kΩ, so E fits a 10–100 nF cap at the ADC pin or a buffer) |
-| **`POE_LOSS_N`** | B → E (**FPGA A6**; E's 4.7 k pull-up and 1 k series; also to block F's /DC_TRIP OR; B's 2N7002 sinks the 0.7 mA easily) | **PoE-loss detector (lead decision; R-32a, R-34).** Open-drain (2N7002), active low, pulled up to +3V3 at the FPGA. Asserts on the first converter pulse whose secondary plateau shows Vin < 40.4 V (39.7–41.0 V), before LINEUV stops switching (37.6–39.2 V): ≥ 16 µs ahead of the stop at full load, latency ≤ 0.42 µs. Held ≈ 10 ms after the last such pulse (retriggerable), so the FPGA should latch it. Immune to pulse skipping, bursts, CC limit and hiccups (it never looks at missing pulses). Not covered: PD foldback/PG drop at normal Vin, and very light-load DCM pulses < 0.45 µs, so OR it with `PD_PG` (block A). Ignore it until VBUS is valid at start-up. `B-poe-loss-detect.md` |
-| `ACF_PULSE` | B → E (**FPGA B6**, 1 k series) | 3.3 V push-pull (TLV3202 via 100 Ω): high during every converter on-time (SW_SEC > 16 V). Diagnostics only (converter stopped, hiccup); not a PoE-loss signal |
+| `ILIM_SEL0`, `ILIM_SEL1` | E → B (**RP2350 GPIO34/35**) | 3.3 V GPIO, drive AO3400A gates; 100 k pull-downs in B so reset state = 00 = 0.44 A. Encoding 00 = 0.44 A, 01 = 0.94 A, 10 = 0.80 A, 11 = 1.30 A. Firmware raises it after reading `PD_TPL/TPH/BT` (or LLDP). |
+| `IBUS_SENSE` | B → E (**RP2350 ADC4 / GPIO44**, 100 nF at the pin, block E) | 0–3.0 V for 0–1.5 A converter output current (INA281 × 6.0 V/A, RC 100 Ω/470 nF, divided 200 k/100 k; source ≈ 67 kΩ, so E fits a 10–100 nF cap at the ADC pin or a buffer) |
+| **`POE_LOSS_N`** | B → E (**FPGA A6**; E's 4.7 k pull-up and 1 k series; also to block F's /DC_TRIP OR; B's **2N7002** (gate 5.1–5.5 V, RDS(on) ≤ 7 Ω at 5 V) sinks the ≈ 1.37 mA with VOL ≤ 10 mV) | **VBUS-droop comparator (`B-vbus-droop.md`).** Open-drain, active low. **Low when VBUS < 39.5 V (38.5–40.5 V), released above 41.1 V (40.0–42.2 V)** over every corner (±2.6 %, fourth-pass review), τ 0.31 ms filter, LM393 + TL431B on VSR (works down to VBUS ≈ 7.5 V). ≥ 2.7 V under the 43.2 V burst sag; release ≥ 1.8 V under the 44.0 V `VBUS_VALID` set point. **Asserted during every start-up ramp: the FPGA ignores it until `VBUS_VALID` (> 44.0 V for ≥ 10 ms) has first been set.** PoE loss → low in ≈ 20–42 ms at 60 W, ≈ 250 ms at idle; ≈ 150 ms of rail hold-up after it (R-34). PoE-loss rule: see the identical B/D/E text below |
+| `ACF_PULSE` | B → E (**FPGA B6**; one 4.7 kΩ series resistor, block E's, at the FPGA pin; B drives it directly) | 3.3 V copy of the forward-SR gate drive from **74LVC2G08 gate B** (not a TLV3202; m-2): one rising edge per real conduction pulse, none in skip or dead time; 737.28 kHz when synchronised. Gateware rule below |
 
 ## VBUS overvoltage scheme (agreed B ↔ D, 2026-11-07; same wording in `D-interfaces.md`)
 
@@ -77,7 +77,7 @@ the audio load). Derive ±15 V on the secondary from VBUS (or 5 V) and post-regu
    `IBUS_SENSE` (B → E/D). Add to the D ↔ E / B ↔ E interface list. The IBUS shunt splits the
    converter output from the bulk node: `VBUS_CONV` (converter side) → 30 mΩ → `VBUS`.
 5. **`POE_LOSS_N` (B → E, open-drain, active low)**, the R-32a secondary-side PoE-loss detector, plus
-   `ACF_PULSE` (B → E, diagnostics). Block E maps both and ORs `POE_LOSS_N` with `PD_PG`.
+   `ACF_PULSE` (B → E, converter clock check). Block E maps both; rule "`PD_PG_N` rising **or** `POE_LOSS_N` falling ⇒ PoE lost".
 6. **No ±15 V winding** (above); block C derives ±15 V on the secondary.
 7. Architecture decision 6 stands (silicon FETs in the converter): main FET FDMS86200 150 V, clamp
    P-FET IRFR6215 −150 V, SRs BSC500N20NS3 200 V; NCP4306 diode-emulating SR controllers meet R-33.
@@ -127,10 +127,10 @@ All six MAJORs are fixed; none is disputed.
   precision RON/ROFF do not help).
 - **Fix: SYNC from a primary-side crystal clock**, 737.28 kHz ± 40 ppm (window 712–775 kHz ✓).
   Free-running 656 kHz (590–708 kHz) stays below it, as SYNC requires, and acts as the fallback.
-- At 737 kHz: volt-seconds 54 Vµs worst synced → **45 % cold, ≈ 60 % hot** (72 Vµs clock-failed: 60 % /
+- At 737 kHz: volt-seconds 56 Vµs worst synced (DMAX up to 0.73, n-AB1) → **47 % cold, ≈ 63 % hot** (72 Vµs clock-failed: 60 % /
   ≈ 80 %); core 0.84 W; main FET 1.07–1.19 W; clamp FET 0.04 W; SR snubbers 0.21–0.33 W per SR
   (resistors moved to 2010); output ripple 0.35–0.55 A p-p; NCP4306 MIN_TON 125 ns / MIN_TOFF 245 ns
-  against 0.41 µs minimum conduction/off ✓; LM5019 primary load 76 mA (inductor 330 µH).
+  against 0.37 µs minimum off-time (n-AB1) ✓; LM5019 primary load 76 mA (inductor 330 µH).
   **Efficiency 93.0–93.1 % (≈ 92 % with core loss doubled)**, −0.3 % against 620 kHz; R-33's 92 %
   target / 91 % floor ✓.
 - 737 kHz is 5 % above Würth's typical 200–700 kHz range for T1; asked in the Würth email.
@@ -139,3 +139,90 @@ All six MAJORs are fixed; none is disputed.
   resolution), before the amp starts and continuously after. Outside 737.28 kHz ± 0.5 % it flags a
   converter clock fault; firmware warns and the amp mutes or ramps down. That is the right response,
   because a free-running 590–708 kHz converter can beat with 576 kHz down to ≈ 14 kHz.
+
+### `ACF_PULSE` measurement rule (AB-M3; agreed with block E 2026-11-08, mirrored in `E-interfaces.md` and the B6 row of `E-pinmap.md`)
+
+`ACF_PULSE` = buffered forward-SR gate drive: one rising edge per real forward-conduction pulse, no
+edges in pulse-skip or DCM dead time. The edge sits on the 737.28 kHz sync grid but shifts by tens of
+ns with load and Vin. A secondary copy of the sync clock itself is not possible: the clock is on the
+primary, and R-32a forbids an extra barrier crossing.
+
+**ACF_PULSE converter-clock-fault rule (AB-M3, one rule agreed by blocks B and E, 2026-11-07; identical text in B-interfaces.md and E-interfaces.md):**
+1. Timestamp every ACF_PULSE rising edge at 147.456 MHz (6.8 ns). T = 1/737.28 kHz = 1.3563 µs.
+2. A **run** is a sequence of consecutive rising-to-rising intervals, each within 0.8–1.3 T. Any interval outside that range (a skip of ≈ 2T, a gap, DCM dead time) ends the run.
+3. A run of **≥ 64 intervals** is qualifying. It **passes** if its average interval is within **T ± 0.5 %**, and **fails** otherwise. Averaging 64 intervals reduces B's edge jitter and shift (tens of ns) to ≤ 0.07 %.
+4. Each **10 ms window**, judged on the qualifying runs that complete inside it, gives one verdict:
+   - **LOCKED**: at least one qualifying run, and all of them pass.
+   - **FAULT**: any qualifying run fails.
+   - **UNKNOWN**: no qualifying run (deep skip, burst, stopped, start-up).
+5. **Clock fault** = 3 consecutive FAULT windows. The amp does not start, or ramps to zero and mutes (R-34 path). The fault is latched, readable by the RP2350, and reported over the network.
+6. The amp starts on **LOCKED or UNKNOWN only**.
+7. The whole check is gated by **VBUS valid** (ADS7042), so USB-only power never reports a fault.
+8. Margin: a free-running converter (590–708 kHz) has intervals of 1.041–1.25 T. Its runs qualify, and their average misses T by ≥ 4.1 %, so it reads FAULT.
+9. ≥ 64 consecutive intervals all < 0.8 T, or all within 1.3–1.9 T, is also a FAULT window.
+
+**PoE-loss and VBUS-valid gateware rule (third-pass MAJOR-1, lead 2026-11-08; identical text in B-, D- and E-interfaces.md):**
+1. **VBUS valid.** The FPGA reads VBUS from block D's ADS7042 (576 kS/s). `VBUS_VALID` is **set** when VBUS > 44.0 V continuously for ≥ 10 ms after start-up. It is **cleared** only when PoE loss is declared, or when VBUS < 40.5 V by the ADC rule below. Normal burst sag (≥ 43.2 V, R-33) does not clear it.
+2. **Hardware detector.** `POE_LOSS_N` (block B, open-drain into FPGA A6) is low when VBUS < 39.5 V (38.5–40.5 V), releasing above 41.1 V (40.0–42.2 V), 0.31 ms filter (B-vbus-droop.md). It is also asserted during every start-up ramp, so the FPGA **ignores `POE_LOSS_N` until `VBUS_VALID` has first been set**. After that, `POE_LOSS_N` low (level or falling edge) means PoE lost, and the FPGA latches it.
+3. **ADC detector.** VBUS < 40.5 V on every ADS7042 sample for ≥ 0.5 ms (≥ 288 consecutive samples), while `VBUS_VALID` is set, ⇒ PoE lost.
+4. **PoE lost = `POE_LOSS_N` low (after the step-2 gate) OR the step-3 ADC rule OR `PD_PG_N` high.** The FPGA latches the event. `PD_PG_N` rises 45–140 ms after LINEUV, so it is a slow backstop, not a prompt trigger; `POE_LOSS_N` and the ADC rule are the prompt paths.
+5. **Action**, in gateware, independent of the RP2350:
+   - drop `HP_EN` and `LO_EN` at once (relays open);
+   - start block D's R-34 mute ramp to zero, completing in ≤ 5 ms, then stop switching;
+   - report the event to the RP2350 over the link, and from there to the network.
+   Restart only through the normal start-up sequence, after `VBUS_VALID` is set again.
+6. **Calibration (block D, 2026-11-08).** The 44.0 V and 40.5 V thresholds apply to **calibrated** VBUS readings: the same one-time gain calibration as bus feed-forward (`D-vbus-adc.md`). Until a gain is stored, the ADS7042 divider's ±2 % error (≈ ±0.8 V at 40 V) is covered by **widened thresholds**:
+   - set `VBUS_VALID` at raw > **44.9 V** (= 44.0 V × 1.02), so the flag can never be set early;
+   - clear at raw < **39.7 V** (= 40.5 V / 1.02), so normal sag can never trip it.
+   A real loss is still caught as VBUS keeps falling, and `POE_LOSS_N` (39.5 V hardware) and `PD_PG_N` act independently. Amp start is allowed on the widened thresholds (bring-up); the calibrated values take over once stored. **Agreed by the lead, 2026-11-08** (44.9 V stays below the 47.0 V static VBUS minimum, 48 V − 2 %).
+
+(B's consistency check: the comparator's maximum release (42.2 V) is below the 44.0 V (44.9 V
+uncalibrated) `VBUS_VALID` set point. Its assert band (38.5–40.5 V) is the independent hardware path
+beside the ADC rule's 40.5 V (39.7 V uncalibrated). Both stay ≥ 2.7 V under the 43.2 V burst sag ✓.)
+
+## Second-pass review response (`design/gates/rereview-phase1-AB.md`, 2026-11-08)
+
+| Finding | Response | Where |
+|---|---|---|
+| **AB-B1** detector false-trips in DCM/skip | **Fixed.** "Pulse present" is now the forward-SR NCP4306 DRV (divided to 3.3 V), not the SW_SEC level. LA = DRV_FWD · (plateau low). DRV_FWD is low in every DCM dead time and skip interval, so the circuit cannot trip in DCM, skip, burst, regen, CC limit or hiccup (case table). Qualifier now 1.5 k/330 pF (248–460 ns) against ≤ 116 ns leading-edge overlap. Threshold re-centred to 39.9 V (Rbot 6.49 k; 39.3–40.6 V at VPRI). Bench cases added. | `B-poe-loss-detect.md` |
+| **AB-M1** SYNC above VREF + 0.3 V / while VREF off | **Fixed.** The whole clock chain (LVC1GU04, 74HC4017, LVC1G08, pump) runs from the UCC2897A VREF, so no logic high can exceed VREF and nothing drives SYNC while VREF is off. HT7550 deleted. VREF budget ≈ 2.9–3.9 mA of ≈ 5 mA (bench-measure; DNP 2.2 k in the inverter supply as relief). CVREF 0.22 µF. | `B-sync-clock.md`, `B-controller.md` |
+| **AB-M2** frozen counter can hold SYNC high | **Fixed.** SYNC = Q1 AND `CLK_OK`. `CLK_OK` is a charge pump on the counter's CO output (τ 0.1 ms): when the clock stops, CO freezes, `CLK_OK` decays in ≈ 0.15 ms and SYNC is forced low, so the controller free-runs. No reset is used, so start-up cannot deadlock. MR and CP1 tied to GND. | `B-sync-clock.md` |
+| **AB-M3** `ACF_PULSE` edges in DCM/skip | **Fixed and agreed with block E.** `ACF_PULSE` = buffered DRV_FWD (one edge per real pulse, none in skip). Gateware: run-average test (runs of ≥ 64 intervals in 0.8–1.3 T must average T ± 0.5 %; 10 ms windows LOCKED/FAULT/UNKNOWN; 3 consecutive FAULT windows ⇒ mute; start on LOCKED or UNKNOWN; gated by VBUS valid), identical in `E-interfaces.md`. | this file |
+| m-AB1 stale names | Fixed: `PD_PG_N` (LOW = good, rising = loss), `PD_TPL_N`/`PD_TPH_N`/`PD_BT_N`. | this file, `B-poe-loss-detect.md`, `B-converter-design.md` |
+| m-AB6 stacked start-up corner | Added: 0.57 A at 42 V for ≈ 10–15 ms; PSE criterion is ICUT for TCUT 50–75 ms; bring-up pass = no disconnect, ≤ 0.6 A as a goal. | `B-converter-design.md` |
+| m-AB7 threshold margin | Re-centred at 39.9 V (39.3–40.6 V at VPRI), ≥ 0.4 V under a compliant PI minimum less drops. | `B-poe-loss-detect.md` |
+| m-AB8 crystal CL/temperature | The YXC part is −20…+70 °C per LCSC (fails R-40). Replaced by SCTF SXMH7.3728F2020F30 (C2901749): CL 20 pF, ESR 60 Ω, −40…+85 °C; drive level 70–140 µW ✓. | `B-sync-clock.md` |
+| m-AB9 CC RC | Unified to 100 Ω / 470 nF. | `B-converter-design.md` |
+| m-AB10 "30 mA" | Removed; only the TPS2373 p.7 bound (< 179 mA) is quoted. | `B-controller.md`, `B-bias.md`, this file |
+| m-AB2/m-AB3 | Already agreed with block E: 100 nF at ADC4; one 4.7 kΩ at FPGA B6. | this file |
+| m-AB11 MLCC DC-bias | Still open (assumptions), as before. | — |
+| n-AB1 DMAX in sync | Both figures quoted (0.680–0.715, 0.664–0.73 with tolerances); volt-seconds 56 Vµs; MIN_TOFF 256 ns against 0.37 µs ✓. | `B-sync-clock.md`, `B-converter-design.md`, `B-sync-rect.md` |
+| n-AB3 / n-AB5 / n-AB6 | Bench items added (free-running frequency, TLV3201 input injection noted, VSR tracking VBUS from 7.5 V). | `B-sync-clock.md`, `B-poe-loss-detect.md` |
+
+## Third-pass review response (`design/gates/rereview2-phase1.md`, 2026-11-08)
+
+| Finding | Response | Where |
+|---|---|---|
+| **BLOCKER-1** pulse-height detector race | **Retired** (lead decision). `POE_LOSS_N` is now a VBUS-droop comparator: asserts < 39.5 V (38.9–40.1 V), releases > 41.1 V, τ 0.31 ms, LM393 + TL431B on VSR. The old file is kept, marked superseded. | `B-vbus-droop.md`, `B-poe-loss-detect.md` |
+| **MAJOR-1** coverage | VBUS droop now covers every load. PoE loss → assertion 18–41 ms at 60 W, ≈ 240 ms at idle; ≈ 170 ms of hold-up after assertion at the worst corner (block C UVLO-off ≤ 29.6 V; R-34 needs 20 ms). `VBUS_VALID` defined: lead-agreed B/D/E text copied verbatim from `E-interfaces.md` (items 1–6, including the uncalibrated 44.9/39.7 V thresholds). `PD_PG_N` 45–140 ms delay stated. | `B-vbus-droop.md`, this file |
+| **MAJOR-2** VREF budget | Only the SN74LVC1G08 runs from VREF (≤ 0.6 mA with FB). Oscillator, counter and one-shot run from `V5_CLK` (HT7550 off VB_PRI, ≤ 10 mA). 10 kΩ SYNC pull-down; SYNC ≤ VREF + 0.3 V checked in every state including VREF off (IOFF). | `B-sync-clock.md`, `B-controller.md`, `B-bias.md` |
+| m-1 one ACF rule, overtone case | One rule (run-average) in both files. Overtone/sub-multiple clause added as item 9 (same wording in E). | this file |
+| m-2 74LVC2G08 sheet, ACF source | Nexperia 74LVC2G08 sheet added (inputs tolerant to 5.5 V, IOFF confirmed); ACF source text corrected (gate B, not TLV3202). | `datasheets/74lvc2g08-nexperia.pdf`, this file |
+| m-3 old detector threshold text | Moot (detector retired). | — |
+| m-4 CLK_OK slow ramp | Replaced the pump by an SN74LVC1G123 retriggerable one-shot on CO (clean edges, fallback in 2–4 µs). | `B-sync-clock.md` |
+| m-5 crystal decode | Quoted from the SCTF sheet: CL 20 pF, ±20 ppm, −40…+85 °C, ±30 ppm. | `B-sync-clock.md` |
+| m-6 Fly-Buck | Block C's (the lead informs C). | — |
+| m-7 crystal start-up | Stated: possible long SYNC highs inside the soft-start, harmless; bench item. | `B-sync-clock.md` |
+| n-1 NCP4306 LLD after long skip | Recorded: `ACF_PULSE` misses 1–2 edges after a > 540 µs gap; the run rule simply restarts a run. | this file |
+
+## Fourth-pass review response (`design/gates/rereview3-phase1.md`, 2026-11-08)
+
+| Finding | Response | Where |
+|---|---|---|
+| **MAJOR-1** LM393 VOL vs AO3400A Vth | **Fixed.** Output stage is now a 3.3 k pull-up → 10 k series → **2N7002** gate with a 15 k gate pull-down: gate ≤ 0.42 V when the comparator is low (2N7002 VGS(th) ≥ 1.0 V, ≈ 0.75 V hot), 5.14–5.46 V when high (RDS(on) ≤ 7 Ω at 5 V → VOL ≤ 10 mV at 1.37 mA). Hysteresis resistor 866 k restores release at 41.1 V. Band over every corner (±2.6 %): assert 38.5–40.5 V, release 40.0–42.2 V; ≥ 2.7 V under 43.2 V, ≥ 1.8 V under 44.0 V. Shared step-2 numbers updated; sent to blocks E and D. | `B-vbus-droop.md`, this file |
+| m-1 one-shot C | Cext 470 pF (tw ≈ 4.5 µs). | `B-sync-clock.md` |
+| m-2 TL431 current | 3.9 kΩ → 1.85–1.92 mA. | `B-vbus-droop.md` |
+| m-4 tolerance | ±2.6 % propagated; hold-up ≈ 150 ms. | `B-vbus-droop.md`, this file |
+| m-6 divider rating | 150 k in 0805. | `B-vbus-droop.md` |
+| n-1 / n-3 / n-4 | No cap on the TL431 node (stated); relay-OR caveat below VBUS 7.5 V stated; ADC-first / comparator-as-hardware-backup stated. | `B-vbus-droop.md` |
+| "46 ms" text | Removed from B's files (D-interfaces carries its own copy; the lead aligns it). | — |

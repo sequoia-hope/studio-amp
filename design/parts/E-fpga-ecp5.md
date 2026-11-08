@@ -37,7 +37,7 @@ No 1.8 V or 1.2 V rail is needed by this block any more (`E-interfaces.md`).
 - POR is released when VCC ≥ 0.90–1.00 V, VCCAUX ≥ 2.00–2.20 V and VCCIO8 ≥ 0.95–1.06 V (Tab 3.4). Supplies must be **monotonic, 0.01–10 V/ms** (Tab 3.3). VCCAUX ≤ 30 mV/µs.
 - **VCCIO before or together with VCC and VCCAUX** (TN-02038 §4; DS §2.14.2). Block C brings `+3V3` up first and chains `+1V1` from 3V3 PG, which meets this.
 - tICFG ≤ 33 ms from the last of VCC/VCCAUX/VCCIO8 to INITN↑ (Tab 3.42).
-- **GPIO default at power-up and during configuration: outputs tri-stated, weak pull-down** (30–150 µA; TN-02039 §5.2 Initialization; TN-02038 Tab 9.1). After configuration, unused pins stay tri-state with pull-down. Bank-8 D[7:0] have no pull. **Consequence:** PWM and enable inputs default low by themselves. Block D keeps its pull-downs as a backstop; they no longer have to beat a pull-up. Active-low selects (ADC CS) get 10 kΩ pull-ups so the ADCs stay deselected and don't drive MISO before configuration.
+- **GPIO default at power-up and during configuration: outputs tri-stated, weak pull-down** (30–150 µA; TN-02039 §5.2 Initialization; TN-02038 Tab 9.1). After configuration, unused pins stay tri-state with pull-down. Bank-8 D[7:0] have no pull. **Consequence:** PWM and enable inputs default low by themselves. Block D keeps its pull-downs as a backstop; they no longer have to beat a pull-up. Active-low selects (ADC CS) get 4.7 kΩ pull-ups so the ADCs stay deselected and don't drive MISO before configuration.
 - **Hot socketing (DS §3.6, Tab 3.5).** Left/right banks (2, 3, 6, 7) do not support hot socketing: an input above VCCIO is a low-impedance path to ground. Also, while VCCIO is up but VCC is below its POR trip, **A/B and C/D pin pairs present a low-impedance path between the two pins** (IDK up to ±33 mA, "device damage may occur"). Top/bottom banks (0, 1, 8) are limited to ±1 mA. Because `+1V1` follows `+3V3` by ~1 ms, the board does pass through that window. Rules used in `E-pinmap.md`:
   1. Inputs driven by always-powered parts (isolator, PG, comparators, mics, ADC, faults) go on **top banks 0/1** where possible.
   2. Where such an input has to sit on a left/right bank, its pair partner is **left unconnected** and the input has a series resistor (330 Ω fast, 1 kΩ slow).
@@ -135,7 +135,7 @@ Escape depth: one trace per channel escapes about two rings per signal layer. Th
 - "All supplies with same voltage … should be connected together" (Tab 3.2 note 2): every VCCIO on the one `+3V3`, all VCC pins together.
 - Unused VCCIO banks must still be powered (TN-02038 §3.6): all are used here.
 - Bank 8 sets the configuration-pin voltage; VCCIO8 = 3.3 V matches the RP2350.
-- PROGRAMN must not see a falling edge while the FPGA is in initialisation, and must not be pulled low before all rails are stable (TN-02039 §4.6.2) — firmware rule.
+- PROGRAMN must not see a falling edge while the FPGA is in initialisation, and must not be pulled low before all rails are stable (TN-02039 §4.6.2). **Firmware gate (re-review MINOR-4):** the RP2350 has no 1V1/2V5 power-good of its own, so it waits for **INITN (GPIO23) high**. That means VCC, VCCAUX and VCCIO8 are above POR and initialisation is done (tICFG ≤ 33 ms). It then waits a fixed **≥ 10 ms** before the first PROGRAMN pulse, and applies the same gate before every A/B reload.
 - Top-side inputs support IDDRX1 only; RMII and the link are SDR, fine anywhere.
 - −7 speed grade: GDDRX2 at 700 Mb/s is the binding limit for PWM edge resolution.
 
@@ -150,4 +150,4 @@ Escape depth: one trace per channel escapes about two rings per signal layer. Th
 
 - Dynamic power: run the Lattice Power Calculator once on the real design, or measure on an evaluation board.
 - Min tCO for the RMII TX hold check comes from the nextpnr timing model.
-- The edge-resolution loss (1.453 vs 1.017 ns) feeds block D's noise-shaper order.
+- Edge grid 1.695 ns (×12 baseline) at fsw 576 kHz: the noise-shaper estimate in `E-interfaces.md` shows edge quantisation isn't the noise limiter.

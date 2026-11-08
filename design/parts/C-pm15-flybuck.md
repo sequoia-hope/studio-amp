@@ -1,5 +1,44 @@
 # U (AN) — LM5017 Fly-Buck: VBUS → +18.4 V / −17.8 V pre-regulated analog rails
 
+## Revision 4 (3rd review, 2026-11-07): inductor tolerance and UVLO for hold-up
+
+**Peak current with L at −20 %.** With 47 µH −20 % = 37.6 µH, at 347 kHz and 56 V: ΔIL = 0.95 A →
+isw(pk) = 0.71 A, over the 0.7 A ILIM minimum. **Coupled inductor → PSSCAQ7048M-680M** (68 µH ±20 %
+per winding, DCR ≤ 0.7 Ω, Irms 0.7 A, Isat 1.8 A, 600 V coil-to-coil; datasheets/prod-psscaq7048m.pdf,
+same 7.6 mm footprint):
+- At −20 % (54.4 µH): ΔIL = 37.6 × 18.4/(54.4 µ × 347 k × 56) = 0.65 A → **isw(pk) = 0.122 + 0.112 + 0.33 =
+  0.56 A**, 140 mA under ILIM min.
+- Winding loss ≈ (0.25² + 0.15²) × 0.7 = 0.06 W. Irms ≪ 0.7 A.
+- `C56266204 PSSCAQ7048M-680M (PROD Tech, SMD-4P,7.6x7.6mm): extended, JLC stock 932, lifecycle normal, checked 2026-11-07`
+- No stocked Bourns equivalent (SRF0703-680M: 1 in stock), so this part is single-source for the prototypes.
+- RON 330 kΩ, Rr 390 kΩ and RFB 137 kΩ are unchanged. Ripple injection doesn't depend on L.
+
+**UVLO lowered for the PoE-loss hold-up** (C-sequencing.md): RUV1 4.42 kΩ → **5.36 kΩ** (RUV2 125 kΩ).
+Rising = 1.225 × (1 + 125/5.36) = **29.8 V** (28.9–30.6 V); falling = 29.8 − 20 µA × 125 kΩ = **27.3 V**
+(≤ 29.4 V worst case with 1.25 V minimum hysteresis). At 27 V the duty is 0.68 with off-time ≈ 0.7 µs
+(≥ 144 ns min off), so it still regulates. The ±15 V LDOs keep their headroom while VOUT1 regulates.
+
+## Revision 3 (2nd review, 2026-11-07): TON tolerance and real frequency
+
+- LM5017 TON is −25 %/+34 % (p. 5). With Rr = 499 kΩ the FB ripple is 34–87 mV (≥ 25 mV), so Rr stays.
+- VOUT1 worst case (TON max at 56 V, reference max): ≈ 19.0 V. The +15 V LDO fault dissipation
+  becomes 0.81–0.87 W → TJ 106–110 °C at 55 °C air, < 125 °C. VOUT1 minimum 17.9 V leaves the
+  TPS7A3001 2.2 V of headroom before cross-regulation droop. Fine.
+- **Real switching frequency ≈ 380 kHz typ, ≈ 280–510 kHz** over the TON spread (the measured
+  constant 1.2 × 10⁻¹⁰, not eq. 1's 508 kHz). ΔIL at 280 kHz, 56 V: (56 − 18.4) × 18.4/(47 µ × 280 k ×
+  56) = 0.94 A → isw(pk) = 0.122 + 0.112 + 0.47 = **0.70 A at the design load**, at the 0.7 A minimum
+  limit at the slowest corner. Fault case: current-limit foldback, already accepted.
+  **Lower RON to 330 kΩ**: f = VOUT1/(1.2 × 10⁻¹⁰ × 330 k) = 465 kHz typ, **≈ 347–620 kHz** over the TON
+  spread. ΔIL at 347 kHz, 56 V = 37.6 × 18.4/(47 µ × 347 k × 56) = 0.76 A → isw(pk) = 0.122 + 0.112 +
+  0.38 = **0.61 A** at design, giving ≈ 90 mA of margin to the 0.7 A limit. tON at 56 V, TON min =
+  0.75 × 1.2e-10 × 330 k/56 = 0.53 µs ≥ 100 ns.
+  **Rr → 390 kΩ** (0805, 150 V): Vr at TON min, 36 V = 17.6 × 0.83 µs/390 µs = **37 mV**; at TON max,
+  56 V = 37.6 × 0.95 µs/390 µs = 91 mV. Offset +18…46 mV × 14.7 → **VOUT1 ≈ 18.3–18.7 V typ**
+  (≈ 17.9–19.1 V with the reference spread); secondary ≈ −17.7…−18.1 V. **RFB top stays 137 kΩ.**
+  The +15 V LDO fault-case TJ stays ≤ ≈ 110 °C (the 19.0–19.1 V worst case above).
+- Beat products: the Fly-Buck fundamental and 2nd harmonic sweep across 576 kHz. Its input pulse
+  (≈ 0.5 A pk) gives ≈ −94 dBc sidebands (2nd review estimate), an accepted residual (C-interfaces.md).
+
 ## Revision after phase 1 review (2026-11-07): supersedes the VOUT1, Rr and frequency items below
 
 **Type III ripple offset (review M1).** With Rr = 100 kΩ the FB ripple was 197–270 mV, an offset of

@@ -64,16 +64,16 @@ applications without any additional components or external triggering".
 | tPD_ON | 30 typ / 60 max ns | body-diode time budget used in the loss model | |
 | fmax | 1 MHz | 737.28 kHz synced (590–708 kHz if the clock fails) | OK |
 
-Calculations (737.28 kHz, T = 1.356 µs; synced DMAX 0.664–0.696; also checked at clock-failed 590 kHz):
+Calculations (737.28 kHz, T = 1.356 µs; synced DMAX 0.664–0.73 (n-AB1); also checked at clock-failed 590 kHz):
 - **MIN_TON** (blanks the turn-on ringing): datasheet: 0 Ω → 55 ns, 10 kΩ → 1.0 µs, 50 kΩ → 5.0 µs
   (≈ 95 ns/kΩ above the 55 ns floor). Kept **short to limit reverse current in deep DCM (review m4)**:
   **0.75 kΩ → ≈ 125 ns**. That still blanks 2–3 periods of the 20–25 MHz turn-on ring. Reverse current
   held by MIN_TON is ≤ Vo/Lo × 125 ns = 0.09 A peak, ≈ 6 nC per cycle, only in deep DCM
   (`B-converter-design.md`, light load). Shortest required conduction: forward SR D·T = 0.424 × 1.356
-  = 0.575 µs; freewheel (1 − 0.696) × 1.356 = 0.41 µs ✓ (MIN_TON 125 ns is ≤ 31 % of it).
+  = 0.575 µs; freewheel (1 − 0.73) × 1.356 = 0.37 µs ✓ (MIN_TON 126 ns is ≤ 34 % of it).
 - **MIN_TOFF** (blanks the turn-off ringing): must end before the next conduction. Forward SR is off
-  for (1−D)·T ≥ 0.41 µs, freewheel for D·T ≥ 0.575 µs. Set **2.0 kΩ → ≈ 245 ns** (≈ 165 ns margin to
-  0.41 µs; was 2.43 k/285 ns at 620 kHz).
+  for (1−D)·T ≥ 0.37 µs, freewheel for D·T ≥ 0.575 µs. Set **2.0 kΩ → ≈ 256 ns** (70 + 2.0 × 93 ns,
+  n-AB7), ≈ 110 ns margin to 0.37 µs.
 - **Driver loss** (eq. 7: P = VCC × VCLAMP × Cg_ZVS × fsw, i.e. VCC × Qg_ZVS × fsw), Qg_ZVS ≈ 13 nC at
   the 10 V clamp: 10 V × 13 nC × 737 kHz = 96 mW per controller, most of it in the IC's clamp
   (TSOP-6 ≈ 200 °C/W → +19 °C). ICC 1.8 mA × 10 V = 18 mW. OK.

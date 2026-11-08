@@ -31,7 +31,7 @@ Recommended: VDD 8.5–16 V (we run 14.3 V); VDD bypass ≥ 1 µF; VREF ≥ 0.1 
 |---|---|---|
 | VDD (17) | 1 µF X7R 25 V 0603 at the pin to PGND | p.4 pin table, §10 |
 | PVDD (16) | 10 µF X7R 25 V 1206 to PGND; 0 Ω PVDD↔VDD at the IC | §10, §11.1 |
-| VREF (6) | 0.1 µF X7R to GND (≥ 0.022, ≤ 22 µF; VREF:VDD ≥ 1:10 → 0.1 : 11 µF OK) | §8.3.1.4 |
+| VREF (6) | **0.22 µF** X7R to GND (recommended value; VREF also supplies the SYNC-driving SN74LVC1G08 only, ≤ 0.6 mA total with the FB pull-up; VREF:VDD 0.22 : 11 µF ≥ 1:10 ✓) | §8.3.1.4, `B-sync-clock.md` (AB-M1, MAJOR-2) |
 | OUT (15) | 10 kΩ OUT→PGND; 2.2 Ω series to main FET gate | §8.3.1.13 |
 | AUX (14) | 100 nF 25 V coupling cap + BAS316 clamp diode (anode gate, cathode clamp-FET source = RTN) + 10 kΩ gate–source, P-channel low-side clamp | §8.3.7, Fig. 24 |
 | CS (9) | RF 1.00 kΩ + CF 82 pF C0G to GND (range 50–270 pF) | §9.2.2.6 |
@@ -41,7 +41,7 @@ Recommended: VDD 8.5–16 V (we run 14.3 V); VDD bypass ≥ 1 µF; VREF ≥ 0.1 
 | FB (11) | 4.99 kΩ to VREF (pull-up), opto collector, 6.8 nF to GND | §8.3.1.9, `B-feedback.md` |
 | LINEUV (18) | 73.2 k / 2.37 k divider from VPRI | eq. 21–25 |
 | LINEOV (19) | output OVP: N5 → BAV21W → 47 k / 470 k / 23.7 k ‖ 47 nF (see below) | eq. 9, VBUS scheme |
-| SYNC (7) | 737.28 kHz from the crystal clock (74HC4017 Q0) through 100 Ω; no capacitor (§8.3.1.5) | `B-sync-clock.md` |
+| SYNC (7) | 737.28 kHz: 74HC4017 Q1 AND clock-OK (SN74LVC1G08 powered from VREF, so SYNC ≤ VREF; oscillator/counter on `V5_CLK`) through 100 Ω; **10 kΩ SYNC to GND** (VREF-off state); no capacitor (§8.3.1.5). Clock loss → SYNC forced low within 4 µs → free-running | `B-sync-clock.md` (AB-M1, AB-M2) |
 | GND (8) / PGND (13) | separate small-signal ground island, joined to PGND only at the IC (net tie) | §8.3.1.6, §11.1 |
 | VIN (1) | 100 kΩ to VPRI (fitted); 0 Ω to VDD (DNP) — agreed with block A (review n3/n10) | see "Start-up" |
 
@@ -58,11 +58,11 @@ must sit in 712–775 kHz over all tolerances (amp beat rule). The UCC2897A free
   0.050)/36.1e-12 (eq. 11) = 31.3 kΩ → **31.6 kΩ**. Check: tON = 1.091 µs, tOFF = 0.435 µs → free-running
   **656 kHz**, 590–708 kHz with −10/+8 % (p.7), always below 737 kHz (4 % margin) ✓. Free-running DMAX
   = 0.715 (≈ 0.68–0.75).
-- SYNC: 136 ns pulses from the 74HC4017 through 100 Ω; ≥ 50 ns ✓; < (1 − DMAX)·TSYNC = 0.41 µs ✓
+- SYNC: 136 ns pulses (74HC4017 Q1 gated by clock-OK; only the LVC1G08 on VREF) through 100 Ω, 10 kΩ to GND; ≥ 50 ns ✓; < (1 − DMAX)·TSYNC = (1 − 0.73) × 1.356 = 0.37 µs ✓
   (eq. 10). No capacitor on SYNC.
-- Synced DMAX: 0.680 nominal, 0.664–0.696 with ±5 % on tOFF; needed 0.64 at 38.4 V and 0.655 at
-  37.6 V ✓. Datasheet: "DMAX remains accurate" in sync; the tOFF-based value used here is the
-  conservative reading. Bench check.
+- Synced DMAX: between 0.680 (1 − tOFF/TSYNC) and 0.715 (RON/ROFF ratio, which the datasheet says
+  sync preserves; n-AB1); 0.664–0.73 with tolerances. Needed 0.64 at 38.4 V and 0.655 at 37.6 V ✓.
+  Bench check.
 - Turn-on delay 50 ns: the drain falls from Vc to Vin with ≈ 0.66 A of magnetizing current into
   ≈ 600 pF → ≈ 45 ns. That is near the 50 ns setting; footprint RDEL 3.3–6.8 k and tune on the bench.
 
@@ -147,7 +147,7 @@ Two ways exist (TPS2373 §7.3.7, §7.4.8). B uses the second:
      then is the idle UCC2897A (≈ 3 mA) plus block A's isolator primary (≤ 15.3 mA): ≈ 0.26 W at 14.3 V,
      ≈ 11 mA from VPRI at 30 V. Datasheet bound (TPS2373 p.7, confirmed by block A): inrush ends when
      IRTN falls below 65–99 % of the inrush limit, so the DC load at the end of inrush must stay below
-     0.65 × 275 mA ≈ 179 mA. B's 11 mA is well under it (block A keeps its own 30 mA design margin).
+     0.65 × 275 mA ≈ 179 mA. B's 11 mA is well under it (m-AB10).
    - **Line surge:** block A's input TVS is SMCJ58A (≤ 93.6 V at 16 A, ≈ 80 V at 6.5 A). B's VPRI
      parts are rated for it: ceramics and electrolytic 100 V, LM5019 100 V, UCC2897A VIN 120 V via
      100 k. The main FET is protected by peak-current mode's inherent line feed-forward: when Vin

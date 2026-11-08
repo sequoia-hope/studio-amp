@@ -20,8 +20,8 @@ R-02. Variant A choices (user, 2026-11-07): an integrated PoE PD chip; an isolat
 forward converter; a 48 V amp rail; Lattice ECP5 LFE5U-25F FPGA (replacing Gowin GW1N-9, 2026-11-07, so the RP2350 can load it by slave SPI); all-GaN power stage; satellite only
 (no subwoofer); everything on one board (full spec, not a core-only subset); headphone and line
 out fed from an FPGA 1-bit stream with a discrete reconstruction filter (no DAC chip); LMG1210 half-bridge
-GaN gate drivers in place of the spec's uP1966 (0 LCSC stock); Infineon IGC033S10S1 GaN in place of
-Innoscience (stock and lifecycle data).
+GaN gate drivers in place of the spec's uP1966 (0 LCSC stock); Infineon IGB070S10S1 GaN in place of
+Innoscience (stock and lifecycle data; IGC033S10S1 as the fallback footprint).
 
 R-03. Deferred to later variants, with no provision needed in A beyond what is listed:
 discrete PD front end, flyback, planar transformer, non-isolated buck, silicon-MOSFET control
@@ -73,8 +73,9 @@ isolators pass (phase 4).
 
 R-32a. Signals crossing the barrier, through a digital isolator or optocouplers rated for R-32
 **(proposed)**: the PD chip's class/type indication (granted power), and PD power-good. PoE loss is
-detected on the secondary both from this power-good and from a fast comparator on the converter's
-secondary (rectified pulse loss or VBUS droop), whichever trips first. Nothing crosses back to the
+detected on the secondary by whichever trips first: a hardware VBUS-droop comparator
+(`POE_LOSS_N`, ≈ 39.5 V), a gateware rule on the VBUS ADC (< 40.5 V for 0.5 ms), or PD power-good
+(a slow backstop, 45–140 ms). The shared rule text is in B-, D- and E-interfaces.md. Nothing crosses back to the
 primary except the converter's feedback (optocoupler or isolated error amp, phase 1).
 
 R-33. Isolated DC-DC: active-clamp forward, ≥ 92 % efficiency at full load **(proposed target)**,

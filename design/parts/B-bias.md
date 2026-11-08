@@ -46,9 +46,9 @@ minimum off-time 144 ns; UVLO 1.225 V with 20 µA hysteresis current.
 | Max duty check (1 − 144 ns/T) | 0.91 ≥ 14.3/33 = 0.43 ✓ | 0.94; below VBUS ≈ 10.6 V the buck is in dropout, intended |
 | L | **330 µH** ± 20 % (SM5845-331MT: 330 µH, DCR 1.76 Ω, Isat 0.34 A, Irms 0.28 A per the K-version row, p.14), raised from 220 µH for the higher load | 220 µH ± 20 % (SM5845-221**M**T; datasheet lists the K version, same ratings, review m7) |
 | ΔIL = (VIN − VOUT)·TON/L(min) | (57 − 14.3) × 0.47 µs/264 µH = 0.076 A p-p | (55 − 10) × 0.51 µs/176 µH = 0.13 A p-p |
-| Peak IL | 76 + 38 = **114 mA** < 150 mA limit min (76 %), < 0.34 A Isat ✓; Irms 76 mA < 0.28 A ✓ | 37 + 65 = 102 mA ✓ |
-| Load | UCC2897A 3 mA + gates 73 nC × 737 kHz = 56.8 mA, + block A's isolator primary (78L05 + ISO7740 + pull-ups) ≤ 15.3 mA + sync clock 4 mA (`B-sync-clock.md`) = **76 mA** (≤ 100 mA rated) | 2 × NCP4306 (1.8 mA + 13 nC × 623 kHz) = 20 mA + 2 × TL431 2.4 mA + opto LED 1–2 mA (12.8 mA max at loop saturation) + INA281 1 mA ≈ **25 mA typ, 37 mA max** |
-| Power out | 1.09 W (0.22 W of it block A's isolator, 0.06 W the sync clock) | 0.25 W |
+| Peak IL | 85 + 38 = **123 mA** < 150 mA limit min (82 %), < 0.34 A Isat ✓; Irms 85 mA < 0.28 A ✓ | 37 + 65 = 102 mA ✓ |
+| Load | UCC2897A 3 mA + gates 73 nC × 737 kHz = 56.8 mA, + block A's isolator primary (78L05 + ISO7740 + pull-ups) ≤ 15.3 mA + sync clock ≤ 10 mA (HT7550 `V5_CLK`, `B-sync-clock.md`; LVC1GU04 current unspecified, budgeted 3–8 mA) = **≤ 85 mA** (≤ 100 mA rated) | 2 × NCP4306 (1.8 mA + 13 nC × 623 kHz) = 20 mA + 2 × TL431 2.4 mA + opto LED 1–2 mA (12.8 mA max at loop saturation) + INA281 1 mA ≈ **25 mA typ, 37 mA max** |
+| Power out | ≤ 1.22 W (0.22 W of it block A's isolator, ≤ 0.14 W the sync clock) | 0.25 W |
 | UVLO divider (RUV2/RUV1) | 237 k / 10.0 k → start 30.3 V, hysteresis 4.7 V | **51.1 k / 10.0 k → start 7.48 V**, hysteresis 20 µA × 51.1 k = 1.0 V (review M5) |
 | Type III ripple (eq. 26) | Cr 1 nF, Cac 100 nF; Rr ≤ (33 − 14.3) × 0.81 µs/(1 nF × 50 mV) = 303 k → **Rr 200 k** | Rr ≤ (15 − 10) × 1.87 µs/(1 nF × 50 mV) = 187 k → **Rr 82 k** |
 | COUT | 10 µF 25 V X7R 1206 (+ UCC2897A's 1 µF VDD and 10 µF PVDD on the same rail) | 10 µF 25 V X7R 1206 |
@@ -65,7 +65,7 @@ Efficiency: LM5019 assumed ≈ 85 % (estimate; datasheet Fig. 14 is a curve for 
 read numerically) → losses 0.19 W (primary) + 0.04 W (secondary), included in
 `B-converter-design.md`. LM5019 die dissipation ≈ 0.16 W on the SO-8 PowerPAD: negligible rise.
 
-Idle draw during PD inrush (datasheet bound: DC load < 0.65 × 275 mA ≈ 179 mA at the end of inrush, TPS2373 p.7; block A's own margin is 30 mA): UCC2897A held off by SS/SD ≈ 3 mA +
+Idle draw during PD inrush (datasheet bound: DC load < 0.65 × 275 mA ≈ 179 mA at the end of inrush, TPS2373 p.7; m-AB10): UCC2897A held off by SS/SD ≈ 3 mA +
 isolator primary ≤ 15.3 mA + LM5019 1.75 mA → ≈ 0.29 W → ≈ 11 mA at VPRI = 30 V (85 %) ✓. Charging
 the rail's ≈ 22 µF to 14.3 V takes ≈ 0.3 mC, inside the buck's current limit.
 

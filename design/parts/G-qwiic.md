@@ -28,15 +28,19 @@ TCA9617B suits Qwiic: FM+ (1 MHz), B side drives 30 mA, each side up to 550 pF (
   cable power is off), SDAB/SCLB **direct** to J pins 3/4 (no series resistor, see gotchas). Pull-ups
   2.2 kΩ to `QWIIC_3V3` through a bridged solder jumper (cut to remove ours when the far boards bring
   enough).
-- EN (revised, review M2): **driven directly by `QWIIC_PWR_EN`** (the same net that enables the TPS2553;
-  its 100 kΩ pull-down holds EN low, overriding the TCA9617B's weak internal pull-up to VCCB; EN is
-  5.5 V tolerant, VIH 0.7 × VCCB). Plus a **100 kΩ discharge resistor from `QWIIC_3V3` to GND**: the
-  TPS2553 has no output discharge, so without it the off rail would float, and with it the B-side
-  pull-ups sit at 0 V. With the switch off, EN is a defined low and the repeater is isolated, so a
-  floating B side can't pull the RP2350's I2C bus low. At turn-on EN rises before QWIIC_3V3 (0.7–1.5 ms
-  ramp). That is harmless: the far end is unpowered for those µs and the bus is idle (firmware rule:
-  `QWIIC_PWR_EN` changes only with the controller idle). Load of the 100 kΩ on QWIIC_3V3 is 33 µA.
-- Power: TPS2553 IN = +3V3, OUT = `QWIIC_3V3` → J pin 2, EN = `QWIIC_PWR_EN` (FPGA J16, 100 kΩ
+- EN (revised after the 2nd review, MAJOR-1): **driven directly by `QWIIC_PWR_EN`, which now has a
+  10 kΩ pull-down** (was 100 kΩ). The TCA9617B EN has an internal pull-up to VCCB:
+  II(EN) = −25 µA at VI = 0.2 V (SCPS259F p. 6). Against 100 kΩ that left EN at ≈ 1.47 V with J16
+  Hi-Z, above VIL(EN) = 0.3 × VCCB = 0.99 V. With 10 kΩ: EN ≤ 3.3 × 10/(10 + 124) ≈ 0.25 V (Thevenin
+  of the internal pull-up ≈ 124 kΩ, from −25 µA at 0.2 V → (3.3 − 0.2)/25 µA). That is a valid low
+  before configuration, with the FPGA unpowered, and with J16 Hi-Z. When J16 drives high it sources
+  0.33 mA into the 10 kΩ (fine at 4 mA drive). The TPS2553 EN (VIH 1.1 V / VIL 0.66 V, no internal
+  pull) sees the same net.
+  Plus a **100 kΩ discharge from `QWIIC_3V3` to GND**: the TPS2553 has no output discharge, so this
+  holds the B-side pull-ups at 0 V when off.
+  Firmware notes: `QWIIC_PWR_EN` changes only with the I2C controller idle. After switching off, keep
+  it low ≥ 3 s before re-enabling if the far end must see a defined 0 V first (τ = 100 kΩ × 10 µF = 1 s).
+- Power: TPS2553 IN = +3V3, OUT = `QWIIC_3V3` → J pin 2, EN = `QWIIC_PWR_EN` (FPGA J16, **10 kΩ**
   pull-down: off at boot), FAULT_N → `QWIIC_FAULT_N` (10 kΩ to +3V3), RILIM **150 kΩ** 1 % (user cap 100 mA, 2026-11-07). 1 µF on IN,
   10 µF on OUT.
 - ESD: SRV05-4 at the connector: I/O lines on SDA and SCL, pin 5 (VCC rail) = `QWIIC_3V3`, pin 2 GND.

@@ -11,14 +11,14 @@ flowchart LR
   subgraph PRI["PRIMARY (PoE side, isolated ≥1500 Vrms)"]
     RJ45["J1 RJ45 + 4-pair PoE magnetics<br/>(block A)"] --> BR["LT4321 + 8 FET ideal-diode bridges<br/>(block A)"]
     BR --> PD["TPS2373-4 PD<br/>class 8 request, hot-swap<br/>(block A)"]
-    PD -->|VPRI 42–57 V| ACFP["UCC2897A active-clamp<br/>forward 400 kHz, FDMS86200 + clamp<br/>(block B)"]
+    PD -->|VPRI 42–57 V| ACFP["UCC2897A active-clamp<br/>forward 737.28 kHz sync, FDMS86200 + clamp<br/>(block B)"]
   end
   ACFP ==>|T1 Würth 750343576, 1:2| ACFS
   PD -.->|type/class, PG<br/>digital isolator| FPGA
   ACFS -.->|feedback: opto + TL431| ACFP
   subgraph SEC["SECONDARY (user-touchable, GND)"]
     ACFS["SR rectifiers (diode-emulating)<br/>+ output L (block B)"] -->|VBUS 48 V| BULK["VBUS bulk ≈5–7 mF<br/>+ TVS (block B)"]
-    BULK --> AMPW["Woofer BTL:<br/>2× LMG1210 + 4× IGC033S10S1 GaN<br/>LC filter, I-sense, OCP (block D)"]
+    BULK --> AMPW["Woofer BTL:<br/>2× LMG1210 + 4× IGB070S10S1 GaN<br/>LC filter, I-sense, OCP (block D)"]
     BULK --> AMPT["Tweeter BTL:<br/>same + series film HPF cap (block D)"]
     BULK --> P5["5 V buck (block C)"]
     BULK --> PAUX["±15 V analog (block C)"]
@@ -106,7 +106,8 @@ and the earlier text disagree, this section wins. Each `<X>-interfaces.md` holds
 - **FPGA: Lattice ECP5 LFE5U-25F-7BG256I** (user). Slave-SPI configuration from the RP2350; A/B
   bitstreams in the RP2350's W25Q128 flash (decision 2 stands as first written). The Gowin files
   (`E-*gowin*`, `E-fpga-gw1nr9.md`) are kept, marked superseded. 6-layer board, no via-in-pad.
-  PWM edge grid 1.453 ns (ODDRX2). Pin map: `E-pinmap.md` (108 balls used, 88 spare I/O).
+  PWM edge grid 1.695 ns (ODDRX2, ×12 gearing; 1.453 ns is a bring-up option only). Pin map:
+  `E-pinmap.md` (109 balls used, 87 spare I/O), with each ball's required pre-configuration state.
 - **RP2350↔FPGA link:** PIO 8-bit parallel bus at 37.5 MHz, 37.5 MB/s (82 % at the worst-case load).
 - **PHY:** LAN8720AI (RTL8201F fails R-40, rated 0–70 °C), with its 50 MHz reference from an XO.
 - **Audio clock:** 24.576 MHz VCXO trimmed by the FPGA, with a shared land for a 0.7 ps fixed XO
@@ -116,19 +117,21 @@ and the earlier text disagree, this section wins. Each `<X>-interfaces.md` holds
   (TPS2373 VSS); status to the FPGA is active-low `PD_TPH_N`, `PD_TPL_N`, `PD_BT_N`, `PD_PG_N`
   through an ISO7740 isolator powered from `VB_PRI`. The PD's PG doesn't fall on PoE loss: the
   secondary-side detector stays the main PoE-loss signal.
-- **Block B:** 400 kHz; Würth 750343576 rewired 1:2 (bought outside LCSC); NCP4306 zero-current
-  SR control (no reverse power flow); secondary constant-current loop with `ILIM_SEL0/1` from the
-  FPGA (0.47 / 0.94 / 1.34 A per PoE class) and `IBUS_SENSE` back; bias rails `VB_PRI` (13.5 V)
+- **Block B:** 737.28 kHz crystal-synced (see the frequency plan); Würth 750343576 rewired 1:2
+  (bought outside LCSC); NCP4306 zero-current SR control with RCD-Z clamps (no reverse power flow);
+  secondary constant-current loop with `ILIM_SEL0/1` from the RP2350 (00 = 0.44, 01 = 0.94,
+  10 = 0.80, 11 = 1.30 A) and `IBUS_SENSE` back; `POE_LOSS_N` input-voltage detector; bias rails `VB_PRI` (14.3 V)
   and `VSR`; CBULK on `VPRI` 61 µF; VBUS bulk 6 × 1000 µF 63 V EKZN.
 - **VBUS overvoltage:** bulk absorbs regen (≤ 12.4 mJ, +0.04 V); gateware stop at 55 V; converter
   OVP ≈ 53 V through the aux winding into LINEOV; SMCJ51A at the bulk and SMBJ51A at each bridge.
 - **Block C rails:** `+5V_BUCK` (LM5013, LEDs) and `+5V` (TPS2116 priority mux with `VUSB`);
-  `+3V3` and `+1V1` (TLV62569P / TPS62A02A); `+2V5` (TPS7A9401); `+3V3_Q` (TPS7A9401, enable
+  `+3V3` and `+1V1` (TPS62A02A); `+2V5` (TPS7A9401); `+3V3_Q` (TPS7A9401, enable
   gated by ±15 V power-good); `+3V3_A` (TPS7A2033, block D sensing); `VDRV` 7.0 V (LM5017);
   `+15V`/`-15V` from an LM5017 Fly-Buck at +18/−17.4 V plus TPS7A4901/TPS7A3001 LDOs, 120 mA
   per rail; `+5V_A` from +15 V for the mic ADC and bias. `+1V2` and `+1V8` are withdrawn.
-- **Block D:** IGC033S10S1 GaN (user); LMG1210 in PWM mode (one PWM per half-bridge, 16 ns dead
-  time); 448 kHz baseline (512 / 672 kHz options); latched hardware OCP at ≈ 15 A, ≤ 198 ns; NTCs,
+- **Block D:** IGB070S10S1 GaN (user, 2026-11-08), with an IGC033S10S1 fallback courtyard at each site; LMG1210 in PWM mode (one PWM per half-bridge, 20 ns dead-time setting, ≈ 18 ns
+  effective); 576 kHz baseline (768 kHz option); 8–92 % duty clamp; latched OCP at 15 A ± 1 A (≤ 250 ns)
+  plus a differentiator hard-short detector (≤ 100 ns); NTCs,
   VBUS sense and current sense on ADS7038 / ADS8353 ADCs read by the FPGA; post-filter sense fitted;
   tweeter series cap 2 × 22 µF polypropylene. 27 FPGA signals (20 used, 7 reserved).
 - **Block F:** 4-tap FIR 1-bit DAC (74LVC74A) at 6.144 Mb/s; SA5532 filter and drivers; BCP56/53
@@ -138,3 +141,16 @@ and the earlier text disagree, this section wins. Each `<X>-interfaces.md` holds
   a TPS2553 (≈ 1.1 A) and SN74LV1T125 shifters, JST PH 4-pin; display header with 24 solder jumpers
   and a FET-switched `DISP_BLK` driven by `DISP_BL_PWM` (ball G15); SH 3-pin Debug Probe headers;
   1×6 JTAG header.
+
+### Frequency plan (2026-11-08)
+
+| Source | Frequency | Notes |
+|---|---|---|
+| Amp PWM | 576 kHz (12 × 48 kHz) | ECP5 ×12 grid, 1024 steps |
+| Isolated converter | 737.28 kHz ± 40 ppm | 7.3728 MHz crystal ÷ 10 into UCC2897A SYNC; free-runs 590–708 kHz if the clock fails, and the amp then mutes |
+| 5 V buck (LM5013) | ≈ 200 kHz (170–230 kHz) | COT; ≥ 116 kHz from every low-order product |
+| 3V3 / 1V1 bucks | ≈ 2.4 MHz | |
+| Audio clock | 24.576 MHz VCXO | PTP-trimmed; fixed-XO fallback land |
+| RMII | 50 MHz XO | |
+
+Smallest product between the amp and the converter: 161 kHz.

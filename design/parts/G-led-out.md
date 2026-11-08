@@ -79,8 +79,8 @@ TPS2553 soft start (rise 0.7–1.5 ms) limits inrush into them.
   blocked by the TPS2553 reverse-voltage comparator (turns the switch off after 4 ms). The shifters
   then run from that external 5 V, which is harmless.
 - TPS2553 has active-high EN (TPS2552 is active low). Don't substitute the 2552.
-- TVS on +5V_LED is SMF6.0A (review): 5.12 V worst-case rail < 6.0 V VRWM, so there is no standing
-  leakage. The SMF5.0A stays on VUSB (≤ 5.25 V < its 6.4 V VBR min, G-usb-c.md).
+- TVS on +5V_LED is SMF6.0A (review): 5.12 V worst-case rail < 6.0 V VRWM. IR is specified ≤ 400 µA
+  *at* 6.0 V (MDD p. 2), so the leakage at 5.12 V is lower, but not zero (≤ 2 mW worst case). The SMF5.0A stays on VUSB (≤ 5.25 V < its 6.4 V VBR min, G-usb-c.md).
 
 ## Layout guidance
 

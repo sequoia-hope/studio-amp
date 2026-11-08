@@ -65,13 +65,13 @@ between the ceramics upstream of the shunt and the bulk downstream. Fixes:
    → ≈ 7 mV). The 100 Ω is part of the CC divider's top resistor (below), so the set-points include
    it.
 3. `IBUS_SENSE` is taken after the RC and divided 200 k / 100 k → 3.0 V at 1.5 A (source ≈ 67 kΩ).
-   Block E fits 10 nF at RP2350 ADC4/GPIO44 (τ 0.67 ms, fine for telemetry). The INA281 runs from
+   Block E fits **100 nF** at RP2350 ADC4/GPIO44 (τ 6.7 ms, fine for telemetry; agreed 2026-11-07). The INA281 runs from
    `VSR` (from VBUS), which can be up before +3V3. Pad injection is then ≤ 3.0 V/67 kΩ ≈ 45 µA,
    limited by the 200 k (block E records it as accepted).
 
 **Set-points**, from the 91 % efficiency floor (review m1). Path: INA out → 100 Ω (RC) → Rtop
 4.99 k (Rtop_eff 5.09 k) → TL431(CC) REF; Rbot 88.7 k to GND; Rsel0 4.22 k and Rsel1 5.90 k to GND
-through 2N7002 switches driven by `ILIM_SEL0`/`ILIM_SEL1`, 100 k pull-downs, so the reset state is 00.
+through AO3400A switches (RDS(on) < 48 mΩ at VGS 2.5 V, specified, unlike the 2N7002 at 3.3 V) driven by `ILIM_SEL0`/`ILIM_SEL1`, 100 k pull-downs, so the reset state is 00.
 Check against the PD budget at 91 % (plus block A's worst 1.12 W, or 0.8 W at Type 2):
 Class 8 1.30 × 48/0.91 + 1.12 = 69.7 W ≤ 71.3 W ✓; Type 2 0.44 × 48/0.89 + 0.8 = 24.5 W ≤ 25.5 W ✓;
 Class 6 0.941 × 48/0.91 + 1.0 = 50.6 W ≤ 51 W ✓.
@@ -84,10 +84,10 @@ Class 6 0.941 × 48/0.91 + 1.0 = 50.6 W ≤ 51 W ✓.
 | 11 | 2.39 k | 0.3198 | **1.300 A** (62.4 W) | Class 8 |
 
 Every state is ≤ the Class 8 budget, so no GPIO combination can overload the PSE. Tolerance: INA
-±0.5 %, shunt ±1 %, TL431B ±0.5 %, dividers ±0.2 %, 2N7002 Rds (≤ 5 Ω vs 4.22 k) → ≈ ±2.5 %. Firmware can trim further from `IBUS_SENSE`.
+±0.5 %, shunt ±1 %, TL431B ±0.5 %, dividers ±0.2 %, AO3400A Rds (≤ 48 mΩ vs 4.22 k, negligible) → ≈ ±2.3 %. Firmware can trim further from `IBUS_SENSE`.
 CC TL431 cathode → BAS316 → opto LED cathode (diode-OR with the CV TL431). Compensation: 100 k +
 10 nF from CC cathode to REF (integrator, crossover ≈ 200–300 Hz; slow on purpose).
-2N7002: `C8545 2N7002 (JSCJ, SOT-23): basic, JLC stock 5965601, lifecycle normal, checked 2026-11-07`.
+AO3400A: `C20917 AO3400A (AOS, SOT-23): basic, JLC stock 1065196, lifecycle normal, checked 2026-11-07` (datasheets/ao3400a.pdf).
 
 ---
 

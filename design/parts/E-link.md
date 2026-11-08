@@ -28,6 +28,7 @@ Series 22 Ω at each driver on `LINK_D*` (both ends drive): rise ~1 ns, a 30 mm 
 
 **Firmware rules (review MINOR-6):**
 - The RP2350 keeps GPIO8–19 Hi-Z (its reset state) until the ECP5's DONE (GPIO28) is high.
+- **Whenever GPIO8–15 are Hi-Z (before DONE, and before and through every PROGRAMN), the RP2350 pad pull-downs (36–113 kΩ) stay enabled** (re-review MINOR-5). Bank-8 D[7:2] have no internal pull during configuration (TN-02039 §5.2/§6.3: "the PCB design should include them"), so these pad pull-downs are their defined level. Firmware must not clear PDE on these pads while tri-stating the link.
 - The RP2350 returns GPIO8–19 to Hi-Z **before every PROGRAMN pulse** (A/B reload), and waits for DONE again. During configuration DOUT/CSON (M8 = `LINK_D7`) drives high until the bitstream's Bypass instruction (TN-02039 §4.7.2), and WRITEN (M9) and CS1N (P8) are pulled up (Tab 4.5). D2–D7 have no pull.
 - Bank 8 balls M7–M9, N7, P7, P8, R6, R7, T6 are ordinary user I/O once configured, because CFG = 001 leaves the parallel/master-SPI ports unused.
 

@@ -25,7 +25,7 @@
   quantisation noise ≤ −140 dB re m = 1 (tightened after review m2); modulation index capped at **m ≤ 0.487** (= 4.0 Vrms
   line out); taps 1–3 delayed by 1, 2, 3 bits; data launched on the falling MCLK edge; FPGA clock
   insertion plus tco ≤ 12 ns.
-- FPGA pins (16): DAC_L0..3, DAC_R0..3 (out); ADC_BCK, ADC_LRCK (out); ADC_DOUT (in); PDM_CLK
+- *(Superseded by the ECP5 pin map below.)* FPGA pins (16): DAC_L0..3, DAC_R0..3 (out); ADC_BCK, ADC_LRCK (out); ADC_DOUT (in); PDM_CLK
   (out, 3.072 MHz); PDM_DAT (in); HP_EN, LO_EN (out); HP_FAULT_N (in). HP_DET can go to an
   RP2350 GPIO.
 - Firmware/gateware sequencing (R-34): relays open until the DAC has streamed the idle pattern
@@ -140,7 +140,9 @@ Block F's reply:
       is above the 0.5 mA VOH test load, but VOH still exceeds the 1.8 V bank's VIH.
     - With ≈ 5 pF, the RC is ≈ 5 ns, against a 163 ns half-period. OK.
   - PDM_CLK on 77.
-- **HP_EN, LO_EN, HP_FAULT_N, HP_DET on a TCA9535 I2C expander (P12–P15).**
+- **SUPERSEDED (ECP5 change: the TCA9535 is dropped, the 2N7002 is replaced by the AO3400A, and
+  POE_LOSS_N now has an owner). Kept for history only.** HP_EN, LO_EN, HP_FAULT_N and HP_DET on a
+  TCA9535 I2C expander (P12–P15).
   - The 100 kΩ gate pull-downs on both 2N7002 gates are already in `F-mute-relay.md`, so the
     relays stay off while the expander pins are Hi-Z. The expander drives each gate through
     10 kΩ, so the DC detector can override it.
@@ -195,8 +197,8 @@ Block F's reply:
 | MADC_DOUT | L16 | 330 Ω | PCM1808 pin 9. Drop block F's own 33 Ω at DOUT, since block E's 330 Ω replaces it (RC ≈ 330 Ω × 10 pF = 3.3 ns ≪ 163 ns) |
 | PDM_CLK / PDM_DAT | L14 / N13 | — / 330 Ω | T3902 pins 4 / 1. No pull resistor on DATA, still true |
 | HP_EN / LO_EN | M14 / N14 | — (none; corrected by block E) | block F's 10 kΩ to each AO3400A gate, with 100 kΩ pull-downs kept as the backstop. The DC detector and the POE_LOSS_N backstop can override |
-| HP_FAULT_N | P11 | 1 kΩ | /DC_TRIP, with a 10 kΩ pull-up to +3V3 |
-| HP_DET | K13 | 1 kΩ | Neutrik TN normal, 100 kΩ pull-up |
+| HP_FAULT_N | P11 | 1 kΩ | /DC_TRIP, with a 4.7 kΩ pull-up to +3V3 (was 10 kΩ; re-review MINOR-3) |
+| HP_DET | K13 | 1 kΩ | Neutrik TN normal, 47 kΩ pull-up (was 100 kΩ) |
 
 - The I2C expander is dropped. ECP5 pins are all 3.3 V, with no translators.
 - **Hot-socket rule (block E):** these always-powered nets (MADC_DOUT, PDM_DAT, HP_FAULT_N,
@@ -206,7 +208,8 @@ Block F's reply:
   HP_EN/LO_EN within µs of PD_PG_N rising or POE_LOSS_N falling (see the update below). That resolves the
   firmware-latency concern. **Requirement to block E:** gateware drops both enables within ≤ 1 ms
   of PoE loss, independent of the RP2350.
-- The hardware diode-OR of the PoE-loss signal into /DC_TRIP is now optional (a backstop against
+- *(Superseded: D_PL is now fitted, as a separate BAT54C to the gates, not an OR into /DC_TRIP;
+  see the updates below.)* The hardware diode-OR of the PoE-loss signal into /DC_TRIP is now optional (a backstop against
   an unconfigured or hung FPGA, though the pull-downs already make an unconfigured FPGA safe).
 - **Still open with block E:** where PG_3V3Q is read (the expander is gone). Gateware must hold
   the DAC lines low until PG_3V3Q.
@@ -214,7 +217,7 @@ Block F's reply:
   low until PG_3V3Q is high; before configuration the ECP5 pull-downs keep them low. POE_LOSS_N
   and PD_PG_N are FPGA inputs, and the gateware drops HP_EN/LO_EN within µs of PoE loss. The
   hardware diode-OR into /DC_TRIP stays an optional backstop (decided in phase 2, when the
-  POE_LOSS_N net owner is known). Block F's interface items with block E are closed.
+  POE_LOSS_N net owner is known). *(Superseded: D_PL is fitted.)* Block F's interface items with block E are closed.
 
 
 ## Review response (design/gates/review-phase1-F.md, 2026-11-07)
@@ -244,8 +247,9 @@ Block F's reply:
 - **Signal polarity (lead, from review A-M1):**
   - PD_PG_N is active low: low = PD out of inrush and the converter soft-starting. It reads
     high when the primary is dead.
-  - POE_LOSS_N is block B's secondary pulse-loss comparator: open-drain, active low. On block E's
-    side it has a 10 kΩ pull-up and a 1 kΩ series resistor into ball A6.
+  - POE_LOSS_N is block B's VBUS-droop comparator (asserts below ≈ 39.5 V; it replaced the earlier
+    pulse-loss detector): open-drain, active low. On block E's
+    side it has a **4.7 kΩ** pull-up (agreed, re-review MINOR-1) and a 1 kΩ series resistor into ball A6.
 - **Mute rule (replaces every earlier "PD power-good falling" wording):** gateware drops HP_EN
   and LO_EN within ≤ 1 ms of **PD_PG_N rising or POE_LOSS_N falling**. The hardware backstop is
   a BAT54C from POE_LOSS_N to both relay gates, now fitted (`F-mute-relay.md`).
@@ -262,3 +266,18 @@ Block F's reply:
 - Block C confirmation: **+5V at the relay coils is ≥ 4.84 V and ≤ 5.20 V** worst case. The
   5 V buck feedback uses 0.5 % resistors; the margin is after the trace, TPS2116 mux and
   distribution drops. B1's coil-voltage condition (≥ 4.76 V) is closed.
+
+
+## Second-pass review (rereview-phase1-EF.md): block F PASS; minors closed
+
+- **MINOR-3:** /DC_TRIP (HP_FAULT_N) pull-up is now **4.7 kΩ**, so it holds against the ECP5
+  pull-down. The BC847B sinks ≈ 1.4 mA when tripped.
+- **MINOR-1:** POE_LOSS_N uses block E's **4.7 kΩ** pull-up everywhere.
+  - Block F's single load on it is **D_PL**: a separate BAT54C whose anodes go to both relay
+    gates. It is not an OR into /DC_TRIP. Total sink current is 1.37 mA.
+  - Block B's MINOR-2: its pull-down must show RDS ≤ 73 Ω at 1.37 mA.
+- **MINOR-8:** the stale text is fixed. `F-overview.md` now has AO3400A, HP_DET/HP_FAULT_N on
+  FPGA balls, and +3V3_Q at 35 mA. The older paragraphs above are marked superseded.
+- **NOTE-2:** the HP_DET pull-up is now 47 kΩ.
+- **NOTE-3:** ≥ 2 cm² of collector copper per BCP56/53 tab is a hard layout rule
+  (`F-hp-output-stage.md`).

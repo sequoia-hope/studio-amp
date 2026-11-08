@@ -1,5 +1,12 @@
 # Output-short detector (×4, one per output node): RC differentiator + TLV3502 window → channel fault node
 
+> **Second-pass review m-5 (2026-11-08), corrections and normal-operation cases:**
+> - Ripple term at 576 kHz: Ipk/C = 1.04 A/700 nF = **1.5 V/µs → 0.07 V** at X (the body's 448 kHz figure, 2.4 V/µs, is superseded). Full-scale 20 kHz 3.0 V/µs → 0.14 V. τ = 47 ns ± 6 % → trip 19.7–22.3 V/µs.
+> - **Real fast-step threshold ≈ 1.5 V**: node X capacitance (two BAT54S halves + comparator inputs ≈ 20–25 pF against the 47 pF C_D) divides a fast step to ≈ 65 %. Irrelevant for 24–48 V shorts.
+> - Path ≈ 48 ns + ≈ 3 ns R_S·C_in = **≈ 51 ns** ≪ 100 ns.
+> - **Speaker lead opening under current:** the inductor current dumps into the 700 nF node at I/C. At the 13 A legitimate peak that is 18.6 V/µs → X = 0.87–0.94 V, so the detector trips for an interrupted current of **≥ ≈ 14 A**. This is benign: the latch opens, and the FPGA re-arms per policy. **The 1 V threshold stays; do not lower it.**
+> - **Start-up step:** going from "all LS on" to 50 % duty steps both nodes 0 → 24 V through the LC, with peak slope ≈ 24 V × 2π × 60 kHz = 9 V/µs → 0.42 V (no trip). **Gateware start-up must ramp the duty from 0 to 50 % rather than step it** (gateware item 1 in D-interfaces.md); this also avoids a pop.
+
 > **UPDATE 2026-11-08 (IGB070S10S1):** turn-off ≈ 4.5 ns instead of 7 ns → short to all gates off **≈ 48 ns**; peak ≤ pre-fault + 0.24 A ≤ 13.3 A (legitimate peak at 576 kHz is 13.0 A, D-output-inductor.md).
 
 Added after the phase 1 review (M2). The INA241 "holds the output for 1 µs" after a large common-mode ΔV/Δt (INA241 §7.3.1.1, p.15–16; threshold not published). A hard output short is exactly such a step at the shunt's common mode, so the current-sense path is blind for ≈ 1 µs in the fault it exists for. This detector catches the step itself, in ≈ 55 ns, independently of the current path.

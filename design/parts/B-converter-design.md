@@ -43,11 +43,12 @@ History: 400 kHz (phase 1) → 620 kHz (review M3, volt-seconds) → **737.28 kH
 amp PWM is fixed at 576 kHz, and block E's beat check needs the converter inside **712–775 kHz across
 all tolerances**). The UCC2897A's free-running oscillator is ±10 % over temperature (internal timing
 capacitor), so the converter is **synchronised to a 7.3728 MHz crystal divided by 10** on the primary
-(`B-sync-clock.md`). The frequency is then 737.28 kHz ± 40 ppm. If the clock fails, the controller
-free-runs at 590–708 kHz and the converter keeps working (beat flagged by block E from `ACF_PULSE`).
+(`B-sync-clock.md`). The frequency is then 737.28 kHz ± 40 ppm. If the clock fails, a clock-OK gate
+forces SYNC low within ≈ 0.15 ms (AB-M2), so the controller free-runs at 590–708 kHz and the
+converter keeps working. Block E flags the beat from `ACF_PULSE` with a period test (`B-interfaces.md`).
 
 1. **Volt-seconds (cold 120 Vµs on 4 T; ≈ 90 Vµs assumed hot until Würth answers):**
-   - synced: worst 57 V × DMAX(max) 0.696/737 kHz = **54 Vµs → 45 % cold, ≈ 60 % hot** ✓;
+   - synced: worst 57 V × DMAX(max) 0.73/737 kHz = **56 Vµs → 47 % cold, ≈ 63 % hot** ✓ (n-AB1);
    - clock failed: 57 × 0.75/590 kHz = 72 Vµs → 60 % cold, ≈ 80 % hot ✓;
    - steady state 24.4 V/737 kHz = 33 Vµs.
    The off-the-shelf part is now safe even if Würth's hot rating is as low as ≈ 72 Vµs (clock-failed
@@ -56,8 +57,8 @@ free-runs at 590–708 kHz and the converter keeps working (beat flagged by bloc
 3. **Switching, gate, snubber loss** rise ≈ 19 % from 620 kHz; net efficiency −0.2 % (table below).
 4. **Limits**: T1 application range 200–700 kHz (Würth). **737 kHz is 5 % above Würth's typical
    range**; it is not a rating, but it is asked in the Würth email. UCC2897A ≤ 1 MHz, NCP4306 ≤ 1 MHz.
-   Shortest SR conduction 0.41 µs against MIN_TON 125 ns ✓; shortest SR off-time 0.41 µs against
-   MIN_TOFF 245 ns ✓ (`B-sync-rect.md`).
+   Shortest SR conduction 0.37 µs against MIN_TON 126 ns ✓; shortest SR off-time 0.37 µs against
+   MIN_TOFF 256 ns ✓ (`B-sync-rect.md`; DMAX up to 0.73, n-AB1).
 
 Beats with the 576 kHz amp: f − 576 = 161 kHz, 2·576 − f = 415 kHz, 3·576 − 2f = 253 kHz ✓.
 Block C's 5 V buck (≈ 690 kHz): 47 kHz from 737.28 kHz. That is a supply-to-supply product on
@@ -76,8 +77,8 @@ D = (Vo + Io·(R_SR + R_L)) / (n·(Vin − Ipri·Rds_main)); Vc = Vin/(1−D);
 | 50 V | 0.484 | 96.9 V | 1.32 A | 0.50 A | 3.84 A |
 | 57 V | 0.424 | 98.9 V | 1.32 A | 0.55 A | 3.89 A |
 
-**DMAX in sync = 1 − tOFF/TSYNC = 0.680** (ROFF 14.3 k), 0.664–0.696 with ±5 % on tOFF; free-running
-DMAX 0.715 (RON 31.6 k). A DMAX(min) part now covers the 37.6 V corner (0.655) without droop.
+**DMAX in sync: between 0.680 (1 − tOFF/TSYNC) and 0.715 (the RON/ROFF ratio, which the datasheet
+says is kept in sync; n-AB1)**, 0.664–0.73 with ±5 % on tOFF. A DMAX(min) part now covers the 37.6 V corner (0.655) without droop.
 
 ## Stresses (recomputed at the LINEUV-off corner, review M4)
 
@@ -89,7 +90,7 @@ DMAX 0.715 (RON 31.6 k). A DMAX(min) part now covers the 37.6 V corner (0.655) w
 | Clamp cap | 97–109 V DC | | | 250 V |
 | Forward SR Vds = NCP4306 CS | n·Vin·D/(1−D) = **137 V at 38.4 V, 143 V at 37.6 V**; 84 V at 57 V | +22–32 % → 167–189 V unclamped | **RCD-Z clamp (US1G + 10 nF + SMBJ130A, VBR 144–159 V) → ≤ ≈ 165 V** | 200 V (≤ 83 %) |
 | Freewheel SR Vds = NCP4306 CS | n·Vin = 114 V at 57 V | +65 % → 188 V unclamped | **same RCD-Z clamp → ≤ ≈ 165 V** | 200 V (≤ 83 %) |
-| Main FET, DMAX at 57 V transient | 57/(1−0.696) = 188 V if the clamp fully follows | — | slow loop, 60 ms soft-start, CS limit | 150 V |
+| Main FET, DMAX at 57 V transient | 57/(1−0.73) = 211 V if the clamp fully follows | — | slow loop, 60 ms soft-start, CS limit | 150 V |
 
 Note on the DMAX case: the output sees a 6 mF bulk and a loop of ≈ 1 kHz, so a load step moves the
 error amp slowly and D does not jump to DMAX at high line. Soft-start ramps D from zero, and a short is
@@ -141,7 +142,7 @@ OR-ed into the same optocoupler as the voltage loop (`B-feedback.md`):
 - Set-points selected by two GPIOs (`ILIM_SEL0`, `ILIM_SEL1`, secondary side, no barrier crossing):
   **0.440 A (Type 2, default at reset), 0.943 A (Class 6), 1.30 A (Class 8)**, set from the 91 %
   efficiency floor (review m1). The fourth GPIO state gives 0.80 A, so no state exceeds the Class 8
-  budget. Firmware raises the limit after reading `PD_TPL/TPH/BT` (block A) or LLDP.
+  budget. Firmware raises the limit after reading `PD_TPL_N`/`PD_TPH_N`/`PD_BT_N` (block A, active low) or LLDP.
 - Under CC, VBUS sags and output power falls with it, so the PD input stays under Class power.
 - The INA281 output, filtered, is also `IBUS_SENSE` for telemetry.
 
@@ -167,16 +168,20 @@ Hiccup at 0.75 V for shorts. The PD current limit (TPS2373-4, 2.2 A typ) is the 
    and Pout = 14 W. Input ≈ 14 W/0.75 (light-load efficiency, SR body diodes) = 19 W → **0.45 A at
    42 V, 0.37 A at 52 V**. This is under a Type 2 PSE's ≈ 0.6 A ICUT; Class 6/8 PSEs allow more.
    From 7.5 V on, CC caps the output at 0.44 A, so Pin ≤ 0.44 × 48/0.89 + 0.8 = 24.5 W < 25.5 W ✓.
-   Worst corner: with the maximum CS threshold (Iout ramp to 3.0 A), VBUS reaches 7.5 V at 42 ms with
-   2.1 A, 16 W out → 0.51 A in at 42 V. Still under 0.6 A; this is the case to measure.
+   Corner with the maximum CS threshold (Iout ramp to 3.0 A): VBUS reaches 7.5 V at 42 ms with
+   2.1 A, 16 W out → 0.51 A in at 42 V. **Stacked corner (m-AB6):** ISS +28 % (tSS 46 ms) and the CS
+   maximum together: t = √(2 · 46 ms · 6 mF · 7.5 V / 3.0 A) = 37 ms, Iout 2.4 A, 18 W out → 24 W in →
+   **0.57 A at 42 V**. Still under ≈ 0.6 A. A PSE also cuts only after current stays above ICUT for
+   TCUT (50–75 ms), and this peak lasts ≈ 10–15 ms (only the last part of the ramp before CC takes
+   over), so there is margin in time as well.
 7. SRs run as body diodes until VSR ≈ 6 V (NCP4306 UVLO 4 V; DRV held low below it), then the
    NCP4306s take over.
 8. Line loss: LINEUV (40.4 V on / 38.4 V off) gives the UCC2897A soft-stop that discharges the clamp
    cap. The off level keeps the PD input ≤ 1.85 A at the Class 8 CC limit (`B-controller.md`).
 
 **Bring-up test (added):** start-up from a Type 2 (802.3at, 30 W) PSE and from a Class 6 PSE, with
-the input current logged against the PSE's ICUT/TCUT. Pass: no PSE disconnect over 20 cold starts,
-and input current ≤ 0.6 A (Type 2) at every point.
+the input current logged against the PSE's ICUT/TCUT. Pass: no PSE disconnect over 20 cold starts.
+Goal (stricter than the standard, m-AB6): input current ≤ 0.6 A at every point.
 
 ## Loop compensation (redone for review M2; confirm in phase 8 simulation and on the bench)
 
@@ -203,8 +208,8 @@ Plant at 1 kHz: 1.47 × 0.0268 = 0.039 (−28.1 dB), falling at −20 dB/dec.
   FB/opto poles; beyond 20 kHz the plant has fallen another 26 dB).
 - Cold bulk (ESR × 3 at −10 °C): the ESR zero moves to ≈ 2 kHz, fc rises ≈ 10 % and PM improves.
 
-CC loop: TL431(CC) 100 k + 10 nF from cathode to REF (zero 160 Hz); INA281 output RC 1 k / 47 nF
-(3.4 kHz). Crossover ≈ 200–300 Hz, slow on purpose because the bulk carries the transients. The CV
+CC loop: TL431(CC) 100 k + 10 nF from cathode to REF (zero 160 Hz); INA281 output RC 100 Ω / 470 nF
+(3.4 kHz; the 100 Ω is part of the CC divider, m-AB9). Crossover ≈ 200–300 Hz, slow on purpose because the bulk carries the transients. The CV
 and CC paths drive the same LED through a diode OR; the hand-over is to be checked in the phase 8
 simulation.
 

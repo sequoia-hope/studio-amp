@@ -1,5 +1,8 @@
 # HF ceramic decoupling across each half-bridge (VBUS–GND), ×4 half-bridges
 
+> **HARD PLACEMENT RULE (second-pass review m-3, 2026-11-08): the commutation loop of each half-bridge (HS drain → LS source → the 2 × 100 nF 0603 → back) must be ≤ 1 nH, verified by phase 6 parasitic extraction** (≤ 1.5 nH only with a documented margin). The 1 nH target is load-bearing. Overshoot I·√(L/Coss) with IGB070 Coss 340 pF: 1 nH → 22 V at the 13 A legitimate peak (70 V) and 27 V at 16 A. 2 nH → 31 V at 13 A (**79 V, at Infineon's 80 V continuous guidance**) and 38 V at 16 A (86 V).
+> **Insurance: an optional RC snubber footprint per half-bridge, DNP by default**, from the switch node to the LS source (GND), beside the LS FET: C_SN 470 pF 100 V C0G 0603 + R_SN 2.2 Ω 2512 (damping R ≈ √(L/Coss) = 1.7–2.4 Ω for 1–2 nH; C ≈ 1.4 × Coss). If fitted, the cost is C·V²·fsw = 470 pF × 48² × 576 kHz = **0.62 W per half-bridge** (2.5 W for four), dissipated in R_SN (2512, 1 W). So it is fitted only if bring-up shows ringing above ≈ 75 V, and the loss must then enter the budget. Part numbers are fixed in phase 2.
+
 > **fsw update 2026-11-07 (FPGA changed to ECP5, edge grid 1.453 ns = 688.128 Mb/s ODDRX2F, E-fpga-ecp5.md):** baseline fsw is now **448 kHz** (1536 grid steps; 448 kHz = 48 kHz × 28/3, audio-locked but not an integer multiple). 480 kHz is not on the grid. Option per build: 672 kHz (14 × 48 kHz, 1024 steps). Ripple currents within ±5 % of the 480 kHz values; conclusions unchanged.
 
 Datasheets: datasheets/hmk325b7225kn.pdf (Taiyo Yuden MSASH32NSB7225KTNA01 / HMK325B7225KN-T spec sheet with DC-bias, ESR and ripple-current curves, read off p.2); datasheets/hmk107b7104ka.pdf (HMK107B7104KAHT spec sheet). Read: all pages.

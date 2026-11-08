@@ -1,18 +1,18 @@
 {
   "schema": 1,
   "board": "satellite",
-  "phase": "1 architecture and parts",
-  "doing": "Phase 1: all block audits done and reconciled (88 audit files, 226 datasheets). Six independent reviewers are re-reading the datasheets and recomputing every calculation, one per block.",
+  "phase": "2 schematic",
+  "doing": "Gate 1 passed 2026-11-08 after four independent review passes (92 part audits, 253 datasheets). Next: phase 2, the KiCad schematic for hw/satellite/a.",
   "needs_user": [
     {
       "id": "wurth-samples",
       "kind": "action",
-      "text": "Email W\u00fcrth: samples of 750343576 (\u22657) and a custom-part quote; text ready in design/parts/B-transformer.md, 'Request to W\u00fcrth'."
+      "text": "Email W\u00fcrth: samples of 750343576 (\u22657) + custom-part quote + Bsat(100 \u00b0C)/Ae/737 kHz questions (design/parts/B-transformer.md)."
     },
     {
-      "id": "led-pinout",
-      "kind": "question",
-      "text": "LED connector pin order 1=5V, 2=GND, 3=Data, 4=Clock: does it match your LED panels?"
+      "id": "order-early",
+      "kind": "action",
+      "text": "Buy/pre-order ~50 IGB070S10S1 (80 in stock) and SER2915H inductors (63 for 22)."
     },
     {
       "id": "display-pinout",
@@ -20,17 +20,33 @@
       "text": "Confirm the ST7735S module's pin order when it arrives."
     }
   ],
-  "checks": {},
+  "checks": {
+    "parts sourcing": "285 LCSC numbers swept 2026-11-08: 277 normal; 11 flagged, all rejected alternatives",
+    "datasheets": "253 listed, 0 missing",
+    "phase 1 review": "4 passes, final verdict: passes"
+  },
   "gates": {
     "0": {
+      "state": "passed",
+      "stale_because": null
+    },
+    "1": {
       "state": "passed",
       "stale_because": null
     }
   },
   "links": [
     {
+      "label": "Gate 1",
+      "href": "design/gates/phase1.md"
+    },
+    {
       "label": "Gate 0",
       "href": "design/gates/phase0.md"
+    },
+    {
+      "label": "Architecture",
+      "href": "design/architecture.md"
     },
     {
       "label": "Design intent",
@@ -39,11 +55,11 @@
     {
       "label": "Decisions",
       "href": "design/decisions.md"
-    },
-    {
-      "label": "System spec",
-      "href": "PoE++ GaN Speaker Amplifier \u2014 System Specification.md"
     }
   ],
-  "updated": "2026-11-07T23:46:17Z"
+  "updated": "2026-11-08T01:30:50Z",
+  "gates_passed": [
+    0,
+    1
+  ]
 }
