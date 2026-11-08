@@ -20,3 +20,11 @@ repo = "https://github.com/sequoia-hope/studio-amp"
 # sch = "hw/main/a/main.kicad_sch"
 # note = "First layout."
 # embed = "index.html"                 # the board the project page shows
+
+[[boards]]
+id = "satellite-a"
+name = "Satellite board, variant A"
+pcb = "hw/satellite/a/satellite.kicad_pcb"
+sch = "hw/satellite/a/satellite.kicad_sch"
+note = "PoE++ / isolated forward / ECP5 / IGB070 GaN BTL x2. Phase 2: schematic done, board not yet placed (footprints stacked at the origin)."
+embed = "index.html"

@@ -12,8 +12,8 @@ VBUS rises (ACF soft start, block B)
  │     └─ PGOOD (FB ≥ 95 %) → PG_5V = 3.24 V
  │           └─ TPS2116 PR1 high → +5V from the buck (USB released, RCB both ways)
  │                 ├─ TPS62A02AP (3V3), EN = +5V → ≤ 1 ms → +3V3 → PG_3V3
- │                 │     ├─ TPS7A9401 (2V5), EN_UV = PG_3V3 → ≈ 1.2 ms → +2V5
- │                 │     └─ TPS62A02AP (1V1), EN = PG_3V3 → ≤ 1 ms → +1V1  (ECP5: 3V3 first, then 1V1/2V5 within ≈ 1 ms)
+ │                 │     ├─ TPS7A9401 (2V5), EN_UV = PG_3V3 → ≈ 5 ms (CNR/SS 2.2 µF) → +2V5
+ │                 │     └─ TPS62A02AP (1V1), EN = PG_3V3 → ≤ 1 ms → +1V1  (ECP5: 3V3 first, then 1V1, then 2V5)
  │                 └─ TPS7A9401 (3V3_Q), IN = +5V, EN_UV = +15V ÷ 5.7 (on at +15V ≥ 7.1 V)
  ├─ ≥ 29.8 V (28.9–31.2 V): LM5017 Fly-Buck UVLO → +18.4 / −17.8 V → TPS7A49/30 (14 ms NR soft start) → ±15 V
  │     └─ +15V → TPS7A4901 → +5V_A; +15V enables 3V3_Q

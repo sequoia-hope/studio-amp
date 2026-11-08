@@ -85,6 +85,9 @@ CAT = {
     "1u_50V_0603": ("1u 50V", C06, "CL10A105KB8NNNC", "Samsung", "C15849"),
     "220p_100V": ("220p C0G 100V", C06, "AC0603JRNPO0BN221", "YAGEO", "C2982813"),
     "4n7_2kV": ("4n7 2kV", C12, "1206B472K202NT", "FH", "C41017"),
+    "10u_50V_1206": ("10u 50V", C12, "CL31B106KBHNNNE", "Samsung", "C89632"),
+    "2u2_10V_0603": ("2u2 10V", C06, "CC0603KRX7R6BB225", "YAGEO", "C513691"),
+    "22p": ("22p C0G", C06, "CL10C220JB8NNNC", "Samsung", "C1653"),
     "100n": ("100n", C06, "CC0603KRX7R9BB104", "YAGEO", "C14663"),
     "10n": ("10n", C06, "0603B103K500NT", "FH", "C57112"),
     "3n3": ("3n3", C06, "CL10B332KB8NNNC", "Samsung", "C1613"),
@@ -182,20 +185,27 @@ class Sheet:
         if value_at is not None:
             value_at = (value_at[0] + dx, value_at[1] + dy)
         x, y = at
-        if vtext and rot == 0 and ref_at is None:
+        if dnp and vtext and rot == 0 and ref_at is None:
+            # DNP: the red X covers the body, so both texts go clear of it, to the right
+            ref_at, value_at, justify = (x + 3.81, y - 0.889), (x + 3.81, y + 0.889), "left"
+        elif vtext and rot == 0 and ref_at is None:
             if vtext == "left":       # both texts on the left (right side is busy)
                 ref_at, value_at, ref_rot, justify = (x - 4.318, y), (x - 2.54, y), 90, ""
             elif vtext == "right":    # both texts on the right
                 ref_at, value_at, ref_rot, justify = (x + 2.54, y), (x + 4.318, y), 90, ""
             else:
                 ref_at, value_at, ref_rot, justify = (x - 2.54, y), (x + 2.54, y), 90, ""
-        if rot in (90, 270) and ref_rot is None and justify in ("left", "right"):
-            # the field angle follows the symbol: a 90/270 part shows its texts turned 180 deg,
+        if ref_at is None and value_at is None and rot in (90, 270):
+            # horizontal two-pin part: both texts centred above the body
+            ref_at, value_at, justify = (x, y - 4.064), (x, y - 2.286), ""
+        if rot in (90, 180, 270) and ref_rot is None and (justify is None or justify in ("left", "right")) \
+                and not lib.startswith("power:"):
+            # the field angle follows the symbol: a rotated part shows its texts turned 180 deg,
             # which KiCad reads upright with the justification mirrored; swap so "left" means left
-            justify = "right" if justify == "left" else "left"
+            justify = "left" if justify == "right" else "right"
         if ref_at is None and value_at is None:
-            if rot in (90, 270):          # horizontal two-pin part: both texts above the body
-                ref_at, value_at = (x - g(3), y - 4.064), (x - g(3), y - 2.286)
+            if rot in (90, 270):
+                pass
             else:
                 ref_at, value_at = (x + g(2), y - g(1)), (x + g(2), y + g(1))
         p = self.sch.symbol(lib, ref or self.ref(prefix), v, at, rot=rot, mirror=mirror, footprint=fp,

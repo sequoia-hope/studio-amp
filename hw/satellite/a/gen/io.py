@@ -18,7 +18,7 @@ S = Sheet("io", paper="A2")
 def hR(key, left, below=False, **kw):
     """Horizontal resistor whose pin 1 is at `left`."""
     if below:
-        kw.update(ref_at=(left[0] + 1.27, left[1] + 2.54), value_at=(left[0] + 1.27, left[1] + 4.318))
+        kw.update(ref_at=(left[0] + 3.81, left[1] + 2.54), value_at=(left[0] + 3.81, left[1] + 4.318), justify="")
     return S.R(key, (left[0] + 3.81, left[1]), rot=90, **kw)
 
 
@@ -48,10 +48,11 @@ def esd(at):
     return d
 
 
-def tvs(key, at):
+def tvs(key, at, left=False):
     """Unidirectional SMF TVS (drawn as a Zener), cathode on the rail at `at`, anode to GND."""
+    dx, j = (-2.54, "right") if left else (2.54, "left")
     d = S.part("Device:D_Zener", "D", key, (at[0], at[1] + 3.81), rot=270,
-               ref_at=(at[0] + 2.54, at[1] + 3.048), value_at=(at[0] + 2.54, at[1] + 4.826), justify="left")
+               ref_at=(at[0] + dx, at[1] + 3.048), value_at=(at[0] + dx, at[1] + 4.826), justify=j)
     S.gnd((at[0], at[1] + 7.62))
     return d
 
@@ -105,14 +106,14 @@ def usb():
     S.gnd(gp)
     # shell: 0R to GND fitted; 1M || 4n7 2 kV (DNP) is the isolated-shell option for EMC tests
     ysh = gp[1] + 10.16
-    S.w(sh, (sh[0], ysh), (53.34, ysh))
+    S.w(sh, (sh[0], ysh), (60.96, ysh))
     S.label("USB_SHIELD", (sh[0] + 2.54, ysh))
     vR_gnd("0R", (38.1, ysh), fields={"Note": "fit for shell to GND; remove to isolate"})
-    vR_gnd("1M", (45.72, ysh), dnp=True, vtext="right", fields={"Note": "DNP: isolated-shell option"})
-    S.C("4n7_2kV", (53.34, ysh + 3.81), dnp=True, vtext="right", fields={"Note": "DNP: isolated-shell option"})
-    S.gnd((53.34, ysh + 7.62))
+    vR_gnd("1M", (45.72, ysh), dnp=True, fields={"Note": "DNP: isolated-shell option"})
+    S.C("4n7_2kV", (60.96, ysh + 3.81), dnp=True, fields={"Note": "DNP: isolated-shell option"})
+    S.gnd((60.96, ysh + 7.62))
     S.text("Shell: 0R to GND fitted. Isolated option:\nremove the 0R, fit 1M || 4n7 2 kV (G-usb-c.md)",
-           (68.58, 99.06))
+           (78.74, 99.06))
     # VBUS -> VUSB: SMF5.0A at the connector, USBLC6 VBUS clamp, VUSB_DET divider
     y = vb[1]
     xd = 116.84
@@ -173,13 +174,17 @@ def qwiic():
     S.label("QWIIC_SCL", (35.56, y_scl))
     S.label("QWIIC_SDA", (35.56, y_sda))
     pullup("2.2k", (66.04, y_scl), "QWIIC_PU")
+    S.w((66.04, y_scl - 7.62), (50.8, y_scl - 7.62))
+    S.flag((50.8, y_scl - 7.62))            # QWIIC_PU is fed through the jumper
     pullup("2.2k", (76.2, y_sda), "QWIIC_PU")
     S.tp((48.26, y_scl), "SCLB", keystone=False)
     S.tp((55.88, y_sda), "SDAB", keystone=False)
     S.gnd(t.pin("4"))
     vcca, vccb = t.pin("1"), t.pin("8")
     yb = vcca[1] - 7.62
-    S.w(vccb, (vccb[0], yb), (109.22, yb))
+    S.w((88.9, yb), (109.22, yb))
+    S.w(vccb, (vccb[0], yb))
+    S.cap_down("100n", 88.9, yb, dec=f"{t.ref}.8", vtext="left")     # VCCB (cable side)
     S.w(vcca, (vcca[0], yb))
     S.rail("+3V3", (vccb[0], yb))
     S.cap_down("100n", 109.22, yb, dec=f"{t.ref}.1", vtext="right")
@@ -214,10 +219,7 @@ def qwiic():
     # supply of the B-side pull-ups: QWIIC_3V3 through a bridged jumper (cut to remove ours)
     jumper((66.04, y_pwr - 3.81), True, rot=90, note="cut to remove the on-board 2.2k B-side pull-ups",
            ref_at=(68.58, y_pwr - 4.572), value_at=(68.58, y_pwr - 2.794), justify="left")
-    S.w((66.04, y_pwr - 7.62), (66.04, y_pwr - 10.16))
-    S.rail("QWIIC_PU", (66.04, y_pwr - 10.16))
-    S.flag((60.96, y_pwr - 10.16))
-    S.w((60.96, y_pwr - 10.16), (66.04, y_pwr - 10.16))
+    S.rail("QWIIC_PU", (66.04, y_pwr - 7.62))
     # FAULT -> QWIIC_FAULT_N, 10k to +3V3
     S.w(P["FLT"], (P["FLT"][0] + 2.54, P["FLT"][1]), (P["FLT"][0] + 2.54, 106.68), (129.54, 106.68))
     pullup("10k", (114.3, 106.68), "+3V3")
@@ -267,8 +269,8 @@ def led():
     S.glabel("LED_FAULT_N", (66.04, 58.42), shape="output")
     S.text("RILIM 23.2k: 1.03-1.20 A;\nfirmware caps it by PoE class", (50.8, 22.86))
     # +5V_LED -> 22u -> BLM31KN601 -> SMF6.0A -> J pin 1 (J at the top right, pins down)
-    j = S.part("Connector_Generic:Conn_01x04", "J", "JST_PH4", (127.0, 20.32), rot=90,
-               ref_at=(101.6, 20.32), value_at=(101.6, 22.098), justify="left")
+    j = S.part("studio_G:Conn_LED_PH4", "J", "JST_PH4", (132.08, 38.1),
+               ref_at=(127.0, 49.53), value_at=(127.0, 51.308), justify="left")
     c1, c2, c3, c4 = j.pin("1"), j.pin("2"), j.pin("3"), j.pin("4")
     xf = 106.68
     S.w(P["OUT"], (xf - 2.54, y))
@@ -278,11 +280,10 @@ def led():
     S.part("Device:FerriteBead_Small", "FB", "FB_600R_2A9", (xf, y), rot=90,
            ref_at=(xf - 3.81, y - 6.096), value_at=(xf - 3.81, y - 4.318), justify="left")
     S.w((xf + 2.54, y), (c1[0], y), c1)
-    tvs("SMF6.0A", (114.3, y))
-    S.label("LED_5V_OUT", (116.84, y))
+    tvs("SMF6.0A", (114.3, y), left=True)
     S.gnd(c2)
     # level shifters on +5V_LED (OE tied low), 47R + PESD to J pins 3 (D) and 4 (C)
-    for pin, name, uy in ((c3, "LED_DATA", 81.28), (c4, "LED_CLK", 116.84)):
+    for pin, name, uy, xv in ((c3, "LED_DATA", 81.28, 119.38), (c4, "LED_CLK", 116.84, 121.92)):
         u = S.part("74xGxx:74LVC1G125", "U", "SN74LV1T125", (66.04, uy),
                    ref_at=(68.58, uy + 7.62), value_at=(68.58, uy + 9.398), justify="left",
                    footprint="Package_TO_SOT_SMD:SOT-23-5")
@@ -297,48 +298,48 @@ def led():
         S.glabel(name, (a[0] - 5.08, a[1]), rot=180, shape="input")
         hR("47R", yo)
         xn = yo[0] + 12.7
-        S.w((yo[0] + 7.62, yo[1]), (pin[0], yo[1]), pin)
+        S.w((yo[0] + 7.62, yo[1]), (xv, yo[1]), (xv, pin[1]), pin)
         esd((xn, yo[1]))
         S.tp((xn + 7.62, yo[1]), f"{name} 5V", keystone=False)
-    S.text("J: 1 +5V  2 GND  3 D  4 C (R-19)", (101.6, 129.54))
 
 
 # ===================================================================== knob header
 def knob():
-    S.box((12.7, 15.24), (147.32, 175.26), "KNOB / ENCODER HEADER  2x6 0.1 in, optional  (G-knob.md)")
-    xh, yh = 40.64, 104.14
-    j = S.part("Connector_Generic:Conn_02x06_Odd_Even", "J", "HDR_2x6", (xh, yh), rot=270,
-               ref_at=(15.24, yh + 17.78), value_at=(15.24, yh + 19.558), justify="left")
+    """Header drawn by function (studio_G:Conn_Knob_2x6, pad numbers kept): signals on the right,
+    fanned up and down to one cell per line; +3V3 on top, GND at the bottom."""
+    S.box((12.7, 15.24), (147.32, 162.56), "KNOB / ENCODER HEADER  2x6 0.1 in, optional  (G-knob.md)")
+    xh, yh = 30.48, 83.82
+    j = S.part("studio_G:Conn_Knob_2x6", "J", "HDR_2x6", (xh, yh),
+               ref_at=(15.24, yh + 25.4), value_at=(15.24, yh + 27.178), justify="left")
     P = {n: j.pin(str(n)) for n in range(1, 13)}
     S.gnd(P[2])
     S.gnd(P[12])
     # pin 11: +3V3 through 47R (encoder pull-ups / indicator LEDs, <= 10 mA)
-    y11 = P[11][1] - 2.54
-    S.w(P[11], (P[11][0], y11), (P[11][0] - 2.54, y11))
-    hR("47R", (P[11][0] - 10.16, y11), below=True)
-    S.w((P[11][0] - 10.16, y11), (P[11][0] - 15.24, y11))
-    S.rail("+3V3", (P[11][0] - 15.24, y11))
-    # top row fans up (pin 1, rightmost, takes the nearest lane), bottom row fans down (pin 4 nearest)
-    yt, yb = P[1][1], P[4][1]
-    top = [(1, "KNOB_REF", yt - 7.62), (3, "KNOB1", yt - 20.32), (5, "KNOB3", yt - 33.02),
-           (7, "ENC1_A", yt - 48.26), (9, "ENC2_A", yt - 63.5)]
-    bot = [(4, "KNOB2", yb + 7.62), (6, "KNOB4", yb + 20.32), (8, "ENC1_B", yb + 35.56),
-           (10, "ENC2_B", yb + 50.8)]
+    vR("47R", (P[11][0], P[11][1] - 7.62), vtext="right")
+    S.rail("+3V3", (P[11][0], P[11][1] - 7.62))
+    # (pin, net, lane y, vertical x): the top pin of the upper group takes the nearest vertical and
+    # the highest lane; the bottom pin of the lower group the nearest vertical and the lowest lane
+    cells = [(1, "KNOB_REF", yh - 50.8, 43.18), (3, "KNOB1", yh - 38.1, 45.72), (4, "KNOB2", yh - 25.4, 48.26),
+             (5, "KNOB3", yh - 12.7, 50.8), (6, "KNOB4", yh, None),
+             (7, "ENC1_A", yh + 15.24, 50.8), (8, "ENC1_B", yh + 30.48, 48.26), (9, "ENC2_A", yh + 45.72, 45.72),
+             (10, "ENC2_B", yh + 60.96, 43.18)]
     xr = 73.66
-    for n, name, ly in top + bot:
+    for n, name, ly, xv in cells:
         p = P[n]
+        if xv is None:
+            S.w(p, (xr, ly))
+        else:
+            S.w(p, (xv, p[1]), (xv, ly), (xr, ly))
         if name == "KNOB_REF":
-            S.w(p, (p[0], ly), (68.58, ly))
-            S.label("KNOB_REF", (48.26, ly))
-            S.cap_down("1u_50V_0603", 55.88, ly, vtext="right")
-            hR("100R", (68.58, ly), below=True)
-            S.w((76.2, ly), (81.28, ly))
-            S.rail("ADC_AVDD", (81.28, ly))
+            S.label("KNOB_REF", (55.88, ly))
+            S.cap_down("1u_50V_0603", 66.04, ly, vtext="right")
+            hR("100R", (xr, ly))
+            S.w((xr + 7.62, ly), (86.36, ly))
+            S.rail("ADC_AVDD", (86.36, ly))
             S.text("KNOB_REF: RP2350 ADC_AVDD (block E) through\n100R, so knob readings are ratiometric.\n"
-                   "Pots 10-50k.", (88.9, ly + 3.81))
+                   "Pots 10-50k.", (91.44, ly - 1.27))
             continue
-        S.w(p, (p[0], ly), (xr, ly))
-        esd((66.04 if n in (3, 7, 4, 8) else 63.5, ly))
+        esd((63.5 if n % 2 else 66.04, ly))
         hR("1k", (xr, ly))
         S.w((xr + 7.62, ly), (124.46, ly))
         if name.startswith("KNOB"):
@@ -381,7 +382,11 @@ def display():
     rows = {k: 38.1 + (k - 1) * 22.86 for k in range(1, 9)}
     xc, yc = 22.86, round((rows[4] + rows[5]) / 2 / 2.54) * 2.54
     j = S.part("Connector_Generic:Conn_01x08", "J", "SOCK_1x8", (xc, yc), mirror="y",
-               ref_at=(15.24, yc - 13.97), value_at=(15.24, yc - 12.192), justify="left")
+               ref_at=(15.24, yc - 17.78), value_at=(15.24, yc - 16.002), justify="left")
+    # pin functions for the default (most common) module order, beside each pin
+    S.text("default", (12.7 + 1.27, j.pin("1")[1] - 3.81), size=1.0)
+    for k, fn in zip(range(1, 9), ("GND", "VCC", "SCL", "SDA", "RES", "DC", "CS", "BLK")):
+        S.text(fn, (13.97, j.pin(str(k))[1]), size=1.0)
     # staircase: pins 1-4 turn up (pin 1 nearest the header), pins 5-8 turn down (pin 8 nearest)
     xv = {1: 30.48, 2: 33.02, 3: 35.56, 4: 38.1, 8: 30.48, 7: 33.02, 6: 35.56, 5: 38.1}
     jv, jb, jg = 66.04, 88.9, 116.84
@@ -477,7 +482,7 @@ S.off = (139.7, 0.0)
 led()
 S.off = (139.7, 124.46)
 knob()
-S.off = (139.7, 289.56)
+S.off = (139.7, 276.86)
 jtag()
 S.off = (289.56, 0.0)
 display()

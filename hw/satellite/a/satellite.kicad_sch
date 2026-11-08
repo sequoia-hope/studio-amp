@@ -9,8 +9,9 @@
 		(date "2026-11-08")
 		(rev "A")
 		(company "Sequoia Alexander, github.com/sequoia-hope/studio-amp")
-		(comment 1 "PoE++ GaN speaker amplifier. Design: design/intent.md, design/architecture.md")
-		(comment 2 "Open source, MIT. Sheets in block-diagram order: power in -> amp -> compute -> audio")
+		(comment 1 "PoE++ GaN speaker amplifier")
+		(comment 2 "design/intent.md, design/architecture.md")
+		(comment 3 "Open source, MIT")
 	)
 	(lib_symbols)
 	(sheet
@@ -46,7 +47,7 @@
 		(exclude_from_sim no)
 		(at 21.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "84e0723a-400f-450b-94d5-73296155bb05")
+		(uuid "1a85cf80-c922-4612-ac09-8d7732fad3d0")
 	)
 	(sheet
 		(at 100 50)
@@ -81,10 +82,10 @@
 		(exclude_from_sim no)
 		(at 101.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "a8cb5c8e-98a2-4637-ad8b-3ed86bfaf4e7")
+		(uuid "5a2e26f1-abf1-4f4e-a177-d486880553be")
 	)
 	(sheet
-		(at 100 95)
+		(at 100 98)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -97,11 +98,11 @@
 		)
 		(uuid "5a7e1117-0004-4000-8000-000000000004")
 		(property "Sheetname" "iso_aux"
-			(at 100 94.2884 0)
+			(at 100 97.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "iso_aux.kicad_sch"
-			(at 100 125.5884 0)
+			(at 100 128.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -114,9 +115,9 @@
 	)
 	(text "Converter sync clock and VBUS droop\n(block B)"
 		(exclude_from_sim no)
-		(at 101.27 97.54 0)
+		(at 101.27 100.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "b2ed7014-f486-4705-bce2-af1159cafed6")
+		(uuid "4d976923-2f22-4ff6-b6fd-da12b6105c1d")
 	)
 	(sheet
 		(at 180 50)
@@ -151,10 +152,10 @@
 		(exclude_from_sim no)
 		(at 181.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "c12f2f21-353b-47dd-a365-0875c0fbb11b")
+		(uuid "16ce9894-a472-4905-86ca-48c4cbc49400")
 	)
 	(sheet
-		(at 260 50)
+		(at 262 50)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -167,11 +168,11 @@
 		)
 		(uuid "5a7e1117-0006-4000-8000-000000000006")
 		(property "Sheetname" "amp_woofer"
-			(at 260 49.2884 0)
+			(at 262 49.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "amp_woofer.kicad_sch"
-			(at 260 80.5884 0)
+			(at 262 80.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -184,12 +185,12 @@
 	)
 	(text "GaN BTL power stage: woofer\n(block D)"
 		(exclude_from_sim no)
-		(at 261.27 52.54 0)
+		(at 263.27 52.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "aa10607d-1683-4eb9-b0fd-cd10f944e881")
+		(uuid "5706c434-6120-464a-846e-775564444a41")
 	)
 	(sheet
-		(at 260 95)
+		(at 262 98)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -202,11 +203,11 @@
 		)
 		(uuid "5a7e1117-0007-4000-8000-000000000007")
 		(property "Sheetname" "amp_tweeter"
-			(at 260 94.2884 0)
+			(at 262 97.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "amp_tweeter.kicad_sch"
-			(at 260 125.5884 0)
+			(at 262 128.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -219,12 +220,12 @@
 	)
 	(text "GaN BTL power stage: tweeter\n(block D)"
 		(exclude_from_sim no)
-		(at 261.27 97.54 0)
+		(at 263.27 100.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "1992d4f1-2be4-4bae-a2d2-3b51befe9aa4")
+		(uuid "fe164840-0c47-4116-856a-825adedc5d0b")
 	)
 	(sheet
-		(at 180 95)
+		(at 180 98)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -237,11 +238,11 @@
 		)
 		(uuid "5a7e1117-0008-4000-8000-000000000008")
 		(property "Sheetname" "amp_sense"
-			(at 180 94.2884 0)
+			(at 180 97.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "amp_sense.kicad_sch"
-			(at 180 125.5884 0)
+			(at 180 128.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -254,9 +255,9 @@
 	)
 	(text "VBUS, current and temperature sensing\n(block D)"
 		(exclude_from_sim no)
-		(at 181.27 97.54 0)
+		(at 181.27 100.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "2c577329-8cf3-44cd-8ba5-7b610b08270b")
+		(uuid "14eb37f3-42d9-40ee-a596-d8526a2232e3")
 	)
 	(sheet
 		(at 180 160)
@@ -291,7 +292,7 @@
 		(exclude_from_sim no)
 		(at 181.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "0f2d0582-a430-4fe8-883d-6bf0f706ead7")
+		(uuid "49eca095-6b60-4d75-8b74-2af04044a9ef")
 	)
 	(sheet
 		(at 100 160)
@@ -326,7 +327,7 @@
 		(exclude_from_sim no)
 		(at 101.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "0c273ef0-89a8-4d4d-86d3-318f5b131c5a")
+		(uuid "92e7ff44-66d3-4b75-8fbb-80d8f45314ff")
 	)
 	(sheet
 		(at 20 160)
@@ -361,10 +362,10 @@
 		(exclude_from_sim no)
 		(at 21.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "3eee6783-2080-41ff-a9cc-12b407033f83")
+		(uuid "8a6212b7-2df1-48b3-b40f-fb83319a6572")
 	)
 	(sheet
-		(at 260 160)
+		(at 262 160)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -377,11 +378,11 @@
 		)
 		(uuid "5a7e1117-0012-4000-8000-000000000012")
 		(property "Sheetname" "audio_out"
-			(at 260 159.2884 0)
+			(at 262 159.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "audio_out.kicad_sch"
-			(at 260 190.5884 0)
+			(at 262 190.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -394,12 +395,12 @@
 	)
 	(text "1-bit DAC, headphone and line out\n(block F)"
 		(exclude_from_sim no)
-		(at 261.27 162.54 0)
+		(at 263.27 162.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "886512e5-ebfe-4de4-bb8a-20d2a31085d1")
+		(uuid "7e829730-fed2-4508-a9d4-85e2abf21e4b")
 	)
 	(sheet
-		(at 260 210)
+		(at 262 210)
 		(size 62 30)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -412,11 +413,11 @@
 		)
 		(uuid "5a7e1117-0013-4000-8000-000000000013")
 		(property "Sheetname" "audio_in"
-			(at 260 209.2884 0)
+			(at 262 209.2884 0)
 			(effects (font (size 1.27 1.27)) (justify left bottom))
 		)
 		(property "Sheetfile" "audio_in.kicad_sch"
-			(at 260 240.5884 0)
+			(at 262 240.5884 0)
 			(effects (font (size 1.27 1.27)) (justify left top))
 		)
 		(instances
@@ -429,9 +430,9 @@
 	)
 	(text "Measurement mic and MEMS mic\n(block F)"
 		(exclude_from_sim no)
-		(at 261.27 212.54 0)
+		(at 263.27 212.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "efd2f674-963d-4749-abdc-1a13b7cba7c6")
+		(uuid "bb4d40e9-aebb-49b2-8f6b-6f70f7b62586")
 	)
 	(sheet
 		(at 180 210)
@@ -466,55 +467,465 @@
 		(exclude_from_sim no)
 		(at 181.27 212.54 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "99071f96-ff6c-4a88-9a2b-8663235392ea")
+		(uuid "5e0427d8-3da4-479d-93ca-b6947c73bb6c")
+	)
+	(polyline
+		(pts (xy 82 62) (xy 100 62))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "7f96e352-6a9c-4999-98ab-0718418cbde5")
+	)
+	(polyline
+		(pts (xy 98 63) (xy 100 62) (xy 98 61))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "bc11d623-a8b5-4990-aced-a016d32fbaa3")
+	)
+	(text "VPRI 42-57 V"
+		(exclude_from_sim no)
+		(at 83 60 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "3350a551-67ab-4802-abba-8f4dfc898da2")
+	)
+	(polyline
+		(pts (xy 100 70) (xy 82 70))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "f151c981-6d68-412f-a77a-1ad27d34b76e")
+	)
+	(polyline
+		(pts (xy 84 69) (xy 82 70) (xy 84 71))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "8cca314f-c970-4f20-968f-4d46b2c1794c")
+	)
+	(text "UCC_SS"
+		(exclude_from_sim no)
+		(at 84 73.5 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "395ae463-304b-4cfc-9c60-07a5d1bc8203")
+	)
+	(polyline
+		(pts (xy 162 62) (xy 180 62))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "4b5853f0-bb62-4441-95dc-7700e0b6f73d")
+	)
+	(polyline
+		(pts (xy 178 63) (xy 180 62) (xy 178 61))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "29ead206-4586-4261-be20-e77f04ad80dc")
+	)
+	(text "VBUS 48 V"
+		(exclude_from_sim no)
+		(at 163 60 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "063f2fc3-dd78-4fb1-8551-d8d11c5be2b6")
+	)
+	(polyline
+		(pts (xy 242 58) (xy 262 58))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "3cc4a05a-e9c3-4c1e-8fb3-f52c4cc5d3c7")
+	)
+	(polyline
+		(pts (xy 260 59) (xy 262 58) (xy 260 57))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "096abd71-a62a-4a1c-bf8c-1bd35f2b6453")
+	)
+	(text "VBUS, VDRV 7 V"
+		(exclude_from_sim no)
+		(at 243 56 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "e6b79897-9c62-4d4b-933f-e8729c89254f")
+	)
+	(polyline
+		(pts
+			(xy 242 70)
+			(xy 252 70)
+			(xy 252 108)
+			(xy 262 108)
+		)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "19d101ba-f1ea-4fa7-b66d-e9cfa97f6462")
+	)
+	(polyline
+		(pts (xy 260 109) (xy 262 108) (xy 260 107))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "99ebee2d-a5a6-400e-b7e8-1d3e427ecfef")
+	)
+	(text "VBUS, VDRV"
+		(exclude_from_sim no)
+		(at 243 73.5 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "756370f2-abca-4888-8a1f-c2e98f246f3f")
+	)
+	(polyline
+		(pts (xy 131 80) (xy 131 98))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "21f40943-26a4-48b6-99a4-3cbe47571a04")
+	)
+	(polyline
+		(pts (xy 132 96) (xy 131 98) (xy 130 96))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "e01614ff-88fe-4550-bb6b-c933c8f14866")
+	)
+	(text "ACF_SYNC, DRV_FWD"
+		(exclude_from_sim no)
+		(at 133 90 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "eb6fe474-5c9d-4e77-9fea-1f65403f0120")
+	)
+	(polyline
+		(pts (xy 262 118) (xy 242 118))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "04ac4ba2-90df-4c00-bd75-35ba526c4d47")
+	)
+	(polyline
+		(pts (xy 244 117) (xy 242 118) (xy 244 119))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "de851d9b-be54-490d-bf42-555161110d57")
+	)
+	(text "I, V, T sense"
+		(exclude_from_sim no)
+		(at 244 121.5 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "59198dbd-afcc-4246-b856-85c714006973")
+	)
+	(polyline
+		(pts (xy 30 80) (xy 30 160))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "71a28783-9f69-47e3-aa05-844487d0d25a")
+	)
+	(polyline
+		(pts (xy 31 158) (xy 30 160) (xy 29 158))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "d0a23da7-c040-45c9-89b4-42384ec3cc44")
+	)
+	(text "ETH pairs, LEDs"
+		(exclude_from_sim no)
+		(at 32 120 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "689e4319-17d6-45e6-a21e-71d884cd0eec")
+	)
+	(polyline
+		(pts (xy 82 172) (xy 100 172))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "df4fb9be-ad7b-4a4e-9a67-c67a4d3ece79")
+	)
+	(polyline
+		(pts (xy 98 173) (xy 100 172) (xy 98 171))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "7606e804-1616-4a03-81b2-efbb948d405e")
+	)
+	(text "RMII + 50 MHz"
+		(exclude_from_sim no)
+		(at 83 170 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "488b6d36-8b18-489d-a094-0786e42b173b")
+	)
+	(polyline
+		(pts (xy 162 172) (xy 180 172))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "da0aaa35-5329-4362-9a28-99b2e156662f")
+	)
+	(polyline
+		(pts (xy 178 173) (xy 180 172) (xy 178 171))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "caeb7193-156d-441e-a66e-b62ddf94ab18")
+	)
+	(text "PIO link, SSPI config"
+		(exclude_from_sim no)
+		(at 163 170 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "47774ec1-d63d-416b-8989-587edbe8c94b")
+	)
+	(polyline
+		(pts
+			(xy 150 160)
+			(xy 150 146)
+			(xy 292 146)
+			(xy 292 128)
+		)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "1265eb8e-989e-4e34-b809-c9bddb7bc55f")
+	)
+	(polyline
+		(pts (xy 291 130) (xy 292 128) (xy 293 130))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "8726ea3d-c617-4115-b6fc-94e5bb7f3fdb")
+	)
+	(text "PWM, FAULT, ARM (both bridges)"
+		(exclude_from_sim no)
+		(at 190 144 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "2f751f76-413d-4ec9-b39c-aca644319530")
+	)
+	(polyline
+		(pts (xy 118 128) (xy 118 160))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "1ffef434-7628-4791-98c3-9cea95a4e6fc")
+	)
+	(polyline
+		(pts (xy 119 158) (xy 118 160) (xy 117 158))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "d30c32cd-8dc4-4e9e-a598-ac755f892f93")
+	)
+	(text "POE_LOSS_N, ACF_PULSE"
+		(exclude_from_sim no)
+		(at 88 145 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "532b2fc6-138b-473f-b6f6-3dcbb5454319")
+	)
+	(polyline
+		(pts
+			(xy 131 190)
+			(xy 131 200)
+			(xy 282 200)
+			(xy 282 190)
+		)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "10126bdb-6189-4716-a645-3fccce8444c4")
+	)
+	(polyline
+		(pts (xy 281 192) (xy 282 190) (xy 283 192))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "28d60858-83c8-4c3b-9b55-af35092bd536")
+	)
+	(text "1-bit DAC, MCLK_Q, relays"
+		(exclude_from_sim no)
+		(at 190 198 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "c0885b39-0648-4430-8a27-ee10c8c35c75")
+	)
+	(polyline
+		(pts
+			(xy 262 222)
+			(xy 252 222)
+			(xy 252 206)
+			(xy 140 206)
+			(xy 140 190)
+		)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "b4e95536-b764-4b69-8312-04e5b80451d9")
+	)
+	(polyline
+		(pts (xy 139 192) (xy 140 190) (xy 141 192))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "b7a00945-c385-49f3-9645-308e5d620a0c")
+	)
+	(text "I2S mic ADC, PDM"
+		(exclude_from_sim no)
+		(at 160 209.5 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "19ac4363-898a-480a-9264-8e943744aebd")
+	)
+	(polyline
+		(pts (xy 205 190) (xy 205 210))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "040b0f2b-3999-4b57-8abc-5dc2e01f97b8")
+	)
+	(polyline
+		(pts (xy 206 208) (xy 205 210) (xy 204 208))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "af177f63-2d21-464c-92be-69705bfde871")
+	)
+	(text "USB, SWD, I2C, LED, display"
+		(exclude_from_sim no)
+		(at 207 203 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "01454893-0584-4125-916b-7c2372ec9802")
+	)
+	(polyline
+		(pts
+			(xy 70 80)
+			(xy 70 142)
+			(xy 108 142)
+			(xy 108 160)
+		)
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "aa2b9161-684a-483f-a38f-3443f972467f")
+	)
+	(polyline
+		(pts (xy 109 158) (xy 108 160) (xy 107 158))
+		(stroke
+			(width 0.4)
+			(type solid)
+			(color 0 72 160 1)
+		)
+		(uuid "ac08da4f-b35a-4cc0-820b-b1dd45201107")
+	)
+	(text "PD status (ISO7740)"
+		(exclude_from_sim no)
+		(at 72 140 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "4ca6f0f6-2ecd-4ca3-a1dc-587164005aab")
 	)
 	(rectangle
-		(start 15 36)
-		(end 335 132)
+		(start 15 40)
+		(end 335 138)
 		(stroke (width 0) (type dash))
 		(fill
 			(type none)
 		)
-		(uuid "9d95ab4a-ca86-473f-987b-7ac44af81db7")
+		(uuid "f6244139-c400-4862-9e2b-5685ff17dcbe")
 	)
 	(text "POWER AND AMPLIFIER"
 		(exclude_from_sim no)
-		(at 16.27 38.54 0)
+		(at 16.27 42.54 0)
 		(effects (font (size 1.778 1.778)) (justify left))
-		(uuid "e08820dd-9c26-4785-abf1-92d977170351")
+		(uuid "be95a6ac-f9e3-4397-bbd8-cbbbef8dbd84")
 	)
 	(rectangle
-		(start 15 140)
-		(end 335 262)
+		(start 15 152)
+		(end 335 244)
 		(stroke (width 0) (type dash))
 		(fill
 			(type none)
 		)
-		(uuid "3004a95f-d775-4820-870f-83c0022bcbdc")
-	)
-	(text "COMPUTE, NETWORK, AUDIO AND I/O"
-		(exclude_from_sim no)
-		(at 16.27 142.54 0)
-		(effects (font (size 1.778 1.778)) (justify left))
-		(uuid "b84497c1-b9fb-4395-8cff-6356de168e42")
+		(uuid "ad30e06c-c4e8-43d3-9da1-e7d45f4f18b8")
 	)
 	(text "PoE (primary side, isolated 1500 Vrms) -> isolated forward converter -> VBUS 48 V -> rails and GaN bridges"
 		(exclude_from_sim no)
-		(at 20 30 0)
+		(at 20 34 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "641bcaf1-a7bc-4cd2-98be-317a947039c1")
+		(uuid "e34a86bf-82e3-4a43-bb45-dee8551c5fcb")
 	)
-	(text "Compute: LAN8720A RMII <-> ECP5 (PWM, MAC, PTP, 1-bit DAC) <-> PIO 8-bit link <-> RP2350B"
+	(text "Inter-sheet signals are global labels and rails are power symbols; the lines on this page show the main flows."
 		(exclude_from_sim no)
-		(at 20 150 0)
+		(at 20 250 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "fd8a302f-9096-496d-b7c7-8c36391ee686")
+		(uuid "7a0bdbc7-5439-41f3-9209-78ca11101fd0")
 	)
-	(text "Inter-sheet signals are global labels; rails are power symbols. Net names: design/parts/*-interfaces.md"
+	(text "Net names: design/parts/*-interfaces.md and E-pinmap.md"
 		(exclude_from_sim no)
-		(at 20 255 0)
+		(at 20 254 0)
 		(effects (font (size 1.27 1.27)) (justify left))
-		(uuid "b63f184d-43af-4ad7-911e-e44e43b5300b")
+		(uuid "8b04ea77-1d24-4437-893a-393c34d45b9a")
+	)
+	(text "COMPUTE, NETWORK, AUDIO AND I/O"
+		(exclude_from_sim no)
+		(at 190 155.5 0)
+		(effects (font (size 1.27 1.27)) (justify left))
+		(uuid "baa85cb1-9ec5-494f-914c-bcd27da77854")
 	)
 	(sheet_instances
 		(path "/"

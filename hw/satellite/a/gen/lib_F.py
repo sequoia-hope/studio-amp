@@ -33,10 +33,13 @@ def _pin(num, name, x, y, ang, etype="passive", length=2.54, hide_name=False):
             f' (number "{num}" (effects (font (size 1.27 1.27)))))\n')
 
 
-def symbol(name, ref, value, fp, ds, desc, body, pins, ref_at, val_at, hide_pin_names=False):
+def symbol(name, ref, value, fp, ds, desc, body, pins, ref_at, val_at, hide_pin_names=False,
+           hide_pin_numbers=False):
     s = f'\t(symbol "{name}"\n'
     if hide_pin_names:
         s += "\t\t(pin_names (hide yes))\n"
+    if hide_pin_numbers:
+        s += "\t\t(pin_numbers (hide yes))\n"
     s += "\t\t(exclude_from_sim no) (in_bom yes) (on_board yes)\n"
     s += _prop("Reference", ref, *ref_at)
     s += _prop("Value", value, *val_at)
@@ -128,7 +131,7 @@ SYMS.append(symbol(
      ("4", "NO1", 10.16, 2.54, 180, "passive"),
      ("5", "NO2", 10.16, -2.54, 180, "passive"),
      ("7", "NC2", 10.16, -7.62, 180, "passive")],
-    (-7.62, 11.43), (7.62, 11.43)))
+    (-7.62, 11.43), (7.62, 11.43), hide_pin_names=True))
 
 # CUI RCJ-01x RCA jack (rcj-014.pdf p.2): pin 2 = centre contact, pin 1 = shell (3 pads).
 SYMS.append(symbol(
@@ -147,7 +150,7 @@ SYMS.append(symbol(
     rect(0.0, 10.16, 10.16, -15.24) + rect(2.54, 3.81, 7.62, -8.89, fill="none") + text("TRS", 5.08, 6.35),
     [("TN", "TN", -2.54, 7.62, 0), ("RN", "RN", -2.54, 5.08, 0), ("T", "T", -2.54, 0.0, 0),
      ("R", "R", -2.54, -5.08, 0), ("SN", "SN", -2.54, -10.16, 0), ("S", "S", -2.54, -12.7, 0)],
-    (0.0, 11.43), (0.0, -16.51)))
+    (0.0, 11.43), (0.0, -16.51), hide_pin_numbers=True))
 
 # Nexperia BAV99 with pins named after the datasheet (bav99.pdf Table 2: 1 = A1, 2 = K2, 3 = K1/A2).
 SYMS.append(symbol(

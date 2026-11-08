@@ -119,10 +119,140 @@ footer { margin-top: 1.5rem; color: var(--muted); font-size: .8rem; }
       <a href="viewer/">All boards and variants →</a>
     </div>
     <!-- pcbview:begin -->
-    <p class="empty">No board yet. Once <code>hw/</code> has a KiCad project and
-    <code>pcbview.toml</code> lists it with <code>embed = "index.html"</code>,
-    <code>scripts/view.sh build pcbview.toml</code> puts the viewer here.</p>
-    <!-- pcbview:end -->
+<!-- written by pcbview (python3 -m pcbview build pcbview.toml): change the config, not this -->
+<link rel="stylesheet" href="viewer/assets/viewer.css">
+<section class="vw" data-pv-embed aria-label="Satellite board, variant A: schematic, PCB and 3D">
+  <div class="vw-bar">
+    <div class="vw-left"><button data-vw="layers" aria-pressed="true"
+      title="show or hide the side panel"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 14.2 5 8 8.2 1.8 5z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M1.8 8 8 11.2 14.2 8M1.8 11 8 14.2 14.2 11" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg><span>Panel</span></button></div>
+    <div class="vw-tabs" role="tablist" aria-label="view"><button role="tab" data-tab="schematic" aria-controls="schematic" aria-selected="false">SCH</button><button role="tab" data-tab="copper" aria-controls="copper" aria-selected="true">PCB</button><button role="tab" data-tab="board3d" aria-controls="board3d" aria-selected="false">3D</button></div>
+    <div class="vw-tools">
+      <button data-vw="info" title="about this board" aria-label="about this board"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 7.2v4.2M8 4.6v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <button data-vw="full" title="full screen" aria-label="full screen"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2h4.5v4.5M14 2 9 7M6.5 14H2V9.5M2 14l5-5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
+  
+  <div class="vw-panel" id="schematic" data-dir="viewer/satellite-a/sch/" role="tabpanel" hidden>
+    <div class="cu sch">
+      <div class="cu-panel">
+        <p class="cu-head">Sheets</p>
+        <div id="sch-sheets"></div>
+        <div class="cu-row">
+          <button data-sch="out" title="zoom out">&minus;</button>
+          <button data-sch="fit" title="the whole sheet">fit</button>
+          <button data-sch="in" title="zoom in">+</button>
+          <span class="sub" id="sch-zoom">1.0&times;</span>
+        </div>
+        <div class="cu-row"><a class="a3-btn" id="sch-pdf" download hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8v8.4M4.4 6.8 8 10.4l3.6-3.6M2 12v2.2h12V12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>PDF, every sheet</span></a></div>
+        <p class="sub cu-note" id="sch-cap"></p>
+        <p class="cu-hint">Keys: <b>1</b>&ndash;<b>9</b> pick a sheet, <b>+</b> and <b>&minus;</b> zoom, <b>0</b> fit.
+        Drag to pan; scroll or double-click to zoom.</p>
+      </div>
+      <div class="cu-canvas">
+        <div class="sch-plate" id="sch-plate">
+          <div class="sch-pan" id="sch-pan"><img id="sch-img" alt="" draggable="false"></div>
+          <p class="b3-msg" id="sch-msg" hidden></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="vw-panel" id="copper" data-dir="viewer/satellite-a/layers/" data-parts="viewer/satellite-a/3d/parts.json" role="tabpanel">
+    <div class="cu">
+      <div class="cu-panel">
+        <div id="cu-layers"></div>
+        <p class="cu-hint" style="margin-top:.3rem">The dot puts a layer on top at full
+        opacity; the box says whether it is drawn at all.</p>
+        <div class="cu-row">
+          <button data-act="all" title="show every layer">all</button>
+          <button data-act="none" title="show only the selected layer">none</button>
+          <button data-act="solo" title="the selected layer and the outline only">solo</button>
+          <button data-act="grid" title="the copper layers side by side">grid</button>
+        </div>
+        <label class="cu-ctl">opacity of the unselected copper
+          <input type="range" id="cu-dim" min="0" max="60" value="16"></label>
+        <label class="cu-ctl"><input type="checkbox" id="cu-mirror">
+          view from the back (mirrored)</label>
+        <div class="cu-row">
+          <button data-act="out" title="zoom out">&minus;</button>
+          <button data-act="fit" title="fit the board">fit</button>
+          <button data-act="in" title="zoom in">+</button>
+          <button data-act="real" title="life size: a millimetre on the board is a millimetre on this screen (click again to set the screen up)">1:1</button>
+          <span class="sub" id="cu-zoom">1.0&times;</span>
+        </div>
+        <p class="cu-note" id="cu-note"></p>
+        <p class="cu-read" id="cu-read"></p>
+        <p class="cu-hint">Keys: <b>1</b>&ndash;<b>9</b> pick a layer, <b>s</b> solo,
+        <b>a</b> all, <b>m</b> mirror, <b>0</b> fit, <b>l</b> life size. Click a part for its pane;
+        coordinates are pcbnew&rsquo;s, in millimetres.</p>
+        <p class="cu-hint" id="cu-stats"></p>
+      </div>
+      <div class="cu-canvas">
+        <div class="cu-plate" id="cu-plate">
+          <div class="cu-pan" id="cu-pan"><div class="cu-flip" id="cu-flip"></div></div>
+          <div class="cu-scale"><i id="cu-bar"></i><span id="cu-barlab"></span></div>
+          <div class="cu-back" id="cu-back"></div>
+          <p class="b3-msg" id="cu-fallback" hidden></p>
+        </div>
+        <div class="cu-grid" id="cu-gridbox" hidden></div>
+      </div>
+      <aside class="b3-info pv-pane" id="cu-info" aria-label="the selected part" hidden>
+        <div class="b3-ih"><b class="pv-iref"></b><button class="b3-x" title="close"
+          aria-label="close the part pane">&times;</button></div>
+        <div class="b3-ib pv-ib"></div>
+      </aside>
+    </div>
+  </div>
+  
+  <div class="vw-panel" id="board3d" data-dir="viewer/satellite-a/3d/" role="tabpanel" hidden>
+    <div class="b3">
+      <div class="b3-bar">
+        <div class="cu-row" role="group" aria-label="view">
+          <button data-view="front" title="the front face, as pcbnew draws it">front</button>
+          <button data-view="back" title="the back face, turned over left to right">back</button>
+          <button data-view="tilt" title="from the front, tilted towards you">tilted</button>
+          <button data-view="edge" title="edge on: how tall each face stands">edge</button>
+        </div>
+        <div class="b3-layers" id="b3-layers"></div>
+        <label class="b3-find">find <input id="b3-find" list="b3-refs" placeholder="U1"
+          disabled spellcheck="false" autocomplete="off" title="a reference, e.g. U1"></label>
+        <datalist id="b3-refs"></datalist>
+      </div>
+      <div class="b3-body">
+        <div class="b3-stage" id="b3-stage">
+          <p class="b3-msg" id="b3-msg">The model loads when this tab is open.</p>
+          <div class="b3-tag" id="b3-tag" hidden></div>
+        </div>
+        <aside class="b3-info pv-pane" id="b3-info" aria-label="the selected part" hidden>
+          <div class="b3-ih"><b class="pv-iref"></b><button class="b3-x" title="close"
+            aria-label="close the part pane">&times;</button></div>
+          <div class="b3-ib pv-ib"></div>
+        </aside>
+      </div>
+      <p class="b3-facts" id="b3-facts"></p>
+    </div>
+  </div>
+  
+  <div class="vw-panel pv-over" id="overview" role="tabpanel" hidden>
+    <div class="pv-card">
+      <h1>Satellite board, variant A</h1>
+      <p class="pv-lede">PoE++ / isolated forward / ECP5 / IGB070 GaN BTL x2. Phase 2: schematic done, board not yet placed (footprints stacked at the origin).</p>
+      <dl class="pv-facts"><dt>Source</dt><dd><code>hw/satellite/a/satellite.kicad_pcb</code><br><code>hw/satellite/a/satellite.kicad_sch</code></dd><dt>Schematic</dt><dd>14 sheets<small>A3, A2, A2, A3, A2, A2, A2, A3, A3, A2, A3, A2, A3, A2</small></dd></dl>
+      <p class="cu-hint">Built 2026-11-07 19:38 by pcbview from the KiCad files above:
+      <code>python3 -m pcbview build pcbview.toml</code>. Nothing here is drawn by hand &mdash; the layer plots, the model and the
+      sheets are KiCad&rsquo;s own exports.</p>
+    </div>
+  </div>
+</section>
+<script src="viewer/assets/parts.js" defer></script>
+<script src="viewer/assets/gesture.js" defer></script>
+<script src="viewer/assets/scale.js" defer></script>
+<script src="viewer/assets/viewer.js" defer></script>
+<script src="viewer/assets/copper.js" defer></script>
+<script src="viewer/assets/sch.js" defer></script>
+<script type="importmap">{"imports": {"three": "./viewer/assets/vendor/three.module.js"}}</script>
+<script type="module" src="viewer/assets/board3d.js"></script>
+<!-- pcbview:end -->
   </section>
 
 </main>

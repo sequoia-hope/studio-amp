@@ -196,3 +196,7 @@ Two ways exist (TPS2373 §7.3.7, §7.4.8). B uses the second:
   timing pins plus GND/PGND on the bottom; NC pins 2 and 20 hidden.
 - Parts picked: CF 82 pF C0G `0603CG820J500NT` (FH, `C1683`); FB cap 6.8 nF X7R `0603B682K500NT`
   (FH, `C1631`) — the Samsung equivalents had no stock. OUT → 2.2 Ω `RC0603FR-072R2L` (`C112307`).
+- **0805 for the high-voltage resistors (phase 2 review B-m1):** R206 73.2 k (LINEUV top, 57 V),
+  R208 47 k and R209 470 k (LINEOV node A, 57 V steady, ≈ 150 V in the DMAX-at-57 V transient) and
+  R218 100 k (VIN) are now UNI-ROYAL 0805W8F (150 V working, 300 V overload): C17814, C17713,
+  C17709, C149504. 0603 is 75 V working / 150 V overload, so the transient sat at its overload limit.

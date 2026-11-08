@@ -255,8 +255,8 @@ def hp_stage(ch: str, Yc: float, unit: int, filt):
     pwr_above("+15V", drs.pin("1"))
     sch.no_connect(drs.pin("3"))
     W(drs.pin("2"), qst.pin("1"))
-    rref = vR("15k", 408.94, Yc - 13.97, left=True)
-    W((408.94, Yc - 17.78), rref.pin("1")); W((408.94, Yc - 17.78), (x_sp, Yc - 17.78)); J((x_sp, Yc - 17.78))
+    rref = vR("15k", x_sp - 10.16, Yc - 13.97, left=True)
+    W((x_sp - 10.16, Yc - 17.78), rref.pin("1")); W((x_sp - 10.16, Yc - 17.78), (x_sp, Yc - 17.78)); J((x_sp, Yc - 17.78))
     gnd_below(rref.pin("2"))
     qsb = pl.part("Transistor_BJT:BC847", "Q", "BC847", (424.18, Yc + 38.1),
                   ref_at=(428.22, Yc + 36.83), value_at=(428.22, Yc + 39.37))
@@ -269,8 +269,8 @@ def hp_stage(ch: str, Yc: float, unit: int, filt):
     sch.no_connect(drs2.pin("3"))
     pwr_below("-15V", drs2.pin("2"))
     W(drs2.pin("1"), qsb.pin("1"))
-    rref2 = vR("15k", 408.94, Yc + 41.91, left=True)
-    W((408.94, Yc + 38.1), rref2.pin("1")); W((408.94, Yc + 38.1), (x_sp, Yc + 38.1)); J((x_sp, Yc + 38.1))
+    rref2 = vR("15k", x_sp - 10.16, Yc + 41.91, left=True)
+    W((x_sp - 10.16, Yc + 38.1), rref2.pin("1")); W((x_sp - 10.16, Yc + 38.1), (x_sp, Yc + 38.1)); J((x_sp, Yc + 38.1))
     gnd_below(rref2.pin("2"))
     T("Q_ST/Q_SB: (2 VF - VBE)/180 = 4 mA", (x_cs + 5.08, Yc - 31.75))
     # N_T / N_B rails of the spreader
@@ -350,8 +350,8 @@ def hp_stage(ch: str, Yc: float, unit: int, filt):
                   ref_at=(x_oh - 3.81, y_oi + 15.24), value_at=(x_oh + 3.81, y_oi + 15.24))
     W((x_oh, y_oi), clp.pin("3"))
     pl.pwr("+15V", clp.pin("2")); pwr_below("-15V", clp.pin("1"), 2.54)
-    W((x_oh, y_oi), (x_oh + 5.08, y_oi)); J((x_oh, y_oi))
-    label(f"HPA_{sfx}", (x_oh + 5.08, y_oi))
+    W((x_oh, y_oi), (x_oh, y_oi - 5.08)); J((x_oh, y_oi))
+    label(f"HPA_{sfx}", (x_oh, y_oi - 5.08), rot=90)
     return (x_oh, y_oi)
 
 
@@ -391,11 +391,11 @@ gnd_below(bp.pin("2"))
 cbk = vC("100n", 50.8, YM + 15.24, left=True, decouples=f"{U_CK}.5")
 W((60.96, bp.pin("5")[1] - 2.54), (50.8, bp.pin("5")[1] - 2.54), cbk.pin("1")); J((60.96, bp.pin("5")[1] - 2.54))
 gnd_below(cbk.pin("2"))
-cbulk = vC("10u_0805", 27.94, YM + 20.32, note="+3V3_Q bulk at the entry point")
+cbulk = vC("10u_1206", 27.94, YM + 20.32, note="+3V3_Q bulk at the entry point")
 pwr_above("+3V3_Q", cbulk.pin("1"), 2.54); gnd_below(cbulk.pin("2"))
 
 # ---- 74LVC74 supply pins with their 100 nF (F-dac-74lvc74.md)
-sch.box((93.98, 160.02), (182.88, 234.95), "74LVC74 SUPPLY, 100 nF AT EACH PIN 14")
+sch.box((93.98, 160.02), (182.88, 234.95), "74LVC74 POWER UNITS, 100 nF AT PIN 14")
 T("+3V3_Q SNS:\nKelvin to\nthis row", (135.89, 222.25))
 pkgs = U_FF["L"] + U_FF["R"]
 for (x, y), ref in zip(((119.38, YM - 12.7), (160.02, YM - 12.7), (119.38, YM + 21.59), (160.02, YM + 21.59)), pkgs):
@@ -410,6 +410,7 @@ for (x, y), ref in zip(((119.38, YM - 12.7), (160.02, YM - 12.7), (119.38, YM + 
 
 # ---- op-amp supply units: 100 nF + 10 uF per rail per package (F-opamp-sa5532.md, F-servo-opa2277.md)
 sch.box((185.42, 160.02), (355.6, 234.95), "OP-AMP SUPPLIES: 100 nF + 10 µF PER RAIL AT EACH PACKAGE")
+T("Power units (C) of the multi-unit symbols (74LVC74, SA5532, OPA2277); their logic and op-amp\nunits are in the bands. Each cap's Decouples field names its pin, so layout puts it at that package.", (187.96, 166.37))
 for x, ref, lib, val in ((213.36, U_F, "Amplifier_Operational:SA5532", "SA5532"),
                          (269.24, U_HP, "Amplifier_Operational:SA5532", "SA5532"),
                          (325.12, U_SV, "Amplifier_Operational:OPA2277", "OPA2277")):
@@ -454,8 +455,8 @@ def relay(xk, yk, en_label, com_labels):
                 ref_at=(xc + 2.54, y_d + 3.81), value_at=(xc + 2.54, y_d + 6.35))
     gnd_below(q.pin("2"))
     g = q.pin("1")
-    x_j = g[0] - 5.08
-    rpd = vR("100k", g[0], g[1] + 3.81, note="gate pull-down: relay off by default")
+    x_j = g[0] - 15.24
+    rpd = vR("100k", g[0], g[1] + 3.81, left=True, note="gate pull-down: relay off by default")
     W(g, rpd.pin("1")); gnd_below(rpd.pin("2"))
     W(g, (x_j, g[1])); J(g)
     rg = hR("10k", x_j - 6.35, g[1], top=True, note="10k: lets the BAT54A override the FPGA")
@@ -469,7 +470,7 @@ def relay(xk, yk, en_label, com_labels):
     return k, (da.pin("1")[0], da.pin("2")[0])
 
 
-k1, x1 = relay(403.86, 185.42, "HP_EN", ("HPA_L", "HPA_R"))
+k1, x1 = relay(408.94, 185.42, "HP_EN", ("HPA_L", "HPA_R"))
 k2, x2 = relay(497.84, 185.42, "LO_EN", ("LO_L", "LO_R"))
 x_bus0 = 381.0
 W((x_bus0, Y_DC), (x1[0], Y_DC), (x2[0], Y_DC)); J((x1[0], Y_DC))
@@ -485,20 +486,20 @@ sch.no_connect(jh.pin("TN")); sch.no_connect(jh.pin("RN"))
 no1, no2 = k1.pin("4"), k1.pin("5")
 y_t, y_r = 170.18, 198.12
 xt = jh.pin("T")[0]
-x_fb, x_tv = 424.18, 435.61
+x_fb, x_tv = 429.26, 440.69
 W(no1, (no1[0] + 2.54, no1[1]), (no1[0] + 2.54, y_t))
-fbt = pl.part("Device:FerriteBead_Small", "FB", "FB600", (x_fb, y_t), rot=90, ref_at=(419.1, y_t - 6.35), value_at=(419.1, y_t - 3.81))
-W((no1[0] + 2.54, y_t), fbt.pin("2"))
+fbt = pl.part("Device:FerriteBead_Small", "FB", "FB600", (x_fb, y_t), rot=90, ref_at=(x_fb - 1.27, y_t - 6.35), value_at=(x_fb - 1.27, y_t - 3.81), justify="right")
+W((no1[0] + 2.54, y_t), fbt.pin("1"))
 tvt = pl.part("Device:D_TVS", "D", "PESD15", (x_tv, y_t + 3.81), rot=270, ref_at=(x_tv + 3.81, y_t + 2.54), value_at=(x_tv + 3.81, y_t + 5.08))
 gnd_below(tvt.pin("2"))
-W(fbt.pin("1"), (x_tv, y_t), (xt - 7.62, y_t), (xt - 7.62, jh.pin("T")[1]), jh.pin("T")); J((x_tv, y_t))
+W(fbt.pin("2"), (x_tv, y_t), (xt - 7.62, y_t), (xt - 7.62, jh.pin("T")[1]), jh.pin("T")); J((x_tv, y_t))
 W((x_tv, y_t), tvt.pin("1"))
 W(no2, (no2[0] + 2.54, no2[1]), (no2[0] + 2.54, y_r))
-fbr = pl.part("Device:FerriteBead_Small", "FB", "FB600", (x_fb, y_r), rot=90, ref_at=(419.1, y_r + 3.81), value_at=(419.1, y_r + 6.35))
-W((no2[0] + 2.54, y_r), fbr.pin("2"))
+fbr = pl.part("Device:FerriteBead_Small", "FB", "FB600", (x_fb, y_r), rot=90, ref_at=(x_fb - 1.27, y_r - 6.35), value_at=(x_fb - 1.27, y_r - 3.81), justify="right")
+W((no2[0] + 2.54, y_r), fbr.pin("1"))
 tvr = pl.part("Device:D_TVS", "D", "PESD15", (x_tv, y_r + 3.81), rot=270, ref_at=(x_tv + 3.81, y_r + 2.54), value_at=(x_tv + 3.81, y_r + 5.08))
 gnd_below(tvr.pin("2"))
-W(fbr.pin("1"), (x_tv, y_r), (xt - 12.7, y_r), (xt - 12.7, jh.pin("R")[1]), jh.pin("R")); J((x_tv, y_r))
+W(fbr.pin("2"), (x_tv, y_r), (xt - 12.7, y_r), (xt - 12.7, jh.pin("R")[1]), jh.pin("R")); J((x_tv, y_r))
 W((x_tv, y_r), tvr.pin("1"))
 sp_, ss_ = jh.pin("SN"), jh.pin("S")
 W(ss_, (ss_[0] - 2.54, ss_[1]), (ss_[0] - 2.54, ss_[1] + 5.08)); pl.gnd((ss_[0] - 2.54, ss_[1] + 5.08))
@@ -559,7 +560,7 @@ W(qdp.pin("3"), (562.61, 114.3), (x_tr, 114.3)); J((x_tr, 114.3))
 rpu = vR("4k7", x_tr, 39.37, note="/DC_TRIP pull-up, read in hardware (re-review MINOR-3)")
 W(rpu.pin("2"), (x_tr, 45.72)); J((x_tr, 45.72)); pwr_above("+3V3", rpu.pin("1"))
 glabel("HP_FAULT_N", (x_tr, 119.38), rot=270, shape="output")
-T("Trips at ±0.6 V on N_DC:\n2.4 V DC on one output,\n~30 ms incl. relay release", (521.97, 132.08))
+T("Trips at ±0.6 V on N_DC:\n2.4 V DC on one output,\n~30 ms incl. relay release.\nFILT_L is a global label: the\nsame net feeds the audio_in\nloopback. FILT_R is local.", (521.97, 127.0))
 
 sch.save()
 print("wrote", sch.file)

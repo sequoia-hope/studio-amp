@@ -45,3 +45,11 @@ exceed 30 mV/µs during power-up", over 0–3 V) and within 0.01–10 V/ms (Tabl
   input, 100 kΩ to +3V3), or leave it unconnected (permitted).
 - CIN 10 µF, COUT 10 µF X7R ≤ 20 mΩ ESR. SNS to OUT at the bead input.
 - Load on +3V3: 50 mA, included in the 0.79 A design.
+
+## Phase 2 (parts cross-check C-m3, 2026-11-07)
+
+CNR/SS raised from 1.0 µF (the 1 µF minimum) to **2.2 µF X7R 10 V 0603 (CC0603KRX7R6BB225, C513691)**;
+at 2.5 V bias it still sits well above 1 µF. Ramp: 2.33 V × 2.2 µF / 2.1 mA = 2.4 ms fast charge +
+0.18 V × 2.2 µF / 150 µA = 2.6 ms → **≈ 5 ms** to regulation, steepest ≈ 1 mV/µs (≤ 30 mV/µs,
+0.01–10 V/ms OK). 2V5 now settles ≈ 4 ms after 1V1, still after 3V3 as block E requires (ECP5 sets
+no VCCAUX-to-VCC order).

@@ -162,7 +162,7 @@ def draw_power(unit, at, bulk):
             sch.wire((xps, yr), fb.pin("1"))
             rail_start = fb.pin("2")[0]
             sch.label("VCCAUX", (rail_start + 1.27, yr))
-            sch.power("power:PWR_FLAG", (rail_start + 7.62, yr))
+
             caps_x = [xps + 15.24]
         else:
             d.rail("+1V1" if name == "VCC" else "+3V3", (xps, yr))
@@ -174,6 +174,9 @@ def draw_power(unit, at, bulk):
             sch.wire(p, (p[0], yr))
             d.cap_down("100n", (p[0] + 5.08, yr), decouples=f"{REF}.{b_}")
             last = p[0] + 5.08
+        if name == "VCCAUX":           # PWR_FLAG on the bead's output, past the last cap
+            last += 7.62
+            sch.power("power:PWR_FLAG", (last, yr))
         sch.wire((rail_start, yr), (last, yr))
     for b_, p in pins.items():
         if p["angle"] == 90:

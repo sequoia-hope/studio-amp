@@ -106,3 +106,7 @@ Rds(on) test condition region (VGS(th) ≤ 4 V). Rds rises a few %, which is acc
 - SM5845 inductor footprint `studio_B:L_SXN_SM5845` made from the datasheet table (p.2): pads
   2.15 × 1.7 mm at ±1.675 mm. **Provisional** — the table's column labels are ambiguous; check
   against a sample or the LCSC drawing before phase 6.
+- **0805 for RON and the UVLO top resistor on both bucks (review B-m1):** VB_PRI R221 267 k
+  (C17585), R224 237 k (C17568) at ≤ 57 V; VSR R251 280 k (C17597), R254 51.1 k (C17731) at
+  ≤ 55 V steady and 82.4 V at the SMCJ51A clamp, above the 0603's 75 V working rating. 0805W8F:
+  150 V working.

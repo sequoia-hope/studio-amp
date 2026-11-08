@@ -99,23 +99,23 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U" (at 0 15.24 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "TLV3502" (at 0 -15.24 0) (effects (font (size 1.27 1.27))))
+		(property "Reference" "U" (at 0 17.78 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "TLV3502" (at 0 -17.78 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-8" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "design/datasheets/tlv3501.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Description" "Dual 4.5 ns rail-to-rail push-pull comparator, SOT-23-8 DCN" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(symbol "TLV3502_DCN_0_1"
-			(rectangle (start -5.08 10.16) (end 5.08 -10.16) (stroke (width 0.254) (type default)) (fill (type background)))
+			(rectangle (start -7.62 12.7) (end 7.62 -12.7) (stroke (width 0.254) (type default)) (fill (type background)))
 		)
 		(symbol "TLV3502_DCN_1_1"
-			(pin input line (at -7.62 7.62 0) (length 2.54) (name "+INA" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -7.62 5.08 0) (length 2.54) (name "-INA" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -7.62 -5.08 0) (length 2.54) (name "+INB" (effects (font (size 1.016 1.016)))) (number "3" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -7.62 -7.62 0) (length 2.54) (name "-INB" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016)))))
-			(pin output line (at 7.62 5.08 180) (length 2.54) (name "OUTA" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016)))))
-			(pin output line (at 7.62 -5.08 180) (length 2.54) (name "OUTB" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at 0 12.7 270) (length 2.54) (name "V+" (effects (font (size 1.016 1.016)))) (number "8" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at 0 -12.7 90) (length 2.54) (name "V-" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 7.62 0) (length 2.54) (name "+INA" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 5.08 0) (length 2.54) (name "-INA" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 -5.08 0) (length 2.54) (name "+INB" (effects (font (size 1.016 1.016)))) (number "3" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 -7.62 0) (length 2.54) (name "-INB" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016)))))
+			(pin output line (at 10.16 5.08 180) (length 2.54) (name "OUTA" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016)))))
+			(pin output line (at 10.16 -5.08 180) (length 2.54) (name "OUTB" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at 0 15.24 270) (length 2.54) (name "V+" (effects (font (size 1.016 1.016)))) (number "8" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at 0 -15.24 90) (length 2.54) (name "V-" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016)))))
 		)
 		(embedded_fonts no)
 	)
@@ -147,32 +147,32 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(property "Reference" "U" (at 0 27.94 0) (effects (font (size 1.27 1.27))))
-		(property "Value" "ADS7038-Q1" (at 0 -27.94 0) (effects (font (size 1.27 1.27))))
+		(property "Reference" "U" (at 0 58.42 0) (effects (font (size 1.27 1.27))))
+		(property "Value" "ADS7038-Q1" (at 0 -58.42 0) (effects (font (size 1.27 1.27))))
 		(property "Footprint" "Package_DFN_QFN:WQFN-16-1EP_3x3mm_P0.5mm_EP1.68x1.68mm" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Datasheet" "design/datasheets/ads7038q1.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(property "Description" "8-channel 12-bit 1 MSPS SAR ADC, SPI, WQFN-16 RTE" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
 		(symbol "ADS7038-Q1_0_1"
-			(rectangle (start -7.62 22.86) (end 7.62 -22.86) (stroke (width 0.254) (type default)) (fill (type background)))
+			(rectangle (start -7.62 53.34) (end 7.62 -53.34) (stroke (width 0.254) (type default)) (fill (type background)))
 		)
 		(symbol "ADS7038-Q1_1_1"
-			(pin input line (at -10.16 20.32 0) (length 2.54) (name "AIN0" (effects (font (size 1.016 1.016)))) (number "15" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -10.16 17.78 0) (length 2.54) (name "AIN1" (effects (font (size 1.016 1.016)))) (number "16" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -10.16 15.24 0) (length 2.54) (name "AIN2" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 50.8 0) (length 2.54) (name "AIN0" (effects (font (size 1.016 1.016)))) (number "15" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 38.1 0) (length 2.54) (name "AIN1" (effects (font (size 1.016 1.016)))) (number "16" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 25.4 0) (length 2.54) (name "AIN2" (effects (font (size 1.016 1.016)))) (number "1" (effects (font (size 1.016 1.016)))))
 			(pin input line (at -10.16 12.7 0) (length 2.54) (name "AIN3" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016)))))
 			(pin input line (at -10.16 -12.7 0) (length 2.54) (name "AIN4" (effects (font (size 1.016 1.016)))) (number "3" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -10.16 -15.24 0) (length 2.54) (name "AIN5" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -10.16 -17.78 0) (length 2.54) (name "AIN6" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016)))))
-			(pin input line (at -10.16 -20.32 0) (length 2.54) (name "AIN7" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 -25.4 0) (length 2.54) (name "AIN5" (effects (font (size 1.016 1.016)))) (number "4" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 -38.1 0) (length 2.54) (name "AIN6" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016)))))
+			(pin input line (at -10.16 -50.8 0) (length 2.54) (name "AIN7" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016)))))
 			(pin input line (at 10.16 5.08 180) (length 2.54) (name "~{CS}" (effects (font (size 1.016 1.016)))) (number "11" (effects (font (size 1.016 1.016)))))
 			(pin input line (at 10.16 2.54 180) (length 2.54) (name "SCLK" (effects (font (size 1.016 1.016)))) (number "13" (effects (font (size 1.016 1.016)))))
 			(pin input line (at 10.16 0 180) (length 2.54) (name "SDI" (effects (font (size 1.016 1.016)))) (number "14" (effects (font (size 1.016 1.016)))))
 			(pin output line (at 10.16 -2.54 180) (length 2.54) (name "SDO" (effects (font (size 1.016 1.016)))) (number "12" (effects (font (size 1.016 1.016)))))
 			(pin passive line (at 10.16 -7.62 180) (length 2.54) (name "DECAP" (effects (font (size 1.016 1.016)))) (number "8" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at -2.54 25.4 270) (length 2.54) (name "AVDD" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at 2.54 25.4 270) (length 2.54) (name "DVDD" (effects (font (size 1.016 1.016)))) (number "10" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at 0 -25.4 90) (length 2.54) (name "GND" (effects (font (size 1.016 1.016)))) (number "9" (effects (font (size 1.016 1.016)))))
-			(pin power_in line (at 0 -25.4 90) (length 2.54) (name "GND" (effects (font (size 1.016 1.016)))) (number "17" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at -2.54 55.88 270) (length 2.54) (name "AVDD" (effects (font (size 1.016 1.016)))) (number "7" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at 2.54 55.88 270) (length 2.54) (name "DVDD" (effects (font (size 1.016 1.016)))) (number "10" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at 0 -55.88 90) (length 2.54) (name "GND" (effects (font (size 1.016 1.016)))) (number "9" (effects (font (size 1.016 1.016)))))
+			(pin power_in line (at 0 -55.88 90) (length 2.54) (name "GND" (effects (font (size 1.016 1.016)))) (number "17" (effects (font (size 1.016 1.016)))))
 		)
 		(embedded_fonts no)
 	)
@@ -227,6 +227,329 @@
 			(pin power_in line (at -2.54 6.35 270) (length 2.54) (name "VS+" (effects (font (size 1.016 1.016)))) (number "6" (effects (font (size 1.016 1.016)))))
 			(pin input line (at 2.54 6.35 270) (length 2.54) (name "PD" (effects (font (size 1.016 1.016)))) (number "5" (effects (font (size 1.016 1.016)))))
 			(pin power_in line (at -2.54 -6.35 90) (length 2.54) (name "VS-" (effects (font (size 1.016 1.016)))) (number "2" (effects (font (size 1.016 1.016)))))
+		)
+		(embedded_fonts no)
+	)
+	(symbol "BAT54S"
+		(pin_names
+			(offset 0)
+			(hide yes)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "D"
+			(at 2.54 -5.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BAT54S"
+			(at -6.35 3.175 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 1.905 3.175 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
+			(at -3.048 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "schottky diode"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_fp_filters" "SOT?23*"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "BAT54S_0_1"
+			(polyline
+				(pts
+					(xy -4.445 1.27) (xy -4.445 -1.27) (xy -2.54 0) (xy -4.445 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -3.81 0) (xy -1.27 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -3.175 -1.27) (xy -3.175 -1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.54 1.27) (xy -1.905 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.54 -1.27) (xy -3.175 -1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -2.54 -1.27) (xy -2.54 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.905 1.27) (xy -1.905 1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy -1.905 0) (xy 1.905 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(circle
+				(center 0 0)
+				(radius 0.254)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type outline)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.27 0) (xy 3.81 0)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 1.905 1.27) (xy 1.905 -1.27) (xy 3.81 0) (xy 1.905 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.175 -1.27) (xy 3.175 -1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.81 1.27) (xy 4.445 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.81 -1.27) (xy 3.175 -1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 3.81 -1.27) (xy 3.81 1.27)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+			(polyline
+				(pts
+					(xy 4.445 1.27) (xy 4.445 1.016)
+				)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "BAT54S_1_1"
+			(pin passive line
+				(at -7.62 0 0)
+				(length 3.81)
+				(name "A"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 0 -5.08 90)
+				(length 5.08)
+				(name "COM"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "3"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin passive line
+				(at 7.62 0 180)
+				(length 3.81)
+				(name "K"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
 		)
 		(embedded_fonts no)
 	)

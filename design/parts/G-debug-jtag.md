@@ -64,3 +64,11 @@ SM03B footprint and confirm the pad row-to-MP distance (5.55 / 4.0 mm on the FG 
 
 - User: is the FPGA JTAG pinout above the one your programmer cable uses (an FT2232H/Tigard-style 6-pin, the Lattice HW-USBN-2B 1×8/2×5, or a
   2×5 1.27 mm ARM-style)? A 1×6 0.1 in header is assumed.
+
+## Phase 2: FG 1.0-3PWT land pattern check (2026-11-07)
+
+Read from the rendered drawing (datasheets/fg-1.0-3pwt.pdf, "PCB LAYOUT"; A = 2.00 mm for 3 pins):
+signal pads 0.60 × 1.55 mm (5.55 − 4.0) at 1.00 mm pitch; MP pads 1.20 × 1.80 mm, inner edge
+0.70 mm from the pin-1 centre (MP centres ±2.30 mm); 5.55 mm from the MP bottom edge to the signal-pad top
+edge. KiCad `JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal` has signal pads 0.6 × 1.55 at
+y −2.0, MP 1.2 × 1.8 at (±2.3, 1.875): the same pattern, so the KiCad footprint is kept for C2763613.

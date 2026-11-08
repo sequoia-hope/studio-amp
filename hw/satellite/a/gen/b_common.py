@@ -23,14 +23,15 @@ class B:
         horizontal two-pin part, n = positions given in kw."""
         val, fp, *_ = P[key]
         x, y = at
+        g = 2.54 if dnp else 0.0          # keep text clear of KiCad's DNP cross
         if tf == "l":
-            kw.update(ref_at=(x - 2.54, y - 1.27), value_at=(x - 2.54, y + 1.27), justify="right")
+            kw.update(ref_at=(x - 2.54 - g, y - 1.27), value_at=(x - 2.54 - g, y + 1.27), justify="right")
         elif tf in ("v", "vl"):
             # vertical text beside a vertical part, centred a little high so it clears the
             # ground symbol's net name below the part
             rr = 0 if rot in (90, 270) else 90
             yc = y if rot in (90, 270) else y - 3.81
-            xs_ = (x + 2.03, x + 3.81) if tf == "v" else (x - 3.81, x - 2.03)
+            xs_ = (x + 2.03 + g, x + 3.81 + g) if tf == "v" else (x - 3.81 - g, x - 2.03 - g)
             kw.update(ref_at=(xs_[0], yc), value_at=(xs_[1], yc), ref_rot=rr, justify="")
         elif tf == "h":
             kw.update(ref_at=(x, y - 2.54), value_at=(x, y + 2.54), justify="")
@@ -139,14 +140,14 @@ def lm5019_buck(b, dx, dy, refs, vals, vin, vout, ret, title, note):
     ret(co.pin("2"))
     vcc(p(121.92, 264.16), vout)
     w(p(121.92, 264.16), p(121.92, 269.24))
-    b.flag(p(114.3, 243.84))
+    b.flag(p(127.0, 246.38))
+    w(p(114.3, 246.38), p(127.0, 246.38))
     rr = R(refs["RR"], vals["RR"], p(99.06, 246.38), rot=90, tf="n", ref_at=p(99.06, 248.92),
            value_at=p(99.06, 251.46), justify="")
     cr = C(refs["CR"], "1n", p(109.22, 246.38), rot=90, tf="ha")
     w(p(91.44, 255.27), p(91.44, 246.38), rr.pin("1"))
     w(rr.pin("2"), cr.pin("1"))
     w(cr.pin("2"), p(114.3, 246.38), p(114.3, 269.24))
-    w(p(114.3, 243.84), p(114.3, 246.38))
     ca = C(refs["CAC"], "100n", p(104.14, 260.35), tf="v")
     w(p(104.14, 246.38), ca.pin("1"))
     w(ca.pin("2"), p(104.14, 287.02))

@@ -127,11 +127,10 @@ def sym_t1():
             body += _coil(sgn * 2.54, yt, yb, -sgn * 1.27)
             yd = yt - 1.27 if dot_top else yb + 1.27
             body += _circle((sgn * 4.064, yd), 0.381, "outline")
-            body += _text(nm, sgn * 6.35, (yt + yb) / 2)
+            body += _text(nm + " 4T", sgn * 6.35, (yt + yb) / 2)
             pins += (_pin("passive", tp, nm + ("_S" if dot_top else "_F"), sgn * 7.62, yt, 0 if sgn < 0 else 180)
                      + _pin("passive", bp, nm + ("_F" if dot_top else "_S"), sgn * 7.62, yb, 0 if sgn < 0 else 180))
     body += _poly([(-0.508, 22.86), (-0.508, -17.78)]) + _poly([(0.508, 22.86), (0.508, -17.78)])
-    body += _text("4T each", 0, -19.05)
     return _symbol("750343576", "T", "750343576", "studio_B:Wurth_750343576_ER19",
                    "design/datasheets/we-750343576.pdf",
                    "Würth WE-PoE++ transformer, 5 x 4 T, 100 uH (N1+N2), 2250 V DC N1,N2,N5 => N3,N4",
@@ -179,7 +178,7 @@ def write_symbols():
 
 # ------------------------------------------------------------------ footprints
 
-def _fp(name, descr, pads, body_w, body_h, attr="smd", extra=""):
+def _fp(name, descr, pads, body_w, body_h, attr="smd", extra="", silk_rect=True):
     hw, hh = body_w / 2, body_h / 2
     lines = ""
     for (x1, y1, x2, y2), layer, w in [((-hw, -hh, hw, -hh), "F.Fab", 0.1), ((hw, -hh, hw, hh), "F.Fab", 0.1),
@@ -194,8 +193,9 @@ def _fp(name, descr, pads, body_w, body_h, attr="smd", extra=""):
               f'\t\t\t(width 0.05)\n\t\t\t(type solid)\n\t\t)\n\t\t(fill no)\n\t\t(layer "F.CrtYd")\n\t\t(uuid "{_u()}")\n\t)\n')
     # silk: body outline outside the pads, plus pin-1 dot
     sx, sy = hw + 0.15, hh + 0.15
-    lines += (f'\t(fp_rect\n\t\t(start {_f(-sx)} {_f(-sy)})\n\t\t(end {_f(sx)} {_f(sy)})\n\t\t(stroke\n'
-              f'\t\t\t(width 0.12)\n\t\t\t(type solid)\n\t\t)\n\t\t(fill no)\n\t\t(layer "F.SilkS")\n\t\t(uuid "{_u()}")\n\t)\n')
+    if silk_rect:
+        lines += (f'\t(fp_rect\n\t\t(start {_f(-sx)} {_f(-sy)})\n\t\t(end {_f(sx)} {_f(sy)})\n\t\t(stroke\n'
+                  f'\t\t\t(width 0.12)\n\t\t\t(type solid)\n\t\t)\n\t\t(fill no)\n\t\t(layer "F.SilkS")\n\t\t(uuid "{_u()}")\n\t)\n')
     pad_txt = ""
     for num, x, y, w, h in pads:
         pad_txt += (f'\t(pad "{num}" smd roundrect\n\t\t(at {_f(x)} {_f(y)})\n\t\t(size {_f(w)} {_f(h)})\n'
@@ -211,16 +211,32 @@ def _fp(name, descr, pads, body_w, body_h, attr="smd", extra=""):
 
 
 def write_footprints():
-    # Würth 750343576 recommended land pattern (datasheet p.1): pads 3.13 x 1.89 mm, columns
-    # 21.23 mm outer-to-outer, pitch 2.8 mm, six positions per side. Left column 1..6 (bottom to
-    # top), right column 7..11 top to bottom with no pin 9. PROVISIONAL: the drawing is not fully
-    # dimensioned (4.57 / 3.18 mm marks); confirm against a sample before phase 6.
-    xc = 21.23 / 2 - 3.13 / 2
-    ys = [7.0, 4.2, 1.4, -1.4, -4.2, -7.0]          # bottom to top (y down = +)
-    pads = [(str(n), -xc, y, 3.13, 1.89) for n, y in zip([1, 2, 3, 4, 5, 6], ys)]
-    pads += [(n, xc, y, 3.13, 1.89) for n, y in zip(["7", "8", "10", "11"], [-7.0, -4.2, 4.2, 7.0])]
-    _fp("Wurth_750343576_ER19", "Wurth 750343576 WE-PoE++ ER19 SMD transformer, land per datasheet p.1 (provisional)",
-        pads, 21.08, 23.37)
+    # Würth 750343576 "Recommended Land Pattern" (we-750343576.pdf p.1), TOP VIEW, KiCad y down.
+    # Dimensions: 21.23 mm between the column centres (the arrow runs pad centre to pad centre),
+    # pads 3.13 x 1.89 mm. Left column (primary) 1,2,3 / 4,5,6 at 2.8 mm pitch with 4.57 mm between
+    # pads 3 and 4; right column (secondary) 11,10 / 8,7 with pads 10 and 8 at +-3.18 mm from the
+    # centre line and 11 / 7 one 3.16 mm pitch further out (measured from the vector drawing; the
+    # sheet does not dimension it). Pin 1 upper left, 6 lower left, 11 upper right, 7 lower right.
+    # Phase 2 review B-M1: the first version copied the pad-side (mirrored) view; fixed here.
+    xc = 21.23 / 2
+    left = {"1": -7.885, "2": -5.085, "3": -2.285, "4": 2.285, "5": 5.085, "6": 7.885}
+    right = {"11": -6.36, "10": -3.18, "8": 3.18, "7": 6.36}
+    pads = [(n, -xc, y, 3.13, 1.89) for n, y in left.items()] + [(n, xc, y, 3.13, 1.89) for n, y in right.items()]
+    hw, hh = 21.08 / 2, 23.37 / 2
+    ln = lambda x1, y1, x2, y2, layer, wd: (f'\t(fp_line\n\t\t(start {_f(x1)} {_f(y1)})\n\t\t(end {_f(x2)} {_f(y2)})\n'
+                                           f'\t\t(stroke\n\t\t\t(width {wd})\n\t\t\t(type solid)\n\t\t)\n'
+                                           f'\t\t(layer "{layer}")\n\t\t(uuid "{_u()}")\n\t)\n')
+    sx = xc - 3.13 / 2 - 0.3            # silk stops clear of the pad columns
+    extra = (ln(-sx, -hh - 0.15, sx, -hh - 0.15, "F.SilkS", 0.12) + ln(-sx, hh + 0.15, sx, hh + 0.15, "F.SilkS", 0.12)
+             # pin-1 marks: silk dot above pad 1, fab chamfer at the pin-1 corner, barrier line on fab
+             + f'\t(fp_circle\n\t\t(center {_f(-xc)} -9.6)\n\t\t(end {_f(-xc + 0.35)} -9.6)\n\t\t(stroke\n'
+               f'\t\t\t(width 0.12)\n\t\t\t(type solid)\n\t\t)\n\t\t(fill yes)\n\t\t(layer "F.SilkS")\n'
+               f'\t\t(uuid "{_u()}")\n\t)\n'
+             + ln(-hw, -hh + 2.0, -hw + 2.0, -hh, "F.Fab", 0.1)
+             + ln(0, -hh, 0, hh, "F.Fab", 0.1))
+    _fp("Wurth_750343576_ER19", "Wurth 750343576 WE-PoE++ ER19 SMD transformer, top-view land per datasheet p.1. "
+        "Left column 1-6 primary, right column 7/8/10/11 secondary; pin 1 upper left",
+        pads, 21.08, 23.37, extra=extra, silk_rect=False)
     # Sumida CDRH127/LD land pattern (sumida-cdrh127ldnp.pdf p.1, "Land pattern"): two pads, each
     # 5.4 mm wide x 2.9 mm deep, outer edges 12.8 mm apart (the 7.0 mm band is silk, not copper).
     # Drawn rotated 90 deg so pads 1/2 sit left/right: 2.9 x 5.4 at x = +-(12.8 - 2.9) / 2.

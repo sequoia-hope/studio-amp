@@ -103,7 +103,8 @@ def build():
     vcc((134.62, 109.22), "V5_CLK")
     vcc(os_.pin("3"), "V5_CLK")             # CLR high
     cx, rcx = os_.pin("6"), os_.pin("7")
-    c264 = C("C264", "470p", (129.54, cx[1]), rot=90, tf="ha")
+    c264 = C("C264", "470p", (129.54, cx[1]), rot=90, tf="n", ref_at=(131.45, 127.0),
+             value_at=(129.54, 119.38), justify="")
     w(cx, c264.pin("2"))
     w(c264.pin("1"), (125.73, rcx[1]), rcx)
     r259 = R("R259", "10k", (118.11, rcx[1]), rot=90, tf="n", ref_at=(118.11, rcx[1] + 2.54),
@@ -158,7 +159,7 @@ def build():
     lm5019_buck(b, 203.2, -203.2, dict(U="U251", L="L251", RON="R251", RFBT="R252", RFBB="R253", RUVT="R254",
                                        RUVB="R255", RR="R256", CIN="C251", CIN2="C252", CVCC="C253",
                                        CBST="C254", COUT="C255", CR="C256", CAC="C257"),
-                dict(RON="280k", RFBT="71k5", RUVT="51k1", RR="82k", L="L220"), "VBUS", "VSR", gnd,
+                dict(RON="280k_8", RFBT="71k5", RUVT="51k1_8", RR="82k", L="L220"), "VBUS", "VSR", gnd,
                 "VSR 10 V BIAS BUCK (SECONDARY)",
                 "VSR 10 V (9.7-10.3), <= 37 mA: NCP4306s, TL431s, opto LED, INA281,\n"
                 "droop comparator. Starts at VBUS 7.48 V (51.1k/10k), dropout below\n"

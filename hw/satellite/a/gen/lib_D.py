@@ -161,7 +161,7 @@ SYMBOLS = [
                    ("6", "OUTB", "output", "R", -5.08),
                    ("8", "V+", "power_in", "T", 0.0),
                    ("5", "V-", "power_in", "B", 0.0),
-               ], w=10.16, h=20.32),
+               ], w=15.24, h=25.4),
     # SN74LVC1G74, DCU VSSOP-8 (datasheet Fig. 5-1, pin functions).
     box_symbol("74LVC1G74_DCU", "U", "74LVC1G74", "Package_SO:VSSOP-8_2.3x2mm_P0.5mm",
                "Single D flip-flop with preset and clear, VSSOP-8 DCU",
@@ -179,14 +179,14 @@ SYMBOLS = [
     box_symbol("ADS7038-Q1", "U", "ADS7038-Q1", "Package_DFN_QFN:WQFN-16-1EP_3x3mm_P0.5mm_EP1.68x1.68mm",
                "8-channel 12-bit 1 MSPS SAR ADC, SPI, WQFN-16 RTE",
                "design/datasheets/ads7038q1.pdf", [
-                   ("15", "AIN0", "input", "L", 20.32),
-                   ("16", "AIN1", "input", "L", 17.78),
-                   ("1", "AIN2", "input", "L", 15.24),
+                   ("15", "AIN0", "input", "L", 50.8),
+                   ("16", "AIN1", "input", "L", 38.1),
+                   ("1", "AIN2", "input", "L", 25.4),
                    ("2", "AIN3", "input", "L", 12.7),
                    ("3", "AIN4", "input", "L", -12.7),
-                   ("4", "AIN5", "input", "L", -15.24),
-                   ("5", "AIN6", "input", "L", -17.78),
-                   ("6", "AIN7", "input", "L", -20.32),
+                   ("4", "AIN5", "input", "L", -25.4),
+                   ("5", "AIN6", "input", "L", -38.1),
+                   ("6", "AIN7", "input", "L", -50.8),
                    ("11", "~{CS}", "input", "R", 5.08),
                    ("13", "SCLK", "input", "R", 2.54),
                    ("14", "SDI", "input", "R", 0.0),
@@ -196,7 +196,7 @@ SYMBOLS = [
                    ("10", "DVDD", "power_in", "T", 2.54),
                    ("9", "GND", "power_in", "B", 0.0),
                    ("17", "GND", "power_in", "B", 0.0),
-               ], w=15.24, h=45.72),
+               ], w=15.24, h=106.68),
     # ADS8353, PW TSSOP-16 (datasheet p.4 pin functions).
     box_symbol("ADS8353_PW", "U", "ADS8353", "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
                "Dual 16-bit 600 kSPS simultaneous-sampling SAR ADC, TSSOP-16",
@@ -230,6 +230,18 @@ SYMBOLS = [
                    ("2", "VS-", "power_in", "B", -2.54),
                ], w=10.16, h=7.62),
 ]
+
+
+def bat54s_symbol():
+    """KiCad's Diode:BAT54S with the pin names hidden (K/A/COM collide with nearby labels when rotated)."""
+    src = Path("/usr/share/kicad/symbols/Diode.kicad_sym").read_text()
+    i = src.index('\t(symbol "BAT54S"\n')
+    j = src.index("\n\t)\n", i) + 3
+    blk = src[i:j].rstrip("\n")
+    return blk.replace("(pin_names\n\t\t\t(offset 0)\n\t\t)", "(pin_names\n\t\t\t(offset 0)\n\t\t\t(hide yes)\n\t\t)", 1)
+
+
+SYMBOLS.append(bat54s_symbol())
 
 
 def write_symbols():
@@ -285,19 +297,47 @@ def finish(lines, name, cy1, cy2, cx1, cx2, ref_y, val_y):
     (PRETTY / f"{name}.kicad_mod").write_text("\n".join(out) + "\n")
 
 
+def frect(x1, y1, x2, y2, layer):
+    """Filled rectangle (mask opening on F.Mask, stencil aperture on F.Paste)."""
+    return (f"\t(fp_rect (start {f(x1)} {f(y1)}) (end {f(x2)} {f(y2)}) (stroke (width 0) (type solid)) "
+            f"(fill yes) (layer {q(layer)}) (uuid {q(uuid.uuid4())}))")
+
+
+def cu_pad(num, x, y, w, h):
+    """Copper-only SMD pad: the mask opening and paste are drawn separately (solder-mask-defined)."""
+    return (f"\t(pad {q(num)} smd rect (at {f(x)} {f(y)}) (size {f(w)} {f(h)}) (layers \"F.Cu\") "
+            f"(uuid {q(uuid.uuid4())}))")
+
+
 def fp_igb070():
     """IGB070S10S1 PG-TSON-4, footprint drawing Fig. 2 p.14 (top view, mm). Rows: top = pin 3 (source),
-    middle = pin 2 (drain), bottom = pin 1 (gate, left) and pin 4 (source, right); outer edges at
-    +/-1.505. The datasheet pads are solder-mask defined with notched edges; drawn here as their
-    full copper rectangles (notches filled, same net) with paste reduced 15 %. Phase 6 reserves the
-    IGC033S10S1 (PG-TSON-6, 3 x 5 mm) courtyard around each site (D-gan-fet.md)."""
+    middle = pin 2 (drain), bottom = pin 1 (gate, left) and pin 4 (source, right).
+    Solder-mask defined, as the datasheet requires: copper is the Fig. 2 pad plus 0.05 mm all round;
+    the mask windows are Fig. 2's (0.4 mm tall on the inner side of the 0.605 mm outer rows, 0.35 mm on
+    the drain bar); the small mask notches on the outer edges of the outer rows are left closed.
+    Stencil apertures are Fig. 2's split pattern for a 0.13 mm stencil: 3 x 0.93 x 0.36 (pin 3),
+    3 x 0.76 x 0.31 (pin 2), 1 x 0.71 x 0.36 (pin 1), 2 x 0.88 x 0.36 (pin 4).
+    Phase 6 reserves the IGC033S10S1 (PG-TSON-6, 3 x 5 mm) courtyard around each site (D-gan-fet.md)."""
     name = "IGB070S10S1_PG-TSON-4"
-    L = fp_header(name, "Infineon PG-TSON-4 3.2x3.0 mm, IGB070S10S1 (datasheet Fig. 2 p.14)", tags="GaN TSON")
-    L += [smd("3", 0, -1.2025, 3.2, 0.605, paste_ratio=-0.15, rr=0.05),
-          smd("2", 0, 0, 3.2, 0.35, paste_ratio=-0.15, rr=0.05),
-          smd("1", -1.175, 1.2025, 0.85, 0.605, paste_ratio=-0.15, rr=0.05),
-          smd("4", 0.625, 1.2025, 1.95, 0.605, paste_ratio=-0.15, rr=0.05),
-          rect(-1.6, -1.5, 1.6, 1.5, "F.Fab", 0.1),
+    L = fp_header(name, "Infineon PG-TSON-4 3.2x3.0 mm, IGB070S10S1, solder-mask-defined (datasheet Fig. 2 p.14)",
+                  tags="GaN TSON")
+    e = 0.05
+    L += [cu_pad("3", 0, -1.2025, 3.2 + 2 * e, 0.605 + 2 * e),
+          cu_pad("2", 0, 0, 3.2 + 2 * e, 0.35 + 2 * e),
+          cu_pad("1", -1.175, 1.2025, 0.85 + 2 * e, 0.605 + 2 * e),
+          cu_pad("4", 0.625, 1.2025, 1.95 + 2 * e, 0.605 + 2 * e)]
+    # solder-mask windows (Fig. 2)
+    L += [frect(-1.6, -1.3, 1.6, -0.9, "F.Mask"),
+          frect(-1.6, -0.175, 1.6, 0.175, "F.Mask"),
+          frect(-1.6, 0.9, -0.75, 1.3, "F.Mask"),
+          frect(-0.35, 0.9, 1.6, 1.3, "F.Mask")]
+    # stencil apertures (Fig. 2, right)
+    def ap(cx, cy, w, h):
+        return frect(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2, "F.Paste")
+    L += [ap(x, -1.1, 0.93, 0.36) for x in (-1.115, 0.0, 1.115)]
+    L += [ap(x, 0.0, 0.76, 0.31) for x in (-1.2, 0.0, 1.2)]
+    L += [ap(-1.225, 1.1, 0.71, 0.36), ap(0.11, 1.1, 0.88, 0.36), ap(1.14, 1.1, 0.88, 0.36)]
+    L += [rect(-1.6, -1.5, 1.6, 1.5, "F.Fab", 0.1),
           line(-1.75, 1.65, -1.75, 1.95, "F.SilkS"), line(-1.75, 1.95, -1.3, 1.95, "F.SilkS"),
           line(-1.75, -1.65, 1.75, -1.65, "F.SilkS")]
     finish(L, name, -2.0, 2.2, -2.0, 2.0, -2.6, 2.7)

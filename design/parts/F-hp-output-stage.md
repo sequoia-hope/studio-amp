@@ -188,3 +188,14 @@ mostly a resistive 10 Ω load above 3.4 MHz, which keeps the emitter followers s
   - the sustained-short case with both channels, checking the 43 mA limit, the 11.3 mA op-amp
     current and the Tj figures above;
   - stability with 4.7 nF Zobel and 0–10 nF cable.
+
+## Phase 2 parts cross-check (2026-11-08)
+
+- B-1: the bottom reference BAV99s (D1005/D1011) had pin 3 tied to GND through R_REF2's ground
+  end, which shorted −15 V to GND. R_REF moved off the midpoint, and pin 3 is now a no-connect on
+  all four reference diodes. Netlist check, D1005: pin 1 = base node, pin 2 = −15 V, pin 3
+  unconnected; D1004: pin 1 = +15 V, pin 2 = base node, pin 3 unconnected.
+- Bias re-derived with the series pair intact: VR = 2 VF ≈ 1.38 V, so (1.38 − 0.65)/180 Ω =
+  4.0 mA per source, as above. No value changes.
+- Every other BAV99/BAT54x on audio_out and audio_in was checked in the netlist: all midpoint pins
+  go to their intended node.

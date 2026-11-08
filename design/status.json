@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "board": "satellite",
-  "phase": "2 schematic",
-  "doing": "Phase 2: schematic. Project skeleton and 13-sheet hierarchy in hw/satellite/a (ERC clean on placeholders). Six block agents are drawing their sheets with generator scripts: A poe_in; B iso_dcdc + iso_aux; C/G rails + io; D amp_woofer/tweeter/sense; E mcu/fpga/ethernet; F audio_out/in.",
+  "phase": "3 net classification",
+  "doing": "Gate 2 passed 2026-11-08: 13-sheet schematic, 1261 symbols, ERC 0, style pass, parts cross-checked against audits, visual review 8.5/10. Next: phase 3, nets.csv.",
   "needs_user": [
     {
       "id": "wurth-samples",
@@ -21,9 +21,11 @@
     }
   ],
   "checks": {
-    "parts sourcing": "285 LCSC numbers swept 2026-11-08: 277 normal; 11 flagged, all rejected alternatives",
-    "datasheets": "253 listed, 0 missing",
-    "phase 1 review": "4 passes, final verdict: passes"
+    "ERC": "0 errors, 0 warnings",
+    "style check": "PASS, 1 explained warning (C331 stacked pin)",
+    "sync": "PASS, 1181 parts with LCSC+MPN",
+    "parts cross-check": "A-G PASS",
+    "visual review": "8.5/10 PASS"
   },
   "gates": {
     "0": {
@@ -33,9 +35,21 @@
     "1": {
       "state": "passed",
       "stale_because": null
+    },
+    "2": {
+      "state": "passed",
+      "stale_because": null
     }
   },
   "links": [
+    {
+      "label": "Gate 2",
+      "href": "design/gates/phase2.md"
+    },
+    {
+      "label": "Schematic PDF",
+      "href": "design/renders/schematic.pdf"
+    },
     {
       "label": "Gate 1",
       "href": "design/gates/phase1.md"
@@ -57,9 +71,10 @@
       "href": "design/decisions.md"
     }
   ],
-  "updated": "2026-11-08T01:54:21Z",
+  "updated": "2026-11-08T03:39:06Z",
   "gates_passed": [
     0,
-    1
+    1,
+    2
   ]
 }

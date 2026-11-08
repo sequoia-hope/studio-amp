@@ -199,6 +199,28 @@ volt-second margin is twice that of the 750343576 build.
 - Symbol `studio_B:750343576` draws the 1:2 wiring: N5 at the top left, N1 inverted so the two
   dotted starts (2, 3) sit together and join VPRI, the finishes (4, 5) join SW_PRI outside; N3
   over N4 on the right with the 10 → 8 series link. Dots at each start.
-- Footprint `studio_B:Wurth_750343576_ER19` from the datasheet p.1 land (3.13 × 1.89 mm pads,
-  2.8 mm pitch, 21.23 mm outer span). **Provisional**: the drawing is not fully dimensioned;
-  confirm against the Würth samples before phase 6.
+- Footprint `studio_B:Wurth_750343576_ER19`, **corrected for phase 2 review B-M1** (the first version
+  copied the mirrored pad-side view, which would have put primary pins on secondary pads). Now the
+  top-view "Recommended Land Pattern" (p.1), checked pad by pad by script against the vector drawing
+  (scale set by the 21.23 mm dimension, every pad within 0.05 mm):
+
+  | Pad | x (mm) | y (mm, KiCad y down) | Side |
+  |---|---|---|---|
+  | 1 / 2 / 3 | −10.615 | −7.885 / −5.085 / −2.285 | primary (upper left = pin 1) |
+  | 4 / 5 / 6 | −10.615 | +2.285 / +5.085 / +7.885 | primary |
+  | 11 / 10 | +10.615 | −6.36 / −3.18 | secondary |
+  | 8 / 7 | +10.615 | +3.18 / +6.36 | secondary |
+
+  Pads 3.13 × 1.89 mm. The 21.23 mm arrow runs pad centre to pad centre (not outer edge), and the
+  left column has a 4.57 mm gap between pads 3 and 4 (pitch 2.8 mm otherwise); the right column's
+  10/8 sit ±3.18 mm from the centre line, 11/7 one ≈ 3.16 mm pitch further out (measured; not
+  dimensioned). Pin-1 dot on silk, chamfered corner and the barrier centre line on fab; silk stays
+  off the pad columns.
+- **Creepage/clearance (R-32):** primary-to-secondary pad edges are 21.23 − 3.13 = **18.1 mm** apart
+  on the surface under the body. R-32 is a 1500 Vrms 60 s withstand at ≤ 57 V working; basic
+  insulation needs ≈ 1.5 mm clearance and ≈ 1.2 mm creepage at that working voltage (IEC 62368-1,
+  pollution degree 2, material group IIIb), and the board barrier is set by block A's ISO7740 at
+  8 mm. 18.1 mm leaves the barrier keepout (phase 4) free to run straight under T1; no copper of
+  either side may enter the 18.1 mm gap.
+- Still **provisional** on the unlabelled right-column pitch: confirm 11/7 against the Würth samples
+  before phase 6.

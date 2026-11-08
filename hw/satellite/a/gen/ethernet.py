@@ -104,10 +104,10 @@ d.gnd(pin("25"))
 top = phy.pin("6")[1]
 y1, y2 = top - 15.24, top - 30.48
 x = pin("6")[0]
-sch.wire(pin("6"), (x, y1), (x - 40.64, y1))
+sch.wire(pin("6"), (x, y1), (x - 45.72, y1))
 d.cap_down("1u", (x - 25.4, y1), decouples=f"{U}.6")
-d.cap_down("470p", (x - 33.02, y1), decouples=f"{U}.6")
-flag((x - 40.64, y1))
+d.cap_down("470p", (x - 35.56, y1), decouples=f"{U}.6")
+flag((x - 45.72, y1))
 sch.label("VDDCR", (x - 22.86, y1))
 x = pin("9")[0]
 sch.wire(pin("9"), (x, y2), (x - 27.94, y2))
@@ -175,7 +175,7 @@ vc = sch.symbol("studio_E:VCXO_3225", d.ref("Y"), "24.576MHz VCXO", (VX, VY),
                 fields=fields("SX3V24.576B20100F30TNN", "SCTF", "C5179997",
                               Note="alternative on the same land: YXC OT2EL4C4JI-111OLP-24.576M (C5203547), "
                                    "fit R(0R) to VDD, remove the series 0R"),
-                ref_at=(VX + 2.54, VY + 10.16), value_at=(VX + 2.54, VY + 12.7))
+                ref_at=(VX + 5.08, VY + 12.7), value_at=(VX + 5.08, VY + 15.24))
 vin, vout, vvdd = vc.pin("1"), vc.pin("3"), vc.pin("4")
 d.gnd(vc.pin("2"))
 # tune: VCXO_TUNE (ECP5 N4, delta-sigma) -> 100k -> 1u -> 100k -> 1u -> 0R -> Vc  (2 poles at 1.59 Hz)
@@ -198,13 +198,13 @@ sch.wire(b3, n3, vin)
 # shared land: XO's pin 1 is OE -> 0R to VDD (DNP with the VCXO fitted)
 yr = VY - 20.32
 rx = d.part("0R", (n3[0], VY - 7.62), dnp=True, note="fit only with the fixed XO (C5203547); then remove R(0R) in the tune path",
-            ref_at=(n3[0] - 2.54, VY - 7.62), value_at=(n3[0] - 2.54, VY - 5.08), justify="right")
+            ref_at=(n3[0] - 3.81, VY - 8.89), value_at=(n3[0] - 3.81, VY - 6.35), justify="right")
 sch.wire(n3, rx.pin("2"))
 sch.wire(rx.pin("1"), (n3[0], yr))
 sch.wire(vvdd, (vvdd[0], yr))
 sch.wire((n3[0], yr), (vvdd[0] + 30.48, yr))
-d.cap_down("100n", (vvdd[0] + 12.7, yr), decouples=f"{vc.ref}.4")
-d.cap_down("4u7_0603", (vvdd[0] + 20.32, yr), decouples=f"{vc.ref}.4")
+d.cap_down("100n", (vvdd[0] + 7.62, yr), decouples=f"{vc.ref}.4")
+d.cap_down("4u7_0603", (vvdd[0] + 17.78, yr), decouples=f"{vc.ref}.4")
 fv = d.part("FB221", (vvdd[0] + 38.1, yr), rot=90, justify="",
             ref_at=(vvdd[0] + 38.1, yr - 5.59), value_at=(vvdd[0] + 38.1, yr - 3.05))
 lo = min(fv.pin("1"), fv.pin("2"))

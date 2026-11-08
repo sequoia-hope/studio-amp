@@ -95,3 +95,8 @@ within ≈ 1 ms.
 453 kΩ 0.5 % 0603 is not stocked at LCSC. The +3V3 divider is now **R1 = 100 kΩ 0.1 % (C122538)
 over R2 = 22.0 kΩ 0.1 % (C469656)**: 0.6 V × (1 + 100/22.0) = **3.327 V** (±0.2 % from the
 resistors, plus the VFB tolerance above). Schematic: rails sheet, U-buck "3V3".
+
+## Phase 2 (parts cross-check C-m1, 2026-11-07)
+
+C3 feed-forward drawn as a DNP footprint across each R_top: 22 pF C0G 0603 (CL10C220JB8NNNC,
+C1653, basic), C316 (3V3) and C320 (1V1). Not fitted in FPWM.

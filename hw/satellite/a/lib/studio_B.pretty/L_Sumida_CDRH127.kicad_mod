@@ -7,7 +7,7 @@
 	(property "Reference" "REF**"
 		(at 0 -7.65 0)
 		(layer "F.SilkS")
-		(uuid "1ade8421-1f39-49ec-adbe-dcd794a35332")
+		(uuid "3325d1a4-d74e-44bd-af33-2dce09951b00")
 		(effects
 			(font
 				(size 1 1)
@@ -18,7 +18,7 @@
 	(property "Value" "L_Sumida_CDRH127"
 		(at 0 7.65 0)
 		(layer "F.Fab")
-		(uuid "16b64c9d-8531-4757-9443-a160c9608381")
+		(uuid "3e72dab2-ba46-4c5c-aea7-9ef3cd8684a8")
 		(effects
 			(font
 				(size 1 1)
@@ -35,7 +35,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "0198d1d1-cf49-4348-9cd2-63b124a1688d")
+		(uuid "4288662f-94a3-4a2f-91e9-3d88aa1a2af2")
 	)
 	(fp_line
 		(start 6.15 -6.15)
@@ -45,7 +45,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "72b58a39-8aa7-4e25-9ad6-ad5e030f69cb")
+		(uuid "0347c98b-d646-42c3-9a0f-a6930362ad2e")
 	)
 	(fp_line
 		(start 6.15 6.15)
@@ -55,7 +55,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "44b92be6-cb32-44c8-98af-d1d95b430802")
+		(uuid "6daddf88-5d34-4b5e-9d2f-1f40307260d5")
 	)
 	(fp_line
 		(start -6.15 6.15)
@@ -65,7 +65,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "57f4ea9f-edc5-4872-9ae2-7b248f91853e")
+		(uuid "4d46f4d9-da6e-4998-aefd-35a2e3811949")
 	)
 	(fp_rect
 		(start -6.9 -6.65)
@@ -76,7 +76,7 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "c0646732-50b9-4f22-bcf0-a2debc5b11ed")
+		(uuid "196322a3-654e-4768-bb7b-b666568c179e")
 	)
 	(fp_rect
 		(start -6.3 -6.3)
@@ -87,21 +87,21 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "511def4f-2413-4dbe-904a-defc65294cc6")
+		(uuid "c7c178c4-c355-470c-925a-4f8434fb2593")
 	)
 	(pad "1" smd roundrect
 		(at -4.95 0)
 		(size 2.9 5.4)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.1)
-		(uuid "f81761b4-a4c5-4159-91ab-e6169690438b")
+		(uuid "69736cb1-4fc8-4678-8e52-72b7dbc715de")
 	)
 	(pad "2" smd roundrect
 		(at 4.95 0)
 		(size 2.9 5.4)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.1)
-		(uuid "0b5282a3-7127-4d20-bba6-906c2594a1dd")
+		(uuid "b7d138c4-2151-4c75-a861-f69dff2d0092")
 	)
 	(embedded_fonts no)
 )

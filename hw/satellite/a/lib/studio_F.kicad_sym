@@ -51,6 +51,7 @@
 		(embedded_fonts no)
 	)
 	(symbol "HFD4"
+		(pin_names (hide yes))
 		(exclude_from_sim no) (in_bom yes) (on_board yes)
 		(property "Reference" "K" (at -7.62 11.43 0) (effects (font (size 1.27 1.27))))
 		(property "Value" "HFD4/5-SR" (at 7.62 11.43 0) (effects (font (size 1.27 1.27))))
@@ -104,6 +105,7 @@
 		(embedded_fonts no)
 	)
 	(symbol "NMJ6HCD2_F"
+		(pin_numbers (hide yes))
 		(exclude_from_sim no) (in_bom yes) (on_board yes)
 		(property "Reference" "J" (at 0.0 11.43 0) (effects (font (size 1.27 1.27))))
 		(property "Value" "NMJ6HCD2" (at 0.0 -16.51 0) (effects (font (size 1.27 1.27))))

@@ -10,7 +10,7 @@ Datasheets: datasheets/ads8353.pdf (TI SBAS584B, Aug 2014; read: all sections in
 |---|---|---|---|
 | U_PF (one per amp channel) | TI ADS8353IPWR, TSSOP-16 | 2 | `C701691 ADS8353IPWR (TI, TSSOP-16): extended, JLC stock 881, lifecycle normal` |
 | U_DRV (one per output terminal) | TI OPA836IDBVR, SOT-23-6, the ADC driver the ADS8353 datasheet itself shows | 4 | `C111589 OPA836IDBVR (TI, SOT-23-6): extended, JLC stock 7848, lifecycle normal` |
-| R_PT / R_PB | divider 140 kΩ / 10.0 kΩ, **thin film 0.1 %, 25 ppm** 0603 (Yageo RT0603B family, whose 2.43 kΩ member C861815 is in stock; exact LCSC numbers in phase 2) | 4 + 4 | family checked: `C861815 RT0603BRE072K43L (YAGEO, 0603): extended, JLC stock 3699, lifecycle normal` |
+| R_PT / R_PB | divider 140 kΩ / 10.0 kΩ, **thin film 0.1 %, 25 ppm** 0603: RT0603**BRD**07140KL `C861125` (stock 1070, normal, 2026-11-07) / RT0603BRD0710KL `C95204`. Both are 25 ppm (TCR code D = 25, E = 50 ppm/°C, datasheets/yageo-rt0603.pdf p.1), so the ratio tracks; phase 2 parts review D-m2 replaced a 50 ppm BRE 140 k. | 4 + 4 | family checked: `C861815 RT0603BRE072K43L (YAGEO, 0603): extended, JLC stock 3699, lifecycle normal` |
 | R/C kickback filter | 20 Ω + 1 nF C0G per ADC input | 4 + 4 | C237166 (C0G) |
 | C_REF | 10 µF on REFIO_A and REFIO_B (datasheet §8.3.1) | 4 | Samsung CL10A106KP8NNNC, X5R 0603 10 µF 10 V: `C19702` (basic; phase 2) |
 

@@ -110,3 +110,9 @@ type: `C16430 TPS7A4901DGNR (TI, HVSSOP-8): extended, JLC stock 5633, lifecycle 
 already include the ≈ 12 mA +5V_A LDO input, so the real +15 V load is 120/200 mA. The 135/215 mA
 rows above count +5V_A twice. They stay as margin: the real fault case is (18.9 − 14.94) × 0.2 =
 0.79 W → +50 °C → ≈ 105 °C TJ.
+
+## Phase 2 (parts cross-check C-m2, 2026-11-07)
+
++5V_A LDO (U312) input cap changed from 10 µF 25 V to **10 µF 50 V X7R 1206 (CL31B106KBHNNNE,
+C89632)**, same 1206 size: at 15 V bias the 25 V part derated to ≈ 5 µF. The output cap stays
+10 µF 25 V (5 V bias).

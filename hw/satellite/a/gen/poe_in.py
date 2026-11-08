@@ -159,8 +159,8 @@ sch.text("Isolation barrier (R-32, 1500 Vrms):\nthis box edge, through J101", (1
 cols = [  # FET x, centre-tap net, gate nets, refs (pair set A: CT12/CT36, pair set B: CT45/CT78)
     (101.6, "POE_CT12", "TG12", "BG12", "Q101", "Q102"),
     (134.62, "POE_CT36", "TG36", "BG36", "Q103", "Q104"),
-    (180.34, "POE_CT45", "TG45", "BG45", "Q105", "Q106"),
-    (213.36, "POE_CT78", "TG78", "BG78", "Q107", "Q108"),
+    (175.26, "POE_CT45", "TG45", "BG45", "Q105", "Q106"),
+    (208.28, "POE_CT78", "TG78", "BG78", "Q107", "Q108"),
 ]
 FET = f("PSMN040-100MSEX", "Nexperia", "C458214")
 for x, ct, tg, bg, rhs, rls in cols:
@@ -181,7 +181,7 @@ flag((157.48, OUTN_Y))
 flag((157.48, VPRI_Y))
 sch.box((93.98, 33.02), (226.06, 109.22), None)
 sch.text("PAIR SET A (pins 1-2 / 3-6)", (99.06, 36.83), size=1.524)
-sch.text("PAIR SET B (pins 4-5 / 7-8)", (177.8, 36.83), size=1.524)
+sch.text("PAIR SET B (pins 4-5 / 7-8)", (172.72, 36.83), size=1.524)
 sch.text("Two ideal-diode bridges. High-side FET: drain VPRI, source CT; low-side: drain CT, source VPD_N.\n"
          "PSMN040-100MSE: 25-57 mV drop at 0.865 A per pair set, 0.20 W for all eight hot (A-bridge-lt4321.md).\n"
          "Layout: each pair set's 4 FETs round its two CT pins; TG/BG traces short to U101.", (96.52, 113.03))
@@ -191,10 +191,14 @@ U101 = part("studio_A:LT4321", "U101", "LT4321IUF", (254.0, 71.12),
             "Package_DFN_QFN:QFN-16-1EP_4x4mm_P0.65mm_EP2.15x2.15mm",
             f("LT4321IUF#TRPBF", "Analog Devices", "C580183"), ref_at=(243.84, 46.99), value_at=(256.54, 46.99))
 for pn, net in (("15", "POE_CT12"), ("2", "POE_CT36"), ("3", "POE_CT45"), ("6", "POE_CT78")):
-    sch.label(net, U101.pin(pn), rot=180)
+    x, y = U101.pin(pn)
+    W((x, y), (x - 5.08, y))
+    sch.label(net, (x - 5.08, y), rot=180)
 for pn, net in (("16", "TG12"), ("14", "BG12"), ("1", "TG36"), ("13", "BG36"),
                 ("4", "TG45"), ("8", "BG45"), ("5", "TG78"), ("7", "BG78")):
-    sch.label(net, U101.pin(pn))
+    x, y = U101.pin(pn)
+    W((x, y), (x + 5.08, y))
+    sch.label(net, (x + 5.08, y))
 op = U101.pin("12")
 W(op, (op[0], VPRI_Y))
 pwr("VPD_N", U101.pin("9"))
@@ -273,8 +277,8 @@ W((353.06, BUS_Y), (373.38, BUS_Y))
 pwr("VPD_N", (353.06, BUS_Y))
 # AMPS_CTL: R113 DNP (auto-MPS off, R-30)
 px, py = U102.pin("8")
-R113 = res("R113", "1.3k DNP", (424.18, py + 3.81), R1206, f("FRC1206F1301TS", "FOJAN", "C2933592"),
-           left=True, dnp=True)
+R113 = part("Device:R", "R113", "1.3k DNP", (424.18, py + 3.81), R1206, f("FRC1206F1301TS", "FOJAN", "C2933592"),
+            ref_at=(427.99, py + 2.54), value_at=(427.99, py + 5.08), dnp=True)
 W((px, py), R113.pin("1"))
 pwr("VPD_N", R113.pin("2"))
 for pn in ("9", "20", "16"):

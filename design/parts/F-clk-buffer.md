@@ -43,3 +43,5 @@ floor along with the VCXO.
 
 The buffer sits between the VCXO branch end and the first 74LVC74. 1Y runs along the four FF
 packages with a ground reference underneath. Keep 2Y short to the PCM1808.
+
+- Phase 2: the +3V3_Q bulk cap is 10 µF 25 V X7R 1206 (CC1206KKX7R8BB106, C70462), per the audit (C1020).

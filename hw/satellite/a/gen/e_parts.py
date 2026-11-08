@@ -85,9 +85,14 @@ class Drawer:
     def pullup(self, key, p, rail="+3V3", text_left=False, dnp=False, note=None):
         """Resistor from p straight up to a rail symbol. Returns the part."""
         x, y = p[0], p[1] - 3.81
-        kw = dict(ref_at=(x - 2.54, y - 1.27), value_at=(x - 2.54, y + 1.27), justify="right") if text_left else {}
+        dx = 3.81 if dnp else 2.54          # a DNP cross covers the body: keep its text clear
+        kw = dict(ref_at=(x - dx, y - 1.27), value_at=(x - dx, y + 1.27), justify="right") if text_left else \
+            dict(ref_at=(x + dx, y - 1.27), value_at=(x + dx, y + 1.27))
         r = self.part(key, (x, y), dnp=dnp, note=note, **kw)
-        self.rail(rail, (p[0], p[1] - 7.62))
+        top = p[1] - (12.7 if dnp else 7.62)   # DNP: a wire stub lifts the rail symbol out of the cross
+        if dnp:
+            self.sch.wire((p[0], p[1] - 7.62), (p[0], top))
+        self.rail(rail, (p[0], top))
         return r
 
     def pulldown(self, key, p, text_left=False):

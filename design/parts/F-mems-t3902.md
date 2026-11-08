@@ -90,3 +90,5 @@ Pins (Table 9): 1 DATA, 2 SELECT, 3 GND, 4 CLK, 5 VDD.
 ## Open questions
 
 - The port location and seal, above, for phase 4 and the user.
+
+- Phase 2: the 33 Ω PDM_CLK source series resistor is drawn on audio_in (R1114, Note: place at ECP5 ball L14).

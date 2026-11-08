@@ -14,6 +14,10 @@ C1210 = "Capacitor_SMD:C_1210_3225Metric"
 UR = "UNI-ROYAL"
 
 
+def r8(val, code, lcsc):
+    return (f"{val} 1% 0805", R0805, f"0805W8F{code}T5E", UR, lcsc)
+
+
 def r(val, code, lcsc):
     return (f"{val} 1% 0603", R0603, f"0603WAF{code}T5E", UR, lcsc)
 
@@ -37,6 +41,12 @@ P = {
     "15k": r("15k", "1502", "C22809"), "280k": r("280k", "2803", "C22970"),
     "71k5": r("71.5k", "7152", "C23103"), "51k1": r("51.1k", "5112", "C23072"),
     "82k": r("82k", "8202", "C23254"), "100R": r("100", "1000", "C22775"),
+    # 0805 (150 V working, 300 V overload) for resistors that see VPRI / VBUS or the N5 transient
+    # (phase 2 review B-m1): 0603 is rated 75 V working
+    "73k2_8": r8("73.2k", "7322", "C17814"), "47k_8": r8("47k", "4702", "C17713"),
+    "470k_8": r8("470k", "4703", "C17709"), "100k_8": r8("100k", "1003", "C149504"),
+    "267k_8": r8("267k", "2673", "C17585"), "237k_8": r8("237k", "2373", "C17568"),
+    "280k_8": r8("280k", "2803", "C17597"), "51k1_8": r8("51.1k", "5112", "C17731"),
     "0R": ("0R 0603", R0603, "0603WAF0000T5E", UR, "C21189"),
     "2R2": ("2.2R 1% 0603", R0603, "RC0603FR-072R2L", "YAGEO", "C112307"),
     # precision 0.1 % thin film (CV divider, droop divider)

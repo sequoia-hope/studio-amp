@@ -115,50 +115,41 @@ class Sense(Sheet):
     # ------------------------------------------------------------------ ADS7038: currents and NTCs
     def isense(self):
         s = self.sch
-        s.box((200.66, 20.32), (398.78, 160.02), "CURRENT AND TEMPERATURE TELEMETRY, ADS7038-Q1")
-        Yc = 88.9
-        u = self.ic("ads7038", (332.74, Yc), fields=((337.82, Yc + 30.48), (337.82, Yc + 33.02), "left"))
+        s.box((200.66, 20.32), (398.78, 165.1), "CURRENT AND TEMPERATURE TELEMETRY, ADS7038-Q1")
+        Yc = 96.52
+        u = self.ic("ads7038", (332.74, Yc), fields=((340.36, Yc + 53.34), (340.36, Yc + 55.88), "left"))
         ur = u.ref
-        xc = 304.8                          # filter caps: one column, beside the pins
+        xc = 314.96                         # filter caps: one column, beside the pins
         # AIN0-3: INA241 outputs, 100R + 1n C0G (kickback 0.8 LSB, D-isense-adc.md)
-        rows = (Yc - 50.8, Yc - 38.1, Yc - 25.4, Yc - 12.7)
-        jog = (317.5, 314.96, 312.42, None)
-        for i, (name, pn) in enumerate((("ISNS_W_A", "15"), ("ISNS_W_B", "16"), ("ISNS_T_A", "1"),
-                                        ("ISNS_T_B", "2"))):
-            y, p = rows[i], u.pin(pn)
+        for name, pn in (("ISNS_W_A", "15"), ("ISNS_W_B", "16"), ("ISNS_T_A", "1"), ("ISNS_T_B", "2")):
+            p = u.pin(pn)
+            y = p[1]
             self.glabel(name, (228.6, y), 180, "in")
             r = self.part("R", "r100", (264.16, y), rot=90)
             self.w((228.6, y), r.pin("1"))
-            if jog[i]:
-                self.w(r.pin("2"), (jog[i], y), (jog[i], p[1]), p)
-            else:
-                self.w(r.pin("2"), p)
+            self.w(r.pin("2"), p)
             self.cap("c1n", xc, y, dec=f"{ur}.{pn}", fields="left")
         self.text("INA241A1: 1.65 V + 50 mV/A -> 16 mA/LSB,\nrange -32...+29 A", (226.06, 25.4))
         # AIN4-7: NTC dividers, 10k to 3V3_A, 100n at the pin
-        rows = (Yc + 12.7, Yc + 25.4, Yc + 38.1, Yc + 50.8)
-        jog = (None, 312.42, 314.96, 317.5)
-        for i, (name, pn) in enumerate((("T_W_FET", "3"), ("T_W_IND", "4"), ("T_T_FET", "5"), ("T_T_IND", "6"))):
-            y, p = rows[i], u.pin(pn)
+        for name, pn in (("T_W_FET", "3"), ("T_W_IND", "4"), ("T_T_FET", "5"), ("T_T_IND", "6")):
+            p = u.pin(pn)
+            y = p[1]
             self.glabel(name, (228.6, y), 180, "in")
             r = self.part("R", "r10k", (279.4, y - 3.81), rot=90,
                           fields=((271.78, y - 5.08), (271.78, y - 2.54), "left"))
             self.w(r.pin("2"), (r.pin("2")[0], y))
             self.pwr("+3V3_A", r.pin("1"))
-            if jog[i]:
-                self.w((228.6, y), (jog[i], y), (jog[i], p[1]), p)
-            else:
-                self.w((228.6, y), p)
+            self.w((228.6, y), p)
             self.cap("c100n", xc, y, dec=f"{ur}.{pn}", fields="left")
-        self.text("NTC (NCP15XH103, on the power sheets) to GND;\n10k pull-up: 1.65 V at 25 C", (226.06, 154.94))
+        self.text("NTC (NCP15XH103, on the power sheets)\nto GND; 10k pull-up: 1.65 V at 25 C", (345.44, 134.62))
         # supplies
         av, dv = u.pin("7"), u.pin("10")
-        ya = av[1] - 25.4
+        ya = av[1] - 12.7
         self.w(av, (av[0], ya))
         self.pwr("+3V3_A", (av[0], ya))
-        self.w((av[0], ya + 2.54), (342.9, ya + 2.54))
-        self.cap("c1u", 342.9, ya + 2.54, dec=f"{ur}.7")
-        yd = dv[1] - 7.62
+        self.w((av[0], ya + 2.54), (325.12, ya + 2.54))
+        self.cap("c1u", 325.12, ya + 2.54, dec=f"{ur}.7", fields="left")
+        yd = dv[1] - 5.08
         self.w(dv, (dv[0], yd), (363.22, yd))
         self.pwr("+3V3", (363.22, yd))
         self.cap("c1u", 353.06, yd, dec=f"{ur}.10")
@@ -172,7 +163,7 @@ class Sense(Sheet):
             p = u.pin(pn)
             self.w(p, (373.38, p[1]))
             self.glabel(name, (373.38, p[1]), 0, dirn)
-        self.text("SCLK <= 60 MHz; ~240 kS/s per current channel,\nNTCs ~1 kS/s each", (340.36, 132.08))
+        self.text("SCLK <= 60 MHz; ~240 kS/s per current channel,\nNTCs ~1 kS/s each", (345.44, 124.46))
 
     # ------------------------------------------------------------------ post-filter sense
     def buffer(self, name, Xo, Yo, dref, cap=True):
@@ -202,9 +193,9 @@ class Sense(Sheet):
     def pfchan(self, ch, Xo, Yc):
         s = self.sch
         title = "WOOFER" if ch == "W" else "TWEETER"
-        s.box((Xo - 33.02, Yc - 38.1), (Xo + 124.46, Yc + 48.26), f"POST-FILTER SENSE, {title}: OPA836 x 2 + ADS8353")
+        s.box((Xo - 33.02, Yc - 38.1), (Xo + 124.46, Yc + 45.72), f"POST-FILTER SENSE, {title}: OPA836 x 2 + ADS8353")
         Xc = Xo + 76.2
-        u = self.ic("ads8353", (Xc, Yc), fields=((Xc + 12.7, Yc + 33.02), (Xc + 12.7, Yc + 35.56), "left"))
+        u = self.ic("ads8353", (Xc, Yc), fields=((Xc + 15.24, Yc + 30.48), (Xc + 15.24, Yc + 33.02), "left"))
         ur = u.ref
         a = self.buffer(f"PF_{ch}_A", Xo, Yc - 10.16, f"{ur}.1")
         b = self.buffer(f"PF_{ch}_B", Xo, Yc + 25.4, f"{ur}.8", cap=False)
@@ -246,14 +237,14 @@ class Sense(Sheet):
             self.w(p, (Xc + 27.94, p[1]))
             self.glabel(name, (Xc + 27.94, p[1]), 0, dirn)
         self.text("A = OUT_A, B = OUT_B sampled together;\ngateware forms A - B. Range 0-5 V (2 x VREF)",
-                  (Xc - 15.24, Yc + 43.18))
+                  (Xc - 15.24, Yc + 38.1))
 
     def build(self):
         self.vbus()
         self.arm()
         self.isense()
-        self.pfchan("W", 58.42, 200.66)
-        self.pfchan("T", 261.62, 200.66)
+        self.pfchan("W", 58.42, 205.74)
+        self.pfchan("T", 261.62, 205.74)
         self.text("PF dividers (140k/10k 0.1%) sit on the power sheets; shared CS/SCLK/SDI, "
                   "one SDO per ADC channel (D-postfilter-sense.md). +5V load ~24 mA.", (25.4, 280.67))
         self.sch.save()

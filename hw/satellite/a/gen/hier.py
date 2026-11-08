@@ -88,12 +88,11 @@ class SubSheet(Schematic):
         text = re.sub(r"\n\t\(sheet_instances[^\n]*\)", "", text)
         path.write_text(text)
 
-def write_root(layout: dict[str, tuple[float, float, float, float]], notes=(), boxes=()):
+def write_root(layout: dict[str, tuple[float, float, float, float]], notes=(), boxes=(), flows=()):
     """layout: sheet name -> (x, y, w, h) of its sheet symbol on the root page."""
     sch = Schematic(PROJECT, title="Studio Amp satellite, variant A", rev="A", date="2026-11-08",
                     company="Sequoia Alexander, github.com/sequoia-hope/studio-amp",
-                    comments=["PoE++ GaN speaker amplifier. Design: design/intent.md, design/architecture.md",
-                              "Open source, MIT. Sheets in block-diagram order: power in -> amp -> compute -> audio"],
+                    comments=["PoE++ GaN speaker amplifier", "design/intent.md, design/architecture.md", "Open source, MIT"],
                     paper="A3")
     sch.uuid = ROOT_UUID
     for name, title, page, _, block in SHEETS:
@@ -110,6 +109,17 @@ def write_root(layout: dict[str, tuple[float, float, float, float]], notes=(), b
             S("instances", S("project", PROJECT, S("path", f"/{ROOT_UUID}", S("page", str(page))))),
         ])
         sch.text(f"{title}\n(block {block})", (x + 1.27, y + 2.54))
+    for pts, label, at in flows:          # graphic connection lines between blocks (not electrical)
+        sch.items.append(S("polyline", S("pts", *[S("xy", *q) for q in pts]),
+                           S("stroke", S("width", 0.4), S("type", Sym("solid")), S("color", 0, 72, 160, 1)),
+                           S("uuid", new_uuid())))
+        a, b = pts[-2], pts[-1]               # arrowhead at the last point
+        dx, dy = (b[0] > a[0]) - (b[0] < a[0]), (b[1] > a[1]) - (b[1] < a[1])
+        tip = [(b[0] - 2 * dx + 1 * dy, b[1] - 2 * dy + 1 * dx), b, (b[0] - 2 * dx - 1 * dy, b[1] - 2 * dy - 1 * dx)]
+        sch.items.append(S("polyline", S("pts", *[S("xy", *q) for q in tip]),
+                           S("stroke", S("width", 0.4), S("type", Sym("solid")), S("color", 0, 72, 160, 1)),
+                           S("uuid", new_uuid())))
+        sch.text(label, at, size=1.27)
     for a, b, label in boxes:
         sch.box(a, b, label)
     for s, at in notes:

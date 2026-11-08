@@ -118,11 +118,11 @@ def lt4321():
     P += pin(8, "BG45", 12.7, 2.54, 180, "output")
     P += pin(5, "TG78", 12.7, 0, 180, "output")
     P += pin(7, "BG78", 12.7, -2.54, 180, "output")
-    P += pin(10, "~{EN}", 12.7, -12.7, 180, "input")
+    P += pin(10, "EN_N", 12.7, -12.7, 180, "input")
     P += pin(11, "EN", 12.7, -17.78, 180, "input")
     body = rect(-10.16, 20.32, 10.16, -20.32)
     return symbol("LT4321", "U", "LT4321", "Package_DFN_QFN:QFN-16-1EP_4x4mm_P0.65mm_EP2.15x2.15mm",
-                  "design/datasheets/A-lt4321.pdf", "PoE dual ideal-diode bridge controller, 8 external N-FETs",
+                  "design/datasheets/A-lt4321.pdf", "PoE dual ideal-diode bridge controller, 8 external N-FETs. Pin 10 EN_N = datasheet EN-bar (active low)",
                   body, P, (-10.16, 25.4), (-10.16, -25.4))
 
 

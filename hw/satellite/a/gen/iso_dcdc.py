@@ -37,15 +37,15 @@ def build():
     for ref, key, x, pol in (("C215", "47u100", 38.1, True), ("C211", "4u7_100", 50.8, False),
                              ("C212", "4u7_100", 60.96, False), ("C213", "4u7_100", 73.66, False),
                              ("C214", "100n100", 86.36, False)):
-        c = C(ref, key, (x, 58.42), pol=pol, tf="v")
+        c = C(ref, key, (x, 55.88), pol=pol, tf="v")
         w((x, yr), c.pin("1"))
-        w(c.pin("2"), (x, 66.04))
-    w((38.1, 66.04), (86.36, 66.04))
-    rtn((60.96, 66.04))
+        w(c.pin("2"), (x, 63.5))
+    w((38.1, 63.5), (86.36, 63.5))
+    rtn((60.96, 63.5))
     sch.text("VPRI from the PD (block A), 38.4-57 V, <= 1.85 A.\nC215 47u: LT4321 needs >= 10 uF; damps the cable.\n"
              "Layout: C211-C214 at T1 pins 2/3 and Q201's Rcs,\nthe 737 kHz pulse-current loop (1.34 A rms).\n"
-             "B-primary-power.md", (25.4, 77.47))
-    sch.box((20.32, 38.1), (101.6, 91.44), "PRIMARY INPUT CAPACITORS")
+             "B-primary-power.md", (25.4, 73.66))
+    sch.box((20.32, 38.1), (101.6, 87.63), "PRIMARY INPUT CAPACITORS")
 
     # =================================================================== T1
     t1 = b.part("studio_B:750343576", "T201", "T1", (BARRIER_X, 101.6), tf="n",
@@ -66,13 +66,14 @@ def build():
     w(p6, (269.24, p6[1]))
     rtn((269.24, p6[1]))
     w(d202.pin("1"), (254.0, p1[1]))
-    r208 = R("R208", "47k", (254.0, 86.36), tf="l")
+    r208 = R("R208", "47k_8", (254.0, 86.36), tf="l")
     w((254.0, p1[1]), r208.pin("1"))
     rtn(r208.pin("2"))
-    r209 = R("R209", "470k", (243.84, p1[1]), rot=90)
+    r209 = R("R209", "470k_8", (243.84, p1[1]), rot=90)
     w(r209.pin("2"), (254.0, p1[1]))
     w(r209.pin("1"), (233.68, p1[1]))
     b.lab("LINEOV", (233.68, p1[1]), 180)
+    sch.text("N1 || N2 = 4 T:\ndots 2+3 -> VPRI\n4+5 -> SW_PRI", (226.06, 96.52))
     sch.text("T1 wired 1:2: primary N1 || N2 = 4 T (Lm 25 uH),\nsecondary N3 + N4 in series (10-8) = 8 T.\n"
              "Dots = winding starts (B-transformer.md).\nLayout: N1 and N2 symmetric.", (185.42, 40.64))
     sch.text("N5 aux, 4 T: forward pulse ~ VPRI, averaged\n-> LINEOV: output OVP at VBUS ~ 53.3 V,\n"
@@ -92,100 +93,101 @@ def build():
     b.lab("CS_PRI", (256.54, r216.pin("1")[1]), 270)
 
     # =================================================================== UCC2897A
-    u = b.part("studio_B:UCC2897A", "U201", "UCC2897A", (203.2, 139.7), tf="n",
-               ref_at=(203.2, 137.16), value_at=(203.2, 139.7), justify="")
+    u = b.part("studio_B:UCC2897A", "U201", "UCC2897A", (190.50, 139.7), tf="n",
+               ref_at=(190.50, 137.16), value_at=(190.50, 139.7), justify="")
     pin = u.pin
-    # OUT -> 2.2R -> gate (row y = OUT), 10k OUT -> PGND
+    # OUT -> 2.2R at the gate; 10k OUT -> PGND up to its own return
+    r212 = R("R212", "10k", (226.06, 124.46), tf="vl")
+    w(pin("15"), (226.06, gate[1]))
+    w((226.06, gate[1]), r212.pin("2"))
+    w(r212.pin("1"), (226.06, 119.38), (231.14, 119.38))
+    rtn((231.14, 119.38))
     r213 = R("R213", "2R2", (243.84, gate[1]), rot=90, tf="ha")
-    w(pin("15"), r213.pin("1"))
+    w((226.06, gate[1]), r213.pin("1"))
     w(r213.pin("2"), gate)
-    r212 = R("R212", "10k", (236.22, 124.46), tf="vl")
-    w((236.22, gate[1]), r212.pin("2"))
-    w(r212.pin("1"), (236.22, 119.38), (241.3, 119.38))
-    rtn((241.3, 119.38))
-    # AUX -> 100n -> clamp gate; BAS316 (anode gate, cathode RTN) + 10k gate-source
+    # AUX -> C208 100n (in the drop) -> clamp P-FET gate; BAS316 (anode gate, cathode RTN) + 10k
     aux = pin("14")
-    xa = 246.38
+    xa = 243.84
     c208 = C("C208", "100n", (xa, 162.56), tf="v")
     w(aux, (xa, aux[1]), c208.pin("1"))
     w(c208.pin("2"), (xa, 180.34))
-    q202 = b.part("Transistor_FET:IRF9540N", "Q202", "IRFR6215", (251.46, 180.34), tf="n",
-                  ref_at=(256.54, 187.96), value_at=(256.54, 190.5), justify="left")
+    q202 = b.part("Transistor_FET:IRF9540N", "Q202", "IRFR6215", (248.92, 180.34), tf="n",
+                  ref_at=(254.0, 181.61), value_at=(254.0, 184.15), justify="left")
     w((xa, 180.34), q202.pin("1"))
     rtn(q202.pin("3"))
-    d201 = b.part("Diode:BAS316", "D201", "BAS316", (241.3, 186.69), rot=90, tf="v")
-    r215 = R("R215", "10k", (233.68, 186.69), tf="vl")
-    w((xa, 180.34), (233.68, 180.34))
-    w((241.3, 180.34), d201.pin("2"))
-    w((233.68, 180.34), r215.pin("1"))
-    w(r215.pin("2"), (233.68, 195.58), (241.3, 195.58), d201.pin("1"))
-    rtn((241.3, 195.58))
+    d201 = b.part("Diode:BAS316", "D201", "BAS316", (236.22, 186.69), rot=90, tf="v")
+    r215 = R("R215", "10k", (226.06, 186.69), tf="vl")
+    w((xa, 180.34), (226.06, 180.34))
+    w((236.22, 180.34), d201.pin("2"))
+    w((226.06, 180.34), r215.pin("1"))
+    w(r215.pin("2"), (226.06, 195.58), (236.22, 195.58), d201.pin("1"))
+    rtn((231.14, 195.58))
     # clamp caps: SW_PRI (right-hand lane) to the P-FET drain
-    c209 = C("C209", "100n250", (254.0, 170.18), tf="v")
-    c210 = C("C210", "100n250", (264.16, 170.18), tf="v")
+    c209 = C("C209", "100n250", (251.46, 170.18), tf="v")
+    c210 = C("C210", "100n250", (261.62, 170.18), tf="v")
     w(q202.pin("2"), c209.pin("2"))
     w(c209.pin("2"), c210.pin("2"))
     w(c209.pin("1"), c210.pin("1"), (271.78, c210.pin("1")[1]), (271.78, 125.73), (xs, 125.73))
     sch.text("Active clamp, P-FET low side:\nVc ~ 100 V on C209 || C210 (250 V X7R).\nB-primary-power.md",
-             (231.14, 203.2))
-    # CS: Kelvin from the Rcs pad; RF 1k + CF 82p at the pin
+             (223.52, 203.2))
+    # CS: RF 1k + CF 82p at the pin; Kelvin from the Rcs pad via CS_PRI
     cs = pin("9")
-    r205 = R("R205", "1k", (241.3, 157.48), tf="v")
-    w(cs, (241.3, cs[1]), r205.pin("1"))
-    w(r205.pin("2"), (241.3, 163.83))
-    b.lab("CS_PRI", (241.3, 163.83), 270)
-    c204 = C("C204", "82p", (236.22, 152.4), tf="v")
-    w((236.22, cs[1]), c204.pin("1"))
+    c204 = C("C204", "82p", (226.06, 152.4), tf="v")
+    r205 = R("R205", "1k", (233.68, 154.94), tf="v")
+    w(cs, (233.68, cs[1]), r205.pin("1"))
+    w((226.06, cs[1]), c204.pin("1"))
     rtn(c204.pin("2"))
+    w(r205.pin("2"), (233.68, 167.64), (228.6, 167.64))
+    b.lab("CS_PRI", (228.6, 167.64), 180)
     # supplies on top: VDD, PVDD (0R at the IC), VREF
     vdd, pvdd, vref = pin("17"), pin("16"), pin("6")
     vcc((vdd[0], 93.98), "VB_PRI")
     w((vdd[0], 93.98), vdd)
-    c202 = C("C202", "1u", (182.88, 109.22), extra={"Decouples": "U201.17"}, tf="vl")
-    w((vdd[0], 104.14), (182.88, 104.14), c202.pin("1"))
+    c202 = C("C202", "1u", (170.18, 109.22), extra={"Decouples": "U201.17"}, tf="vl")
+    w((vdd[0], 104.14), (170.18, 104.14), c202.pin("1"))
     rtn(c202.pin("2"))
-    r220 = R("R220", "0R", (195.58, 99.06), rot=90)
+    r220 = R("R220", "0R", (182.88, 99.06), rot=90)
     w((vdd[0], 99.06), r220.pin("1"))
     w(r220.pin("2"), (pvdd[0], 99.06), pvdd)
     b.flag((pvdd[0] + 0, 96.52))
     w((pvdd[0], 96.52), (pvdd[0], 99.06))
-    c203 = C("C203", "10u", (205.74, 109.22), extra={"Decouples": "U201.16"}, tf="v")
-    w((pvdd[0], 104.14), (205.74, 104.14), c203.pin("1"))
+    c203 = C("C203", "10u", (193.04, 109.22), extra={"Decouples": "U201.16"}, tf="v")
+    w((pvdd[0], 104.14), (193.04, 104.14), c203.pin("1"))
     rtn(c203.pin("2"))
     vcc((vref[0], 93.98), "VREF_ACF")
     w((vref[0], 93.98), vref)
-    c201 = C("C201", "220n", (220.98, 109.22), extra={"Decouples": "U201.6"}, tf="v")
-    w((vref[0], 104.14), (220.98, 104.14), c201.pin("1"))
+    c201 = C("C201", "220n", (208.28, 109.22), extra={"Decouples": "U201.6"}, tf="v")
+    w((vref[0], 104.14), (208.28, 104.14), c201.pin("1"))
     rtn(c201.pin("2"))
     # left: VIN (100k from VPRI; 0R to VDD DNP), LINEUV, SYNC, FB, LINEOV
     vin = pin("1")
-    r218 = R("R218", "100k", (167.64, 119.38))
-    w(vin, (167.64, vin[1]), r218.pin("2"))
+    r218 = R("R218", "100k_8", (154.94, 119.38))
+    w(vin, (154.94, vin[1]), r218.pin("2"))
     vcc(r218.pin("1"), "VPRI")
-    r219 = R("R219", "0R", (154.94, 119.38), dnp=True, tf="l")
-    w((167.64, vin[1]), (154.94, vin[1]), r219.pin("2"))
+    r219 = R("R219", "0R", (142.24, 119.38), dnp=True, tf="l")
+    w((154.94, vin[1]), (142.24, vin[1]), r219.pin("2"))
     vcc(r219.pin("1"), "VB_PRI")
-    sch.text("VIN: 100k from VPRI (JFET start-up unused;\nVDD from VB_PRI). R219 DNP option.", (106.68, 99.06))
+    sch.text("VIN: 100k from VPRI (JFET start-up unused;\nVDD from VB_PRI). R219 DNP option.", (93.98, 99.06))
     luv = pin("18")
-    r206 = R("R206", "73k2", (132.08, 127.0), tf="l")
-    r207 = R("R207", "2k37", (132.08, 142.24), tf="l")
-    w(luv, (132.08, luv[1]))
-    w(r206.pin("2"), (132.08, luv[1]), r207.pin("1"))
+    r206 = R("R206", "73k2_8", (119.38, 127.0), tf="l")
+    r207 = R("R207", "2k37", (119.38, 142.24), tf="l")
+    w(luv, (119.38, luv[1]))
+    w(r206.pin("2"), (119.38, luv[1]), r207.pin("1"))
     vcc(r206.pin("1"), "VPRI")
     rtn(r207.pin("2"))
-    sch.text("LINEUV: on 40.4 V,\noff 38.4 V", (106.68, 152.4))
+    sch.text("LINEUV: on 40.4 V,\noff 38.4 V", (93.98, 152.4))
     b.glab("ACF_SYNC", pin("7"), 180, "input")
     b.lab("ACF_FB", pin("11"), 180)
     lov = pin("19")
-    r210 = R("R210", "23k7", (167.64, 157.48), tf="v")
-    c207 = C("C207", "47n", (157.48, 157.48), tf="vl")
-    w(lov, (167.64, lov[1]), r210.pin("1"))
-    w((167.64, lov[1]), (157.48, lov[1]), c207.pin("1"))
-    w((157.48, lov[1]), (149.86, lov[1]))
-    b.lab("LINEOV", (149.86, lov[1]), 180)
+    r210 = R("R210", "23k7", (154.94, 157.48), tf="v")
+    c207 = C("C207", "47n", (144.78, 157.48), tf="vl")
+    w(lov, (154.94, lov[1]), r210.pin("1"))
+    w((154.94, lov[1]), (144.78, lov[1]), c207.pin("1"))
+    w((144.78, lov[1]), (137.16, lov[1]))
+    b.lab("LINEOV", (137.16, lov[1]), 180)
     w(c207.pin("2"), r210.pin("2"))
-    rtn((162.56, r210.pin("2")[1]))
-    sch.text("LINEOV: R209 470k from node A;\n23.7k || 47n averages (1 ms)", (106.68, 170.18))
+    rtn((149.86, r210.pin("2")[1]))
+    sch.text("LINEOV: R209 470k from node A;\n23.7k || 47n averages (1 ms)", (93.98, 170.18))
     # bottom: SS/SD, timing resistors, GND + PGND on one RTN bus (net-tied at the IC)
     ybus = 179.07
     ss = pin("12")
@@ -205,20 +207,20 @@ def build():
     sch.text("RDEL 4.53k = 50 ns. RON 31.6k / ROFF 14.3k:\nfree-run 656 kHz (590-708), synced to\n"
              "737.28 kHz, DMAX 0.68-0.715. RSLOPE 316k.\nCSS 1u: 60 ms soft start. PD_PG holds SS\n"
              "low during PD inrush; UCC_SS -> block A.\nGND (8) and PGND (13) meet only at the IC\n"
-             "(datasheet 11.1). B-controller.md", (106.68, 182.88))
+             "(datasheet 11.1). B-controller.md", (93.98, 182.88))
     # SS/SD: PD_PG holds it low through 1k during PD inrush; UCC_SS -> block A's PD_PG_N buffer
-    w((ss[0], 165.1), (175.26, 165.1), (175.26, 173.99))
-    r217 = R("R217", "1k", (175.26, 177.8), tf="l")
+    w((ss[0], 165.1), (162.56, 165.1), (162.56, 173.99))
+    r217 = R("R217", "1k", (162.56, 177.8), tf="l")
     b.glab("PD_PG", r217.pin("2"), 270, "input")
-    w((175.26, 168.91), (162.56, 168.91))
-    b.glab("UCC_SS", (162.56, 168.91), 180, "output")
-    sch.box((101.6, 88.9), (276.86, 215.9), "UCC2897A CONTROLLER, PRIMARY STAGE")
+    w((162.56, 168.91), (149.86, 168.91))
+    b.glab("UCC_SS", (149.86, 168.91), 180, "output")
+    sch.box((88.90, 88.9), (276.86, 215.9), "UCC2897A CONTROLLER, PRIMARY STAGE")
 
     # =================================================================== VB_PRI bias buck (LM5019)
     lm5019_buck(b, 0, 0, dict(U="U202", L="L201", RON="R221", RFBT="R222", RFBB="R223", RUVT="R224",
                               RUVB="R225", RR="R226", CIN="C221", CIN2="C222", CVCC="C218", CBST="C219",
                               COUT="C220", CR="C216", CAC="C217"),
-                dict(RON="267k", RFBT="107k", RUVT="237k", RR="200k", L="L330"), "VPRI", "VB_PRI", rtn,
+                dict(RON="267k_8", RFBT="107k", RUVT="237k_8", RR="200k", L="L330"), "VPRI", "VB_PRI", rtn,
                 "VB_PRI BIAS BUCK (PRIMARY)",
                 "VB_PRI 14.3 V (13.9-14.8), <= 85 mA: UCC2897A, block A's TPS2373\nVC_IN and isolator, "
                 "the sync clock (iso_aux). Starts at VPRI 30.3 V.\n600 kHz (RON 267k); Type III ripple "
@@ -344,6 +346,8 @@ def build():
     w(r233.pin("2"), (424.18, yo))
     w((410.21, yo), r233.pin("1"))
     vcc((424.18, 55.88), "VBUS")
+    sch.text("VBUS 47.9 V, <= 1.30 A from the converter (CC, 62 W);\nbursts above that come from the bulk",
+             (427.99, 48.26))
     w((424.18, 55.88), (424.18, yo), (518.16, yo))
     for i, x in enumerate([431.8, 444.5, 454.66, 467.36, 477.52, 490.22, 500.38]):
         c = C(f"C{241 + i}", "bulk", (x, 71.12), pol=True, dnp=(i == 6), tf="v")
@@ -358,7 +362,7 @@ def build():
              "keep 737 kHz ripple out of it. B-output.md", (299.72, 46.99))
     sch.text("VBUS 47.9 V +-1.5 %: 6 x 1000u 63V KZN (C247 DNP footprint).\n"
              "OVP: SMCJ51A + LINEOV 53.3 V + gateware 55 V (agreed with block D)", (421.64, 86.36))
-    sch.box((294.64, 38.1), (528.32, 93.98), "OUTPUT FILTER, IBUS SHUNT 30 mR, VBUS BULK")
+    sch.box((294.64, 38.1), (528.32, 91.44), "OUTPUT FILTER, IBUS SHUNT 30 mR, VBUS BULK")
 
     # =================================================================== INA281, IBUS_SENSE
     ina = b.part("Amplifier_Current:INA281A4", "U206", "INA281A4", (414.02, 116.84), tf="n",
@@ -409,7 +413,7 @@ def build():
     b.lab("OPTO_K", (294.64, yk), 0)
     # CV: TL431 (mirror: REF right), 47.5k / 2.61k 0.1 %, 115k + 4.7n cathode -> REF
     u208 = b.part("Reference_Voltage:TL431DBZ", "U208", "TL431B", (322.58, yk + 7.62), rot=90, mirror="y",
-                  tf="n", ref_at=(320.04, yk + 3.81), value_at=(320.04, yk + 6.35), justify="left")
+                  tf="n", ref_at=(326.39, yk + 3.81), value_at=(326.39, yk + 6.35), justify="right")
     w((322.58, yk), u208.pin("1"))
     gnd(u208.pin("3"))
     ref8 = u208.pin("2")
@@ -443,15 +447,15 @@ def build():
     w(ref7, (xn, ref7[1]))
     r237 = R("R237", "4k99", (xn, ref7[1] - 7.62), tf="v")
     w(r237.pin("2"), (xn, ref7[1]))
-    w(r237.pin("1"), (xn, ref7[1] - 13.97), (408.94, ref7[1] - 13.97))
-    b.lab("IBUS_F", (408.94, ref7[1] - 13.97), 0)
+    w(r237.pin("1"), (xn, ref7[1] - 17.78), (408.94, ref7[1] - 17.78))
+    b.lab("IBUS_F", (408.94, ref7[1] - 17.78), 0)
     r238 = R("R238", "88k7", (xn, ref7[1] + 7.62), tf="v")
     w((xn, ref7[1]), r238.pin("1"))
     gnd(r238.pin("2"))
     ycr = ycc - 10.16
     w((375.92, ycc), (375.92, ycr))
     r243 = R("R243", "100k", (381.0, ycr), rot=90)
-    c239 = C("C239", "10n", (396.24, ycr), rot=90, tf="ha")
+    c239 = C("C239", "10n", (393.7, ycr), rot=90, tf="ha")
     w((375.92, ycr), r243.pin("1"))
     w(r243.pin("2"), c239.pin("1"))
     w(c239.pin("2"), (401.32, ycr), (401.32, ref7[1]))

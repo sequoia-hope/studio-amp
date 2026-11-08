@@ -20,7 +20,7 @@ data + clock strip, so R-19's PH 4-pin stands.
 
 ## Circuit
 
-`+5V_BUCK` → TPS2553 (IN 1 µF; EN = `LED_EN` RP2350 GPIO, 100 kΩ pull-down: off at boot;
+`+5V_BUCK` → TPS2553 (IN 1 µF; EN = `LED_EN` from ECP5 H15 (E-pinmap.md), 100 kΩ pull-down: off at boot;
 FAULT_N → `LED_FAULT_N`, 10 kΩ to +3V3; RILIM 23.2 kΩ 1 %) → `+5V_LED` → 22 µF → BLM31KN601 →
 SMF6.0A → J pin 1. J pin 2 GND.
 `LED_DATA`, `LED_CLK` (RP2350 PIO, 3.3 V) → SN74LV1T125 A inputs. The shifters' VCC = `+5V_LED`

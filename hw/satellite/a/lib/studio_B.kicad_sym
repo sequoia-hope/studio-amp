@@ -308,7 +308,7 @@
 					(type outline)
 				)
 			)
-			(text "N5"
+			(text "N5 4T"
 				(at -6.35 16.51 0)
 				(effects
 					(font
@@ -395,7 +395,7 @@
 					(type outline)
 				)
 			)
-			(text "N1"
+			(text "N1 4T"
 				(at -6.35 1.27 0)
 				(effects
 					(font
@@ -482,7 +482,7 @@
 					(type outline)
 				)
 			)
-			(text "N2"
+			(text "N2 4T"
 				(at -6.35 -11.43 0)
 				(effects
 					(font
@@ -569,7 +569,7 @@
 					(type outline)
 				)
 			)
-			(text "N3"
+			(text "N3 4T"
 				(at 6.35 1.27 0)
 				(effects
 					(font
@@ -656,7 +656,7 @@
 					(type outline)
 				)
 			)
-			(text "N4"
+			(text "N4 4T"
 				(at 6.35 -11.43 0)
 				(effects
 					(font
@@ -682,14 +682,6 @@
 				)
 				(fill
 					(type none)
-				)
-			)
-			(text "4T each"
-				(at 0 -19.05 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
 				)
 			)
 		)

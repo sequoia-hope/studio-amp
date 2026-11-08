@@ -64,8 +64,7 @@ P = {
     "r2k2": ("2.2k 1%", R0402, "0402WGF2201TCE", "UNI-ROYAL", "C25879"),
     "r9k09": ("9.09k 1%", R0402, "0402WGF9091TCE", "UNI-ROYAL", "C11549"),
     "r15k": ("15k 1%", R0402, "0402WGF1502TCE", "UNI-ROYAL", "C25756"),
-    "r6k2": ("6.2k 1%", R0402, "0402WGF6201TCE", "UNI-ROYAL", "C25915"),
-    "r12k": ("12k 1%", R0402, "0402WGF1202TCE", "UNI-ROYAL", "C25752"),
+    "r4k99": ("4.99k 1%", R0402, "0402WGF4991TCE", "UNI-ROYAL", "C25903"),
     "1g17": ("74LVC1G17", "Package_TO_SOT_SMD:SOT-23-5", "SN74LVC1G17DBVR", "Texas Instruments", "C7836"),
     "1g74": ("74LVC1G74", "Package_SO:VSSOP-8_2.3x2mm_P0.5mm", "SN74LVC1G74DCUR", "Texas Instruments", "C70285"),
     "lmv393": ("LMV393", "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", "LMV393IDR", "Texas Instruments", "C7984"),
@@ -73,7 +72,7 @@ P = {
     "r82k": ("82k 1%", R0603, "0603WAF8202T5E", "UNI-ROYAL", "C23254"),
     "r88k7": ("88.7k 1%", R0603, "0603WAF8872T5E", "UNI-ROYAL", "C23258"),
     "r1m21": ("1.21M 1%", R0603, "0603WAF1214T5E", "UNI-ROYAL", "C422998"),
-    "r140k": ("140k 0.1%", R0603, "RT0603BRE07140KL", "YAGEO", "C326761"),
+    "r140k": ("140k 0.1% 25ppm", R0603, "RT0603BRD07140KL", "YAGEO", "C861125"),
     "r10kp": ("10k 0.1%", R0603, "RT0603BRD0710KL", "YAGEO", "C95204"),
     "ntc": ("10k NTC B3380", R0402, "NCP15XH103F03RC", "Murata", "C77131"),
     "conn": ("MX2EDGRC-5.08-02P", "studio_D:MAX_MX2EDGRC-5.08-02P_1x02_P5.08mm_Horizontal",
@@ -86,7 +85,7 @@ SYM = {
     "NTC": "Device:Thermistor_NTC", "SHUNT": "Device:R_Shunt", "J": "Connector_Generic:Conn_01x02",
     "drv": "studio_D:LMG1210", "gan": "studio_D:IGB070S10S1", "ina": "studio_D:INA241A1_DDF",
     "tlv": "studio_D:TLV3502_DCN", "1g74": "studio_D:74LVC1G74_DCU", "1g17": "74xGxx:74LVC1G17",
-    "lmv393": "Comparator:LMV393", "bat54s": "Diode:BAT54S",
+    "lmv393": "Comparator:LMV393", "bat54s": "studio_D:BAT54S",
 }
 PREFIX = {"R": "R", "C": "C", "L": "L", "D": "D", "TVS": "D", "NTC": "RT", "SHUNT": "R", "J": "J",
           "gan": "Q", "bat54s": "D"}
@@ -186,7 +185,8 @@ class Amp(Sheet):
         rp = self.part("R", "r100", (58.42, pwm[1]), rot=90)
         self.w((27.94, pwm[1]), rp.pin("1"))
         self.w(rp.pin("2"), pwm)
-        cp = self.part("C", "c10p", (73.66, pwm[1] + 3.81), dnp=True)
+        cp = self.part("C", "c10p", (73.66, pwm[1] + 3.81), dnp=True,
+                       fields=((78.74, pwm[1] + 2.54), (78.74, pwm[1] + 5.08), "left"))
         self.w(cp.pin("1"), (73.66, pwm[1]))
         self.gnd(cp.pin("2"))
         # EN from the channel's fault latch
@@ -195,7 +195,8 @@ class Amp(Sheet):
         re_ = self.part("R", "r100", (58.42, en[1]), rot=90)
         self.w((45.72, en[1]), re_.pin("1"))
         self.w(re_.pin("2"), en)
-        ce = self.part("C", "c10p", (73.66, en[1] + 3.81), dnp=True)
+        ce = self.part("C", "c10p", (73.66, en[1] + 3.81), dnp=True,
+                       fields=((78.74, en[1] + 2.54), (78.74, en[1] + 5.08), "left"))
         self.w(ce.pin("1"), (73.66, en[1]))
         self.gnd(ce.pin("2"))
         self.text("PWM mode, high = HS on. 100R at the pins;\n4.7k pull-down; 10p DNP (ground bounce)", (22.86, Yd + 20.32))
@@ -222,9 +223,9 @@ class Amp(Sheet):
         self.gnd(cvin.pin("2"))
         vdd = drv.pin("4")
         vy = vdd[1] - 22.86
-        self.w((68.58, vy), (vdd[0], vy), (116.84, vy))
+        self.w((66.04, vy), (vdd[0], vy), (116.84, vy))
         self.w(vdd, (vdd[0], vy))
-        for x, key, fl in ((88.9, "c100n", "left"), (68.58, "c2u2", "left"), (116.84, "c2u2", "auto")):
+        for x, key, fl in ((86.36, "c100n", "left"), (66.04, "c2u2", "left"), (116.84, "c2u2", "auto")):
             c = self.part("C", key, (x, vy + 3.81), dec=f"{dref}.4", fields=fl)
             self.w((x, vy), c.pin("1"))
             self.gnd(c.pin("2"))
@@ -232,7 +233,8 @@ class Amp(Sheet):
 
         # bootstrap: BAT46WJ BST -> HB, 470n HB -> HS
         bst, hb, hs = drv.pin("17"), drv.pin("12"), drv.pin("9")
-        dbst = self.part("D", "bat46", (bst[0] + 3.81, bst[1] - 10.16), rot=180)
+        dbst = self.part("D", "bat46", (bst[0] + 3.81, bst[1] - 10.16), rot=180,
+                         fields=((bst[0] + 3.81, bst[1] - 15.24), (bst[0] + 3.81, bst[1] - 12.7), ""))
         self.w(bst, dbst.pin("2"))
         k = dbst.pin("1")
         hby = hb[1] - 5.08
@@ -276,6 +278,8 @@ class Amp(Sheet):
         self.w((142.24, vb), (xr, vb))
         self.pwr("VBUS", (d[0], vb))
         for x, key, fl in caps:
+            if x == 142.24:      # above the rail, clear of the bootstrap cap's text
+                fl = ((140.97, vb - 5.08), (140.97, vb - 2.54), "right")
             c = self.part("C", key, (x, vb + 3.81), dec=f"{qh.ref}.2", fields=fl)
             self.w((x, vb), c.pin("1"))
             self.gnd(c.pin("2"))
@@ -291,11 +295,13 @@ class Amp(Sheet):
         # switch node, snubber (DNP), inductor, NTC
         self.w(sw, (278.13, sw[1]))
         self.label(f"SW_{sfx}", (236.22, sw[1]))
-        csn = self.part("C", "csn", (195.58, sw[1] + 3.81), dnp=True)
+        csn = self.part("C", "csn", (195.58, sw[1] + 3.81), dnp=True,
+                        fields=((200.66, sw[1] + 2.54), (200.66, sw[1] + 5.08), "left"))
         self.w((195.58, sw[1]), csn.pin("1"))
-        rsn = self.part("R", "rsn", (195.58, sw[1] + 11.43), dnp=True)
+        rsn = self.part("R", "rsn", (195.58, sw[1] + 11.43), dnp=True,
+                        fields=((200.66, sw[1] + 10.16), (200.66, sw[1] + 12.7), "left"))
         self.gnd(rsn.pin("2"))
-        self.text("RC snubber, DNP\n(0.62 W if fitted)", (198.12, sw[1] + 17.78))
+        self.text("RC snubber, DNP\n(0.62 W if fitted)", (200.66, sw[1] + 17.78))
         ntx = 220.98 if leg == "A" else 256.54
         nt = self.part("NTC", "ntc", (ntx, sw[1] + 11.43))
         self.w(nt.pin("1"), (ntx, sw[1] + 5.08), (ntx + 2.54, sw[1] + 5.08))
@@ -347,10 +353,10 @@ class Amp(Sheet):
         self.label(f"VTH_HI_{ch}", tl.pin("1"), 0)
         self.label(f"VTH_LO_{ch}", tl.pin("4"), 0)
         vp = tl.pin("8")
-        self.pwr("+3V3", vp)
         ct = self.part("C", "c100n", (vp[0] - 17.78, vp[1]), rot=90, dec=f"{tl.ref}.8",
                        fields=((vp[0] - 17.78, vp[1] - 5.08, ""), (vp[0] - 17.78, vp[1] - 2.54, "")))
-        self.w(vp, ct.pin("2"))
+        self.w(vp, (vp[0] - 7.62, vp[1]), ct.pin("2"))
+        self.pwr("+3V3", (vp[0] - 7.62, vp[1]))
         self.gnd(ct.pin("1"))
         self.gnd(tl.pin("5"))
         anodes = []
@@ -368,8 +374,8 @@ class Amp(Sheet):
 
         # row 2: output-short detector, fed by the output node's label
         xd = 345.44
-        self.w((xd, sw[1] + 27.94), (355.6, sw[1] + 27.94))
-        self.label(f"OUT_{sfx}", (355.6, sw[1] + 27.94), 0)
+        self.w((xd, sw[1] + 27.94), (xd, sw[1] + 22.86), (347.98, sw[1] + 22.86))
+        self.label(f"OUT_{sfx}", (347.98, sw[1] + 22.86), 0)
         cdd = self.part("C", "cd", (xd, sw[1] + 31.75))
         self.w((xd, sw[1] + 27.94), cdd.pin("1"))
         xn = cdd.pin("2")
@@ -473,8 +479,8 @@ class Amp(Sheet):
         ladder(50.8, ("r9k09", "r15k", "r9k09"), (f"VTH_HI_{ch}", f"VTH_LO_{ch}"),
                "OCP thresholds 2.396 / 0.904 V\n(9.09k / 15k / 9.09k, ratiometric)")
         ladder(104.14, ("rdt", "rdt"), (f"VSDB_{ch}",), "Short-detector bias 1.65 V\n(2 x 20k)")
-        ladder(152.4, ("r6k2", "r12k", "r6k2"), (f"SDH_{ch}", f"SDL_{ch}"),
-               "Short-detector window\n2.65 / 0.65 V (6.2k / 12k / 6.2k)")
+        ladder(152.4, ("r4k99", "r15k", "r4k99"), (f"SDH_{ch}", f"SDL_{ch}"),
+               "Short-detector window\n2.64 / 0.66 V (4.99k / 15k / 4.99k)")
 
         # fault node (diode-AND of OK signals), 2.2k pull-up, Schmitt, latch
         xf = 228.6
@@ -568,17 +574,17 @@ class Amp(Sheet):
         self.text("ZOBEL 10R (2 x 20R 1 W)\n+ 100n C0G: open-load peak\n+23 dB; firmware limits\nit to <= 1 W",
                   (xz + 3.81, ya + 33.02))
         jy = round(((ya + yb) / 2) / 2.54) * 2.54
-        j = self.part("J", "conn", (576.58, jy), fields=((571.5, jy - 5.08), (571.5, jy + 7.62)))
+        j = self.part("J", "conn", (568.96, jy), fields=((558.8, jy - 7.62), (558.8, jy - 5.08), "left"))
         p1, p2 = j.pin("1"), j.pin("2")
-        xa = 558.8
+        xa = 553.72
         if ch == "T":
-            c1 = self.part("C", "chpf", (546.1, ya), rot=90)
-            c2 = self.part("C", "chpf", (546.1, ya - 10.16), rot=90)
+            c1 = self.part("C", "chpf", (543.56, ya), rot=90)
+            c2 = self.part("C", "chpf", (543.56, ya - 12.7), rot=90)
             self.w((xend, ya), c1.pin("1"))
             self.w(c1.pin("1"), (c1.pin("1")[0] - 2.54, ya), (c1.pin("1")[0] - 2.54, c2.pin("1")[1]), c2.pin("1"))
             self.w(c1.pin("2"), (c1.pin("2")[0] + 2.54, ya), (c1.pin("2")[0] + 2.54, c2.pin("2")[1]), c2.pin("2"))
             self.w(c1.pin("2"), (xa, ya))
-            self.label("OUT_T_HPF", (553.72, ya))
+            self.label("OUT_T_HPF", (xa, ya + 7.62), 270)
             self.text("PROTECTIVE HPF: 2 x 22u MKP in parallel\n= 44 uF: 904 / 603 / 452 Hz at 4 / 6 / 8 ohm;\nblocks DC if a leg fails short (R-54)",
                       (520.7, ya - 22.86))
         else:
@@ -586,8 +592,10 @@ class Amp(Sheet):
         self.w((xa, ya), (xa, p1[1]), p1)
         xb = xa + 5.08
         self.w((xend, yb), (xb, yb), (xb, p2[1]), p2)
-        self.text(("WOOFER" if ch == "W" else "TWEETER") + "  + / -  4-8 ohm\n15 A header MX2EDGRC-5.08;\nplug MX2EDGK-5.08-02P\n(C5187912) ships loose",
-                  (563.88, jy + 12.7))
+        self.text("OUT+", (p1[0] + 8.89, p1[1]))
+        self.text("OUT-", (p2[0] + 8.89, p2[1]))
+        self.text(("WOOFER" if ch == "W" else "TWEETER") + " 4-8 ohm:\npin 1 OUT+ = leg A = speaker +\npin 2 OUT- = leg B = speaker -\n"
+                  "15 A header MX2EDGRC-5.08;\nplug MX2EDGK-5.08-02P\n(C5187912) ships loose", (528.32, jy + 12.7))
 
     def build(self):
         ya, xend = self.leg("A", 66.04)

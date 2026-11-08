@@ -7,7 +7,7 @@ History: IGB070 was recommended on 2026-11-07; the user chose IGC033 for stock; 
 
 ## Footprint: one land pattern or two?
 **Two land patterns are needed.**
-- IGB070S10S1: PG-TSON-4, **3.2 × 3.0 mm**, three pad rows (drain row, source row, gate + source row; Fig. 2 p.14 of its datasheet).
+- IGB070S10S1: PG-TSON-4, **3.2 × 3.0 mm**, three pad rows (top: source, pin 3; middle: drain bar, pin 2; bottom: gate pin 1 + source pin 4; Fig. 2 p.14 of its datasheet).
 - IGC033S10S1: PG-TSON-6, **3 × 5 mm**, five rows alternating drain/source plus a gate + source row (Fig. 2 p.14 of its datasheet).
 The pad rows do not coincide (row pitch 1.505 vs 1.075 mm, different row counts), and both use solder-mask-defined pads with split stencil apertures, so a combined "dual" pattern would leave unsoldered exposed copper under either part. Plan: draw the IGB070 footprint; in phase 6, **reserve the 3 × 5 mm IGC033 courtyard** at each FET site (≈ 2 mm extra length along the drain/source axis), so a fallback variant swaps footprints without moving neighbours. Pinouts: IGB070 pin 1 gate, 2 drain, 3–4 source; IGC033 pin 1 gate, 2/4 drain, 3/5/6 source.
 
@@ -138,7 +138,7 @@ As below for the rejected part, with the 3 × 5 mm package: HS and LS side by si
 Datasheet: datasheets/igb070s10s1.pdf (Final datasheet, Rev 1.0, 2025-01-27). Read: all sections, including diagrams 9–16 (rendered and read off the curves) and the footprint drawing (Fig. 2, p.14).
 MPN: IGB070S10S1XTMA1. Supplier: `C44179579 IGB070S10S1XTMA1 (Infineon, PG-TSON-4-2): extended, JLC stock 80, lifecycle normal, checked 2026-11-07`
 Build need: 8 per board × 5 boards = 40, plus 10 % attrition = 44. Stock 80 ≥ 44: **passes, but thin** (see Open questions).
-Footprint: PG-TSON-4 (3.2 × 3.0 mm, three pad rows, solder-mask-defined pads). This needs a project footprint drawn from Fig. 2 p.14 (copper 1.6 + 1.6 mm wide rows, 1.505 mm row pitch; stencil apertures 3× 0.93 × 0.36 mm, etc.). Pin 1 = gate (small pad, bottom-left in the top view), pin 2 = drain (top row), pins 3–4 = source (middle and bottom rows). The top side is exposed silicon tied to source, and the datasheet says it is "not recommended to use as an electrical connection".
+Footprint: PG-TSON-4 (3.2 × 3.0 mm, three pad rows, solder-mask-defined pads). This needs a project footprint drawn from Fig. 2 p.14 (copper 1.6 + 1.6 mm wide rows, 1.505 mm row pitch; stencil apertures 3× 0.93 × 0.36 mm, etc.). Pins (Fig. 1 p.13, Fig. 2 p.14, top view): **top full-width row = pin 3 (source); middle bar = pin 2 (drain); bottom row = pin 1 (gate, small pad, bottom-left) and pin 4 (source, bottom-right)**. *(Corrected 2026-11-08, phase 2 parts review D-m3; the earlier text "pin 2 = drain (top row), pins 3–4 = source (middle and bottom rows)" was wrong. The footprint `studio_D:IGB070S10S1_PG-TSON-4` and the netlist already follow the datasheet: Q_H pin 2 on VBUS, pins 3/4 on SW; Q_L pin 2 on SW, pins 3/4 on GND.)* The top side is exposed silicon tied to source, and the datasheet says it is "not recommended to use as an electrical connection". *(Phase 2, review D-m1: `studio_D:IGB070S10S1_PG-TSON-4` is now solder-mask-defined per Fig. 2: copper-only pads (Fig. 2 copper + 0.05 mm), separate F.Mask windows (0.4 mm inner windows on the outer rows, 0.35 mm on the drain bar; the outer-edge mask notches are left closed), and Fig. 2's split stencil apertures on F.Paste.)*
 
 Used as: 4 half-bridges (2 per BTL channel: woofer, tweeter), HS and LS each one IGB070S10S1, driven by an LMG1210 (D-lmg1210.md).
 

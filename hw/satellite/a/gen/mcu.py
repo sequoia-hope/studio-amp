@@ -158,18 +158,18 @@ def draw_gpio(u, at):
     return part
 
 
-g1 = draw_gpio(1, (210.82, 132.08))
-g2 = draw_gpio(2, (320.04, 132.08))
+g1 = draw_gpio(1, (210.82, 152.4))
+g2 = draw_gpio(2, (320.04, 152.4))
 T("PIO link to the ECP5 (E-link.md): 8-bit, 37.5 MHz,\n22R series at each driver is in the FPGA design rule;\n"
   "LINK_* tri-stated while the FPGA is configured.\nENC_*: encoder header on the io sheet (block G pulls).",
-  (190.5, 185.42))
+  (190.5, 205.74))
 T("SSPI configuration (SPI1): FPGA_CCLK 33R at the RP2350,\npad set to 8 mA (1k pull-up at the FPGA).\n"
   "Reads <= 18.75 MHz, bitstream writes 37.5 MHz.\nIBUS_SENSE: 100n at the pin (B's 67k source, 24 Hz).\n"
-  "ILIM_SEL0/1, VDRV_EN: reset Hi-Z, pulled down\nat blocks B and C (safe state).", (297.18, 185.42))
+  "ILIM_SEL0/1, VDRV_EN: reset Hi-Z, pulled down\nat blocks B and C (safe state).", (297.18, 205.74))
 
 
 # ---------------------------------------------------------------- system unit
-SX, SY = 78.74, 132.08
+SX, SY = 78.74, 152.4
 sy = unit(3, (SX, SY))
 pin = sy.pin
 # SWD -> debug header (io sheet; G fits the 33R)

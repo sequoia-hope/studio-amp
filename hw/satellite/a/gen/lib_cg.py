@@ -122,6 +122,15 @@ def block_c():
                            ("VOUT", "2", "power_out", "R", 5.08), ("VOUT", "7", "passive", "R", 5.08),
                            ("ST", "8", "open_collector", "R", -5.08),
                            ("GND", "1", "power_in", "B", 0)]))
+    # LM5017 DDA (datasheets/lm5017.pdf pin functions): 1 RTN, 2 VIN, 3 UVLO, 4 RON, 5 FB, 6 VCC,
+    # 7 BST, 8 SW, EP (9) RTN. Same layout as KiCad's LM5017MR, whose pin 3 is misspelt "ULVO".
+    syms.append(symbol("LM5017", "U", "LM5017", "Package_SO:TI_SO-PowerPAD-8",
+                       "100 V 600 mA constant-on-time synchronous buck, SO PowerPAD-8 (DDA)", 7.62, 10.16, [
+                           ("VIN", "2", "power_in", "L", 5.08), ("RON", "4", "input", "L", 2.54),
+                           ("UVLO", "3", "input", "L", -2.54),
+                           ("BST", "7", "input", "R", 5.08), ("SW", "8", "output", "R", 2.54),
+                           ("FB", "5", "input", "R", -2.54), ("VCC", "6", "output", "R", -7.62),
+                           ("RTN", "1", "power_in", "B", -2.54), ("RTNPAD", "9", "power_in", "B", 0)]))
     # TPS62A02A PDDC (datasheets/tps62a02a.pdf Table 5-1, SOT23-6): 1 EN, 2 GND, 3 SW, 4 VIN,
     # 5 PG, 6 FB. Thin SOT-23-6 (review): TSOT-23-6.
     syms.append(symbol("TPS62A02A", "U", "TPS62A02A", "Package_TO_SOT_SMD:TSOT-23-6",
@@ -157,7 +166,7 @@ def block_c():
                            ("GND", "2", "power_in", "B", 0)]))
     # TLV6703 DDC (datasheets/tlv6703.pdf pin functions): 1 OUT, 2/4/6 GND, 3 SENSE, 5 VDD.
     syms.append(symbol("TLV6703", "U", "TLV6703", "Package_TO_SOT_SMD:TSOT-23-6",
-                       "18 V comparator with 400 mV reference, open-drain, TSOT-23-6 (DDC)", 5.08, 5.08, [
+                       "18 V comparator with 400 mV reference, open-drain, TSOT-23-6 (DDC)", 7.62, 7.62, [
                            ("SENSE", "3", "input", "L", 0), ("OUT", "1", "open_collector", "R", 0),
                            ("VDD", "5", "power_in", "T", 0),
                            ("GND", "2", "power_in", "B", 0), ("GND", "4", "passive", "B", 0),
@@ -210,6 +219,22 @@ def block_g():
                            ("OUT", "1", "power_out", "R", 2.54), ("~{FAULT}", "3", "open_collector", "R", -2.54),
                            ("GND", "5", "power_in", "B", -2.54), ("GND", "7", "passive", "B", -2.54),
                            ("ILIM", "2", "passive", "B", 2.54)]))
+    # Connectors drawn by function (the footprint keeps the physical pad numbers):
+    # LED output, JST PH 4 (R-19 order 1 +5V, 2 GND, 3 D, 4 C)
+    syms.append(symbol("Conn_LED_PH4", "J", "JST PH 4P", "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+                       "Addressable-LED output connector, pins by function", 5.08, 3.81, [
+                           ("+5V", "1", "passive", "L", 2.54), ("D", "3", "passive", "L", 0),
+                           ("C", "4", "passive", "L", -2.54), ("GND", "2", "passive", "B", 0)]))
+    # Knob / encoder 2x6 header (G-knob.md pin table); +3V3 (11) on top, GND (2, 12) at the bottom
+    syms.append(symbol("Conn_Knob_2x6", "J", "2x6 header 2.54",
+                       "Connector_PinHeader_2.54mm:PinHeader_2x06_P2.54mm_Vertical",
+                       "Knob / encoder header, pins by function", 7.62, 17.78, [
+                           ("KNOB_REF", "1", "passive", "R", 10.16), ("KNOB1", "3", "passive", "R", 7.62),
+                           ("KNOB2", "4", "passive", "R", 5.08), ("KNOB3", "5", "passive", "R", 2.54),
+                           ("KNOB4", "6", "passive", "R", 0), ("ENC1_A", "7", "passive", "R", -2.54),
+                           ("ENC1_B", "8", "passive", "R", -5.08), ("ENC2_A", "9", "passive", "R", -7.62),
+                           ("ENC2_B", "10", "passive", "R", -10.16), ("+3V3", "11", "passive", "T", 0),
+                           ("GND", "2", "passive", "B", -2.54), ("GND", "12", "passive", "B", 2.54)]))
     return syms
 
 

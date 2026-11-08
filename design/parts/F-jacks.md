@@ -54,7 +54,7 @@ and "R" on the silk.**
 | Shell | tinned iron, pin 2 | GND | — |
 | Footprint | p.2 recommended layout (pin positions at 5.0 and 10.0 mm spacing, hole sizes per drawing) | built from the drawing in phase 2 | phase 2 |
 
-Pin 1 is the centre (signal) and pin 2 the shell/ground (schematic, p.2). The metal shell is
+Pin 2 is the centre (signal) contact and pin 1 the shell/ground, on three pads (schematic and layout, p.2; corrected in phase 2). The metal shell is
 reachable, so it gets a direct GND via cluster next to the TVS.
 
 ## J_MIC: CUI SJ1-3523N, 3.5 mm TRS jack, no switch
@@ -99,3 +99,7 @@ tip. A TS plug shorting ring to sleeve then draws only 5 V/4.4 kΩ ≈ 1.1 mA. H
   - pin 2 (centre): Ø1.7 at (0, 0).
   Each jack has its own 100 kΩ to GND and a PESD15VL1BA.
 - Mic jack: KiCad `Jack_3.5mm_CUI_SJ1-3523N_Horizontal`, pads T/R/S.
+
+- Phase 2 parts cross-check (2026-11-08): the HP ferrites now sit in series. The jack and TVS are
+  on one net, then the bead, then relay NO (FB1001: K1001-NO1 to D1019; FB1002: K1001-NO2 to
+  D1020). This was verified in the exported netlist.

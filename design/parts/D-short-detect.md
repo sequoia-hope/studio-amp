@@ -9,6 +9,13 @@
 
 > **UPDATE 2026-11-08 (IGB070S10S1):** turn-off ≈ 4.5 ns instead of 7 ns → short to all gates off **≈ 48 ns**; peak ≤ pre-fault + 0.24 A ≤ 13.3 A (legitimate peak at 576 kHz is 13.0 A, D-output-inductor.md).
 
+> **Phase 2 correction (2026-11-08, parts review D-M1).** The phase 1 parts row, 6.2 k / 12 k / 6.2 k, gave SDH = 3.3 × 18.2/24.4 = 2.46 V and SDL = 0.84 V: a ±0.81 V window, not the ±1.0 V every figure below assumes. The ladder is now **4.99 k / 15.0 k / 4.99 k** on both channels (R448–R450, R548–R550): SDH = 3.3 × 19.99/24.98 = **2.641 V**, SDL = 3.3 × 4.99/24.98 = **0.659 V**, ±0.991 V about V_B = 1.650 V. Re-derived:
+> - **Threshold tolerance.** Ladder and V_B divider share 3V3_A, so the window is ratiometric. 1 % resistors at worst case give SDH 2.630–2.651 V and V_B 1.634–1.667 V, so a half-width of **0.964–1.018 V**. Adding a ±1.5 % 3V3_A error gives 0.95–1.03 V.
+> - **Trip slew** = V_th/τ = 0.991 V/47 ns = **21.1 V/µs** nominal. With τ ± 6 % and the threshold range: **19.1–23.3 V/µs**.
+> - **Speaker lead opening** (I_trip = C_node × V_th/τ, C_node 7 × 100 nF): **14.8 A** nominal, above the 13.0 A legitimate peak (D-output-inductor.md). The fully stacked worst case (−5 % C0G, low threshold, long τ) is 665 nF × 0.95 V/49.8 ns = 12.7 A. Only that all-tolerances-aligned corner trips on a lead opened at the very peak, and that trip is benign (the latch opens; the FPGA re-arms per policy).
+> - **Nuisance margin**, normal worst sum at 576 kHz: ripple 0.07 V + full-scale 20 kHz audio 0.14 V + edge coupling 0.002 V ≈ 0.21 V (0.27 V with the 448 kHz ripple figure below). Margin **4.7×** nominal and **≥ 3.5×** at the low threshold against 0.27 V. Ramped start-up (0.42 V): ≥ 2.3×.
+> - Unchanged: the delay (≈ 48 ns), the clamp, and R_S.
+
 Added after the phase 1 review (M2). The INA241 "holds the output for 1 µs" after a large common-mode ΔV/Δt (INA241 §7.3.1.1, p.15–16; threshold not published). A hard output short is exactly such a step at the shunt's common mode, so the current-sense path is blind for ≈ 1 µs in the fault it exists for. This detector catches the step itself, in ≈ 55 ns, independently of the current path.
 
 Datasheets: datasheets/tlv3501.pdf (TLV3501/3502); datasheets/yageo-cc-npo.pdf (Yageo CC series NP0/C0G, voltage code 0 = 100 V); datasheets/bat54s-nexperia.pdf (BAT54S); datasheets/uniroyal-0402wgf.pdf; datasheets/bat46wj.pdf. Read: electrical tables, ratings, part-number keys.
@@ -20,7 +27,7 @@ Datasheets: datasheets/tlv3501.pdf (TLV3501/3502); datasheets/yageo-cc-npo.pdf (
 | D_CL (clamp to 3V3_A and GND) | Nexperia BAT54S (series pair) | `C47546 BAT54S,215 (Nexperia, SOT-23): extended, JLC stock 301527, lifecycle normal` |
 | U_SD (window comparator) | TLV3502AIDCNR | `C48618` (D-ocp-logic.md) |
 | Bias V_B = 1.65 V (one per channel) | 2 × 20.0 kΩ divider from 3V3_A + 100 nF | C25765 / C60474 |
-| Window thresholds (one per channel) | ladder from 3V3_A: 2.65 V / 0.65 V | Uni-Royal 0402 1 %: 6.2 k / 12.0 k / 6.2 k (sum 24.4 kΩ) + 100 nF each node |
+| Window thresholds (one per channel) | ladder from 3V3_A: 2.641 V / 0.659 V (±0.991 V about V_B) | Uni-Royal 0402 1 %: **4.99 k / 15.0 k / 4.99 k** (sum 24.98 kΩ): 0402WGF4991TCE `C25903` (stock 669679, normal, 2026-11-07) / 0402WGF1502TCE `C25756` + 100 nF each node |
 | Diodes into FAULT_RAW_n | 2 × BAT46WJ per node (8 per board) | C114696 |
 
 ## Circuit

@@ -38,6 +38,7 @@ SYM = LIB / "studio_E.kicad_sym"
 PRETTY = LIB / "studio_E.pretty"
 KICAD_FP = Path("/usr/share/kicad/footprints")
 G = 2.54
+PL = 5.08     # I/O pin length: the ball number sits mid-pin, clear of a no-connect X at the end
 
 
 def q(s):
@@ -157,9 +158,9 @@ def bank_unit(unit, title, balls, nets, b):
     lines = [f"\t\t(symbol {q(f'{ECP5}_{unit}_1')}", rect(-w / 2, 5.08, w / 2, bottom),
              stext(title, 0, 2.54)]
     for ball, name, y in L:
-        lines.append(pin_line("bidirectional", -w / 2 - G, y, 0, name, ball))
+        lines.append(pin_line("bidirectional", -w / 2 - PL, y, 0, name, ball, length=PL))
     for ball, name, y in R:
-        lines.append(pin_line("bidirectional", w / 2 + G, y, 180, name, ball))
+        lines.append(pin_line("bidirectional", w / 2 + PL, y, 180, name, ball, length=PL))
     lines.append("\t\t)")
     return lines, [x[0] for x in L + R]
 
@@ -190,10 +191,10 @@ def config_unit(unit, b, nets):
              stext("BANK 8 sysCONFIG + JTAG", 0, 2.54)]
     for ball, name, y in L:
         et = CONFIG_TYPES.get(b[ball]["func"], "bidirectional")
-        lines.append(pin_line(et, -w / 2 - G, y, 0, name, ball))
+        lines.append(pin_line(et, -w / 2 - PL, y, 0, name, ball, length=PL))
     for ball, name, y in R:
         et = CONFIG_TYPES.get(b[ball]["func"], "bidirectional")
-        lines.append(pin_line(et, w / 2 + G, y, 180, name, ball))
+        lines.append(pin_line(et, w / 2 + PL, y, 180, name, ball, length=PL))
     lines.append("\t\t)")
     return lines, [x[0] for x in L + R]
 
@@ -224,8 +225,9 @@ def power_unit(unit, title, groups, b, gnd=None):
         x = max(x, 5.08 * (len(gnd) + 1))
     w = up(x, 2 * G)
     h = 15.24
+    tpos = (2.54, -h / 2, "left") if gnd else (w / 2, -h + 2.54, "")   # clear of the pin names
     lines = [f"\t\t(symbol {q(f'{ECP5}_{unit}_1')}", rect(0, 0, w, -h),
-             stext(title, w / 2, -h + 2.54)]
+             stext(title, tpos[0], tpos[1], just=tpos[2])]
     for ball, name, px in pins:
         lines.append(pin_line("power_in", px, G, 270, name, ball))
     if gnd:     # one pin per GND ball along the bottom, each with its own ground symbol
@@ -353,8 +355,8 @@ def rp_symbol():
         w = up((max(len(nm(n)) for n, _ in L + R) * 2) * 1.05 + 5.08, 2 * G)
         bottom = min(y for _, y in L + R) - G
         units += [f"\t\t(symbol {q(f'{RP}_{u}_1')}", rect(-w / 2, 5.08, w / 2, bottom), stext(title, 0, 2.54)]
-        units += [pin_line(et(n), -w / 2 - G, y, 0, nm(n), n) for n, y in L]
-        units += [pin_line(et(n), w / 2 + G, y, 180, nm(n), n) for n, y in R]
+        units += [pin_line(et(n), -w / 2 - PL, y, 0, nm(n), n, length=PL) for n, y in L]
+        units += [pin_line(et(n), w / 2 + PL, y, 180, nm(n), n, length=PL) for n, y in R]
         units.append("\t\t)")
     # unit 3: system. Left: SWD, crystal, RUN. Right: QSPI in flash pin order, USB.
     sysL = [("33", 0), ("34", -2.54), ("30", -12.7), ("31", -30.48), ("35", -45.72)]
@@ -375,7 +377,7 @@ def rp_symbol():
             top.append((n, x))
     w = up(x + 12.7, 2 * G)
     h = 15.24
-    units += [f"\t\t(symbol {q(f'{RP}_4_1')}", rect(0, 0, w, -h), stext("POWER", w / 2, -h + 2.54)]
+    units += [f"\t\t(symbol {q(f'{RP}_4_1')}", rect(0, 0, w, -h), stext("POWER", 2.54, -h / 2, just="left")]
     units += [pin_line(et(n), px, G, 270, nm(n), n) for n, px in top]
     gx = up(w / 2, 2 * G)
     units.append(pin_line("power_in", gx - 5.08, -h - G, 90, nm("62"), "62"))
@@ -449,14 +451,13 @@ def vcxo_symbol():
     out = header(name, "Y", name, "studio_E:Oscillator_SMD_3225-4Pin_YXC_SX3V",
                  "design/datasheets/sx3v-vcxo.pdf",
                  "Voltage-controlled crystal oscillator, CMOS, 3.2x2.5 mm 4-pad (pin 1 Vc; OE on the "
-                 "pin-compatible XO)", "VCXO oscillator", 8.89, -8.89)
-    out += [f"\t\t(symbol {q(name + '_0_1')}", rect(-5.08, 5.08, 5.08, -5.08),
-            "\t\t\t(text \"VCXO\" (at 0 0 0) (effects (font (size 1.016 1.016))))", "\t\t)",
+                 "pin-compatible XO)", "VCXO oscillator", 13.97, -13.97)
+    out += [f"\t\t(symbol {q(name + '_0_1')}", rect(-7.62, 7.62, 7.62, -7.62), "\t\t)",
             f"\t\t(symbol {q(name + '_1_1')}",
-            pin_line("input", -7.62, 0, 0, "Vc", "1"),
-            pin_line("power_in", 0, -7.62, 90, "GND", "2"),
-            pin_line("output", 7.62, 0, 180, "OUT", "3"),
-            pin_line("power_in", 0, 7.62, 270, "VDD", "4"),
+            pin_line("input", -10.16, 0, 0, "Vc", "1"),
+            pin_line("power_in", 0, -10.16, 90, "GND", "2"),
+            pin_line("output", 10.16, 0, 180, "OUT", "3"),
+            pin_line("power_in", 0, 10.16, 270, "VDD", "4"),
             "\t\t)", "\t\t(embedded_fonts no)", "\t)"]
     return "\n".join(out)
 
