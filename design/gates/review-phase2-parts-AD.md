@@ -4,7 +4,7 @@ Date: 2026-11-08. Reviewer did not see the authors' conversation.
 Inputs: `design/renders/netlist.xml` (traced pin by pin, labels not trusted), `design/renders/bom-sch.csv`,
 `design/parts/{A,B,C,D}-*.md` (superseded sections ignored), `design/datasheets/*.pdf` (pdftotext / rendered pages),
 `hw/satellite/a/lib/studio_{A,B,C,D}.kicad_sym` and `.pretty`, `design/intent.md`.
-Scratch scripts: `/tmp/claude-1000/-home-sequoia-pcb-studio-amp/3008461c-63e5-4d02-bfe4-27fe5cca765c/scratchpad/xchk-AD/` (nl.py, sym.py, fp.py, iso.py).
+Scratch scripts: `<session scratchpad>/xchk-AD/` (nl.py, sym.py, fp.py, iso.py).
 
 ## Findings
 
